@@ -18,6 +18,13 @@ python -m uvicorn app.main:app --reload --port 8000
 Startup prints a topology validation report to the console. The API is
 then live at `http://127.0.0.1:8000` (CORS is open to any origin).
 
+Open **http://127.0.0.1:8000/viewer/** for a 2D top-down site plan —
+real building footprint polygons projected from the GNSS coordinates,
+pan/zoom, hover tooltips, and a click-to-drill-down panel showing a
+building's ULPIN, every floor's ULPIN, and every unit's ULPIN/owner. This
+is a QA/debug view of the data layer, not the 3D viewer (that's the
+Three.js frontend).
+
 ## Project layout
 
 ```
@@ -27,8 +34,10 @@ code/
     loader.py       # YAML -> expanded data tree, unit/room generation
     rooms.py         # per-unit room generation from apartment_templates
     ulpin.py          # ULPIN generation
+    geo.py             # lat/lon -> local metres projection + footprint polygons
     validation.py    # topology / referential sanity checks
     main.py            # FastAPI app + endpoints
+    static/index.html  # 2D site plan viewer (served at /viewer)
 ```
 
 ## ULPIN pattern
@@ -238,6 +247,41 @@ object exactly as it appears in `/building/{id}`. 404 with
     }
   ],
   "count": 5
+}
+```
+
+### `GET /footprints`
+
+Powers `/viewer`. Real building footprint polygons (source `corners`
+where given, else a rectangle from center + `length_m`/`width_m`) and
+underground infrastructure lines, projected to local metres (+x = east,
++y = north) around the society origin — not something a 3D frontend needs
+directly (it has real lat/lon already), but handy for any 2D/top-down
+rendering.
+
+```json
+{
+  "origin": { "latitude": 13.08268, "longitude": 80.270718, "elevation_amsl_m": 18.5 },
+  "colors": { "building": "#334155", "parcel_boundary": "#22d3ee", "...": "..." },
+  "site_boundary_polygon": [[-97.37, -84.6], [119.49, -84.6], [119.49, 104.64], [-97.37, 104.64]],
+  "buildings": [
+    {
+      "id": "BLDG-001",
+      "ulpin": "3D-IND-560012-A1",
+      "name": "Tower Alpha",
+      "type": "residential_tower",
+      "block": "A",
+      "status": "registered",
+      "polygon": [[-75.68, -44.53], [-54.0, -44.53], [-54.0, -66.79], [-75.68, -66.79]],
+      "centroid": [-64.84, -55.66],
+      "floor_count": 15,
+      "unit_count": 56,
+      "room_count": 454
+    }
+  ],
+  "underground_infrastructure": [
+    { "id": "UTIL-WATER-001", "type": "water_pipeline", "status": "active", "line": [[-89.6, -76.05], [122.4, 139.3]] }
+  ]
 }
 ```
 

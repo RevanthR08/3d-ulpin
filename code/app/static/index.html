@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Greenfield Heights — 2D Site Plan</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #121a2b;
+    --panel-border: #223049;
+    --text: #e6edf7;
+    --text-dim: #93a3bd;
+    --accent: #22d3ee;
+    --parcel: #22d3ee;
+    --building: #334155;
+    --building-stroke: #64748b;
+    --selected: #06b6d4;
+    --underground: #38bdf8;
+    --community: #a855f7;
+    --utility: #f59e0b;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+  #app { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+
+  #map-wrap { flex: 1; position: relative; }
+  #map { width: 100%; height: 100%; display: block; cursor: grab; background: var(--bg); }
+  #map.grabbing { cursor: grabbing; }
+
+  header { position: absolute; top: 0; left: 0; right: 0; padding: 14px 18px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    pointer-events: none; z-index: 5; }
+  header h1 { font-size: 16px; margin: 0; font-weight: 600; letter-spacing: 0.2px; }
+  header .sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+  header .stats { font-size: 12px; color: var(--text-dim); text-align: right; }
+  header .stats b { color: var(--text); }
+
+  #legend { position: absolute; left: 18px; bottom: 18px; z-index: 5;
+    background: rgba(18,26,43,0.9); border: 1px solid var(--panel-border);
+    border-radius: 8px; padding: 10px 12px; font-size: 12px; backdrop-filter: blur(4px); }
+  #legend .row { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+  #legend .swatch { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+  #legend .line { width: 16px; height: 0; border-top: 2px dashed var(--underground); flex: none; }
+
+  #zoom-controls { position: absolute; right: 18px; bottom: 18px; z-index: 5;
+    display: flex; flex-direction: column; gap: 6px; }
+  #zoom-controls button { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--panel-border);
+    background: var(--panel); color: var(--text); font-size: 16px; cursor: pointer; }
+  #zoom-controls button:hover { background: #1a2540; }
+
+  #tooltip { position: absolute; pointer-events: none; z-index: 10; background: rgba(18,26,43,0.95);
+    border: 1px solid var(--panel-border); border-radius: 6px; padding: 6px 10px; font-size: 12px;
+    display: none; white-space: nowrap; }
+  #tooltip .t-name { font-weight: 600; }
+  #tooltip .t-ulpin { color: var(--accent); font-family: monospace; }
+
+  #panel { width: 340px; flex: none; background: var(--panel); border-left: 1px solid var(--panel-border);
+    overflow-y: auto; padding: 18px; }
+  #panel h2 { font-size: 15px; margin: 0 0 2px; }
+  #panel .ulpin { font-family: monospace; color: var(--accent); font-size: 12px; margin-bottom: 14px; word-break: break-all; }
+  #panel .placeholder { color: var(--text-dim); font-size: 13px; line-height: 1.6; }
+  #panel .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  #panel .stat { background: #0f1729; border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px 10px; }
+  #panel .stat .v { font-size: 16px; font-weight: 600; }
+  #panel .stat .k { font-size: 11px; color: var(--text-dim); }
+  #panel h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim);
+    margin: 18px 0 8px; }
+  #panel .floor-row { border: 1px solid var(--panel-border); border-radius: 6px; margin-bottom: 6px; overflow: hidden; }
+  #panel .floor-head { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px;
+    cursor: pointer; font-size: 12px; background: #0f1729; }
+  #panel .floor-head:hover { background: #16223b; }
+  #panel .floor-head .fl-label { font-weight: 600; }
+  #panel .floor-head .fl-ulpin { color: var(--text-dim); font-family: monospace; font-size: 11px; }
+  #panel .units { padding: 6px 10px; display: none; }
+  #panel .units.open { display: block; }
+  #panel .unit-row { font-size: 11.5px; padding: 4px 0; border-bottom: 1px dashed var(--panel-border);
+    display: flex; justify-content: space-between; gap: 6px; }
+  #panel .unit-row:last-child { border-bottom: none; }
+  #panel .unit-row .u-ulpin { color: var(--text-dim); font-family: monospace; }
+  #panel .unit-row .u-owner { color: var(--text-dim); }
+  #panel .badge { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 999px;
+    background: #0f1729; border: 1px solid var(--panel-border); color: var(--text-dim); margin-left: 6px; }
+  #panel a.close { float: right; color: var(--text-dim); cursor: pointer; font-size: 12px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="map-wrap">
+    <header>
+      <div>
+        <h1>Greenfield Heights — 2D Site Plan</h1>
+        <div class="sub">Real building footprints, projected from GNSS coordinates. Click a building for ULPIN + unit detail.</div>
+      </div>
+      <div class="stats" id="stats">loading…</div>
+    </header>
+    <svg id="map"></svg>
+    <div id="legend"></div>
+    <div id="zoom-controls">
+      <button id="zoom-in" title="Zoom in">+</button>
+      <button id="zoom-out" title="Zoom out">&minus;</button>
+      <button id="zoom-reset" title="Reset view">&#8635;</button>
+    </div>
+    <div id="tooltip"></div>
+  </div>
+  <div id="panel">
+    <div class="placeholder">Click a building on the map to see its ULPIN, floors and units.</div>
+  </div>
+</div>
+
+<script>
+const NS = "http://www.w3.org/2000/svg";
+const state = { viewBox: null, dragging: false, dragStart: null, buildingsById: {} };
+
+function el(tag, attrs = {}, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+
+function typeColor(type, colors) {
+  if (type === "community_facility") return "var(--community)";
+  if (type === "utility_facility") return "var(--utility)";
+  return colors.building || "var(--building)";
+}
+
+async function init() {
+  const [footprints, society] = await Promise.all([
+    fetch("/footprints").then(r => r.json()),
+    fetch("/society").then(r => r.json()),
+  ]);
+
+  document.getElementById("stats").innerHTML =
+    `<b>${society.computed_totals.total_buildings}</b> buildings &nbsp;·&nbsp; ` +
+    `<b>${society.computed_totals.total_floors}</b> floors &nbsp;·&nbsp; ` +
+    `<b>${society.computed_totals.total_units}</b> units &nbsp;·&nbsp; ` +
+    `topology: <b style="color:${society.topology_validation.violation_count ? '#f87171' : '#4ade80'}">` +
+    `${society.topology_validation.violation_count ? society.topology_validation.violation_count + ' issue(s)' : 'clean'}</b>`;
+
+  renderLegend(footprints.colors);
+  renderMap(footprints);
+}
+
+function renderLegend(colors) {
+  const legend = document.getElementById("legend");
+  legend.innerHTML = `
+    <div class="row"><span class="swatch" style="background:${colors.building || '#334155'}"></span>Residential building</div>
+    <div class="row"><span class="swatch" style="background:var(--community)"></span>Community facility</div>
+    <div class="row"><span class="swatch" style="background:var(--utility)"></span>Utility facility</div>
+    <div class="row"><span class="line"></span>Underground infrastructure</div>
+    <div class="row"><span class="swatch" style="background:none;border:1px dashed ${colors.parcel_boundary || '#22d3ee'}"></span>Site boundary</div>
+  `;
+}
+
+function renderMap(data) {
+  const svg = document.getElementById("map");
+  svg.innerHTML = "";
+  const colors = data.colors || {};
+
+  // bounds from site boundary (fallback: bounds of all buildings)
+  let pts = data.site_boundary_polygon.length ? data.site_boundary_polygon.slice()
+    : data.buildings.flatMap(b => b.polygon);
+  const xs = pts.map(p => p[0]), ys = pts.map(p => -p[1]); // flip y: north = up
+  const minX = Math.min(...xs), maxX = Math.max(...xs);
+  const minY = Math.min(...ys), maxY = Math.max(...ys);
+  const pad = Math.max(maxX - minX, maxY - minY) * 0.08 || 10;
+  state.viewBox = { x: minX - pad, y: minY - pad, w: (maxX - minX) + pad * 2, h: (maxY - minY) + pad * 2 };
+  state.initialViewBox = { ...state.viewBox };
+  applyViewBox();
+
+  const g = el("g", { id: "world" }, svg);
+
+  // site boundary
+  if (data.site_boundary_polygon.length) {
+    const d = polyPath(data.site_boundary_polygon);
+    el("path", { d, fill: "none", stroke: colors.parcel_boundary || "#22d3ee",
+      "stroke-width": 1.5, "stroke-dasharray": "6 4", opacity: 0.6 }, g);
+  }
+
+  // underground infrastructure
+  const ug = el("g", {}, g);
+  for (const u of data.underground_infrastructure) {
+    const [[x1, y1], [x2, y2]] = u.line;
+    el("line", { x1, y1: -y1, x2, y2: -y2, stroke: colors.underground || "#38bdf8",
+      "stroke-width": 1, "stroke-dasharray": "4 3", opacity: 0.45 }, ug);
+  }
+
+  // buildings
+  const bg = el("g", {}, g);
+  for (const b of data.buildings) {
+    state.buildingsById[b.id] = b;
+    const d = polyPath(b.polygon);
+    const color = typeColor(b.type, colors);
+    const shape = el("path", {
+      d, fill: color, stroke: colors.building_stroke || "#64748b",
+      "stroke-width": 0.6, opacity: 0.88, class: "building-shape", "data-id": b.id,
+    }, bg);
+    shape.style.cursor = "pointer";
+    shape.style.transition = "opacity 0.1s, filter 0.1s";
+
+    shape.addEventListener("mouseenter", (e) => {
+      shape.setAttribute("opacity", "1");
+      shape.setAttribute("stroke", colors.selected_property || "#06b6d4");
+      shape.setAttribute("stroke-width", "1.4");
+      showTooltip(e, b);
+    });
+    shape.addEventListener("mousemove", (e) => showTooltip(e, b));
+    shape.addEventListener("mouseleave", () => {
+      shape.setAttribute("opacity", "0.88");
+      shape.setAttribute("stroke", colors.building_stroke || "#64748b");
+      shape.setAttribute("stroke-width", "0.6");
+      hideTooltip();
+    });
+    shape.addEventListener("click", () => selectBuilding(b.id));
+
+    if (b.centroid) {
+      const [cx, cy] = b.centroid;
+      const label = el("text", {
+        x: cx, y: -cy, "text-anchor": "middle", "font-size": labelSize(),
+        fill: "#e6edf7", "pointer-events": "none", opacity: 0.85, class: "b-label",
+      }, bg);
+      label.textContent = b.block;
+    }
+  }
+
+  setupPanZoom(svg);
+}
+
+function labelSize() {
+  const vb = state.viewBox;
+  return Math.max(2.2, (vb ? vb.w : 400) * 0.012);
+}
+
+function polyPath(points) {
+  return points.map((p, i) => `${i === 0 ? "M" : "L"} ${p[0]} ${-p[1]}`).join(" ") + " Z";
+}
+
+function applyViewBox() {
+  const vb = state.viewBox;
+  document.getElementById("map").setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  document.querySelectorAll(".b-label").forEach(l => l.setAttribute("font-size", labelSize()));
+}
+
+function showTooltip(evt, b) {
+  const tip = document.getElementById("tooltip");
+  tip.style.display = "block";
+  tip.style.left = (evt.clientX + 14) + "px";
+  tip.style.top = (evt.clientY + 14) + "px";
+  tip.innerHTML = `<div class="t-name">${b.name}</div><div class="t-ulpin">${b.ulpin}</div>` +
+    `<div>${b.floor_count} floors · ${b.unit_count} units</div>`;
+}
+function hideTooltip() { document.getElementById("tooltip").style.display = "none"; }
+
+function setupPanZoom(svg) {
+  let isDown = false, last = null;
+
+  svg.addEventListener("mousedown", (e) => {
+    isDown = true; last = { x: e.clientX, y: e.clientY };
+    svg.classList.add("grabbing");
+  });
+  window.addEventListener("mousemove", (e) => {
+    if (!isDown) return;
+    const dx = e.clientX - last.x, dy = e.clientY - last.y;
+    last = { x: e.clientX, y: e.clientY };
+    const scale = state.viewBox.w / svg.clientWidth;
+    state.viewBox.x -= dx * scale;
+    state.viewBox.y -= dy * scale;
+    applyViewBox();
+  });
+  window.addEventListener("mouseup", () => { isDown = false; svg.classList.remove("grabbing"); });
+
+  svg.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    zoomAt(e.clientX, e.clientY, e.deltaY > 0 ? 1.12 : 1 / 1.12, svg);
+  }, { passive: false });
+
+  document.getElementById("zoom-in").onclick = () => zoomAt(svg.clientWidth / 2, svg.clientHeight / 2, 1 / 1.3, svg, true);
+  document.getElementById("zoom-out").onclick = () => zoomAt(svg.clientWidth / 2, svg.clientHeight / 2, 1.3, svg, true);
+  document.getElementById("zoom-reset").onclick = () => { state.viewBox = { ...state.initialViewBox }; applyViewBox(); };
+}
+
+function zoomAt(clientX, clientY, factor, svg, useCenter) {
+  const rect = svg.getBoundingClientRect();
+  const vb = state.viewBox;
+  const px = useCenter ? 0.5 : (clientX - rect.left) / rect.width;
+  const py = useCenter ? 0.5 : (clientY - rect.top) / rect.height;
+  const fx = vb.x + px * vb.w, fy = vb.y + py * vb.h;
+  vb.w *= factor; vb.h *= factor;
+  vb.x = fx - px * vb.w; vb.y = fy - py * vb.h;
+  applyViewBox();
+}
+
+async function selectBuilding(id) {
+  const panel = document.getElementById("panel");
+  panel.innerHTML = `<div class="placeholder">Loading ${id}…</div>`;
+  const b = await fetch(`/building/${id}`).then(r => r.json());
+
+  let html = `<a class="close" onclick="deselect()">&times; close</a>`;
+  html += `<h2>${b.name} <span class="badge">${b.type.replace(/_/g, " ")}</span></h2>`;
+  html += `<div class="ulpin">${b.ulpin}</div>`;
+  html += `<div class="grid">
+    <div class="stat"><div class="v">${b.floor_count}</div><div class="k">Floors</div></div>
+    <div class="stat"><div class="v">${b.unit_count}</div><div class="k">Units</div></div>
+    <div class="stat"><div class="v">${b.room_count}</div><div class="k">Rooms</div></div>
+    <div class="stat"><div class="v">${(b.vertical_parcel.top_elevation_m - b.vertical_parcel.base_elevation_m).toFixed(1)}m</div><div class="k">Height (base→top)</div></div>
+  </div>`;
+
+  html += `<h3>Floors (click to expand units)</h3>`;
+  for (const f of b.floors) {
+    html += `<div class="floor-row">
+      <div class="floor-head" onclick="toggleFloor(this)">
+        <span><span class="fl-label">${f.floor_type === "residential" ? "Floor " + f.floor_label : f.floor_label}</span>
+          <span class="badge">${f.units.length ? f.units.length + " units" : (f.rooms || []).length + " rooms"}</span></span>
+        <span class="fl-ulpin">${f.ulpin}</span>
+      </div>
+      <div class="units">`;
+    if (f.units.length) {
+      for (const u of f.units) {
+        html += `<div class="unit-row">
+          <span>${u.unit} <span class="badge">${u.type}</span></span>
+          <span class="u-ulpin">${u.ulpin}</span>
+        </div>`;
+      }
+    } else {
+      for (const r of (f.rooms || [])) {
+        html += `<div class="unit-row"><span>${r.type.replace(/_/g, " ")}</span><span class="u-owner">${r.area_sq_m} m²</span></div>`;
+      }
+    }
+    html += `</div></div>`;
+  }
+
+  panel.innerHTML = html;
+}
+
+function toggleFloor(headEl) {
+  headEl.nextElementSibling.classList.toggle("open");
+}
+
+function deselect() {
+  document.getElementById("panel").innerHTML =
+    `<div class="placeholder">Click a building on the map to see its ULPIN, floors and units.</div>`;
+}
+
+window.toggleFloor = toggleFloor;
+window.deselect = deselect;
+
+init().catch(err => {
+  document.getElementById("stats").textContent = "failed to load data — is the API running?";
+  console.error(err);
+});
+</script>
+</body>
+</html>
