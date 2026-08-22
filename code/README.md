@@ -69,6 +69,7 @@ code/
     validation.py    # topology / referential sanity checks
     main.py            # FastAPI app + endpoints
     static/index.html  # 2D site plan viewer (served at /viewer)
+    static3d/index.html # 3D orbit-able viewer (served at /viewer3d, Three.js)
 ```
 
 ## ULPIN pattern
@@ -131,6 +132,28 @@ and don't fully reconcile with what full expansion produces (117 / 406 /
 3201) — this is a property of the synthetic source data, not a bug. Both
 are exposed side-by-side in `/society` as `declared_totals` vs
 `computed_totals` so it's visible rather than silently papered over.
+
+## 3D viewer (`/viewer3d`)
+
+A basic orbit-able 3D scene (`app/static3d/index.html`, Three.js via CDN,
+no build step) - drag to rotate/tilt, scroll to zoom, right-drag to pan.
+Every floor of every building is its own extruded mesh, using each
+floor's **real** `elevation_base_m`/`elevation_top_m` from `/building/{id}`
+for its height - not a fake uniform stack. Ground footprints come from
+`/site-plan`; real OpenStreetMap buildings/roads render as low-detail
+context around the campus, same data as `/viewer`. Click any floor to see
+its ULPIN and units in a side panel (the containing building's other
+floors are also listed, so you can drill from floor to any other floor
+without going back to 2D). This is a genuinely separate, complementary
+build to the 3D extrusion your teammate is building in the main app - a
+lightweight ULPIN-focused viewer directly against this API's data, not a
+replacement for their work.
+
+Coordinate note: ground x/z use the same `METERS_PER_UNIT` (0.26)
+`app/site_plan.py` uses to align the schematic campus with real OSM
+geometry, so footprint width and real floor heights are proportioned
+consistently (e.g. Tower Alpha's 44.8m real height reads correctly tall
+against its ~20m x 14m real-proportioned footprint).
 
 ## Endpoints
 

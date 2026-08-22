@@ -11,6 +11,7 @@ from .validation import validate_society
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "greenfield_heights.yaml")
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+STATIC3D_DIR = os.path.join(os.path.dirname(__file__), "static3d")
 
 app = FastAPI(
     title="3D ULPIN Vertical Property Mapping System — Data API",
@@ -51,6 +52,7 @@ def startup():
 
 
 app.mount("/viewer", StaticFiles(directory=STATIC_DIR, html=True), name="viewer")
+app.mount("/viewer3d", StaticFiles(directory=STATIC3D_DIR, html=True), name="viewer3d")
 
 
 @app.get("/")
@@ -67,6 +69,7 @@ def root():
             "/processing-status",
         ],
         "viewer": "/viewer",
+        "viewer3d": "/viewer3d",
     }
 
 

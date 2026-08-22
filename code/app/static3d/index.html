@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Greenfield Heights — 3D Site Plan</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --bg-outer: #ece7da;
+    --bg-panel: #ffffff;
+    --panel-border: #ddd6c4;
+    --text: #2b2a25;
+    --text-dim: #7a7566;
+    --accent: #0f9d8f;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg-outer); color: var(--text);
+    font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; overflow: hidden; }
+  #app { display: flex; height: 100vh; width: 100vw; }
+  #scene-wrap { flex: 1; position: relative; }
+  #scene-wrap canvas { display: block; }
+
+  header { position: absolute; top: 0; left: 0; right: 0; padding: 14px 18px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    pointer-events: none; z-index: 5; }
+  header .left { pointer-events: auto; }
+  header h1 { font-size: 16px; margin: 0; font-weight: 700; }
+  header .sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; max-width: 420px; }
+  header .stats { font-size: 12px; color: var(--text-dim); text-align: right;
+    background: rgba(255,255,255,0.8); padding: 6px 10px; border-radius: 8px;
+    border: 1px solid var(--panel-border); pointer-events: auto; }
+  header .stats b { color: var(--text); }
+  header a.view-toggle { display: inline-block; margin-top: 6px; font-size: 11px; color: var(--accent);
+    text-decoration: none; background: rgba(255,255,255,0.85); padding: 4px 9px; border-radius: 999px;
+    border: 1px solid var(--panel-border); pointer-events: auto; }
+
+  #hint { position: absolute; left: 18px; bottom: 18px; z-index: 5; font-size: 11.5px; color: var(--text-dim);
+    background: rgba(255,255,255,0.85); padding: 8px 11px; border-radius: 8px; border: 1px solid var(--panel-border);
+    line-height: 1.5; }
+
+  #loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: var(--text-dim); background: var(--bg-outer); z-index: 20; }
+
+  #tooltip { position: absolute; pointer-events: none; z-index: 10; background: rgba(255,255,255,0.97);
+    border: 1px solid var(--panel-border); border-radius: 6px; padding: 6px 10px; font-size: 12px;
+    display: none; white-space: nowrap; box-shadow: 0 2px 10px rgba(0,0,0,0.12); }
+  #tooltip .t-name { font-weight: 700; }
+  #tooltip .t-ulpin { color: var(--accent); font-family: monospace; }
+
+  #panel { width: 340px; flex: none; background: var(--bg-panel); border-left: 1px solid var(--panel-border);
+    overflow-y: auto; padding: 18px; }
+  #panel h2 { font-size: 15px; margin: 0 0 2px; }
+  #panel .ulpin { font-family: monospace; color: var(--accent); font-size: 12px; margin-bottom: 14px; word-break: break-all; }
+  #panel .placeholder { color: var(--text-dim); font-size: 13px; line-height: 1.6; }
+  #panel .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  #panel .stat { background: #f6f4ec; border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px 10px; }
+  #panel .stat.active { background: #e4f6f2; border-color: var(--accent); }
+  #panel .stat .v { font-size: 16px; font-weight: 700; }
+  #panel .stat .k { font-size: 11px; color: var(--text-dim); }
+  #panel h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim);
+    margin: 18px 0 8px; }
+  #panel .floor-row { border: 1px solid var(--panel-border); border-radius: 6px; margin-bottom: 6px; overflow: hidden; }
+  #panel .floor-row.active-floor { border-color: var(--accent); }
+  #panel .floor-head { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px;
+    cursor: pointer; font-size: 12px; background: #f6f4ec; }
+  #panel .floor-head:hover { background: #efebdd; }
+  #panel .floor-head .fl-label { font-weight: 700; }
+  #panel .floor-head .fl-ulpin { color: var(--text-dim); font-family: monospace; font-size: 11px; }
+  #panel .units { padding: 6px 10px; display: none; }
+  #panel .units.open { display: block; }
+  #panel .unit-row { font-size: 11.5px; padding: 4px 0; border-bottom: 1px dashed var(--panel-border);
+    display: flex; justify-content: space-between; gap: 6px; }
+  #panel .unit-row:last-child { border-bottom: none; }
+  #panel .unit-row .u-ulpin { color: var(--text-dim); font-family: monospace; }
+  #panel .badge { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 999px;
+    background: #f6f4ec; border: 1px solid var(--panel-border); color: var(--text-dim); margin-left: 6px; }
+  #panel a.close { float: right; color: var(--text-dim); cursor: pointer; font-size: 12px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="scene-wrap">
+    <div id="loading">Building 3D scene…</div>
+    <header>
+      <div class="left">
+        <h1>Greenfield Heights — 3D Site Plan</h1>
+        <div class="sub">Every floor is extruded from its real elevation data. Drag to orbit, scroll to zoom, click a floor for its ULPIN.</div>
+        <a class="view-toggle" href="/viewer/">&larr; 2D site plan</a>
+      </div>
+      <div class="stats" id="stats">loading…</div>
+    </header>
+    <div id="hint">Drag: rotate &nbsp;·&nbsp; Scroll: zoom &nbsp;·&nbsp; Right-drag: pan &nbsp;·&nbsp; Click a floor: ULPIN detail</div>
+    <div id="tooltip"></div>
+  </div>
+  <div id="panel">
+    <div class="placeholder">Click a floor in the 3D scene to see its ULPIN and units. Click a building's ground footprint to see the whole building.</div>
+  </div>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+const M_PER_UNIT = 0.26; // matches app/site_plan.py's METERS_PER_UNIT - keeps ground footprint and real floor elevations proportioned consistently
+
+const TYPE_COLOR = {
+  residential_tower: 0x17b3a3,
+  residential_midrise: 0x17b3a3,
+  low_rise_residential: 0x17b3a3,
+  community_facility: 0x7c5cd4,
+  utility_facility: 0xe08a2c,
+};
+
+let scene, camera, renderer, controls, raycaster, pointer;
+let selectedMesh = null;
+const buildingCache = {};
+
+function toGround(pt) {
+  return new THREE.Vector2(pt[0] * M_PER_UNIT, pt[1] * M_PER_UNIT);
+}
+
+async function init() {
+  const [plan, society] = await Promise.all([
+    fetch("/site-plan").then(r => r.json()),
+    fetch("/society").then(r => r.json()),
+  ]);
+
+  document.getElementById("stats").innerHTML =
+    `<b>${society.computed_totals.total_buildings}</b> buildings &nbsp;·&nbsp; ` +
+    `<b>${society.computed_totals.total_floors}</b> floors &nbsp;·&nbsp; ` +
+    `<b>${society.computed_totals.total_units}</b> units`;
+
+  const buildings = await Promise.all(
+    plan.buildings.map(b => fetch(`/building/${b.id}`).then(r => r.json()))
+  );
+  buildings.forEach(b => { buildingCache[b.id] = b; });
+
+  setupScene();
+  buildGround(plan);
+  buildCityContext(plan);
+  buildTrees(plan);
+  buildBuildings(plan, buildings);
+
+  document.getElementById("loading").style.display = "none";
+  animate();
+}
+
+function setupScene() {
+  const wrap = document.getElementById("scene-wrap");
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xece7da);
+  scene.fog = new THREE.Fog(0xece7da, 400, 950);
+
+  // campus center in world units = canvas center (500, 350) * M_PER_UNIT ~= (130, 91)
+  camera = new THREE.PerspectiveCamera(48, wrap.clientWidth / wrap.clientHeight, 0.5, 2000);
+  camera.position.set(300, 190, 260);
+
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+  renderer.shadowMap.enabled = true;
+  wrap.appendChild(renderer.domElement);
+
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.target.set(130, 8, 91);
+  controls.maxPolarAngle = Math.PI * 0.49;
+  controls.minDistance = 20;
+  controls.maxDistance = 900;
+  controls.enableDamping = true;
+  controls.update();
+
+  const ambient = new THREE.AmbientLight(0xffffff, 0.65);
+  scene.add(ambient);
+  const sun = new THREE.DirectionalLight(0xfff3d8, 1.0);
+  sun.position.set(120, 180, 60);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.camera.left = -160; sun.shadow.camera.right = 160;
+  sun.shadow.camera.top = 160; sun.shadow.camera.bottom = -160;
+  sun.shadow.camera.far = 500;
+  scene.add(sun);
+
+  raycaster = new THREE.Raycaster();
+  pointer = new THREE.Vector2();
+  renderer.domElement.addEventListener("click", onClick);
+  renderer.domElement.addEventListener("mousemove", onHover);
+
+  window.addEventListener("resize", () => {
+    camera.aspect = wrap.clientWidth / wrap.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+  });
+}
+
+function shapeFromPolygon(polygon) {
+  const pts = polygon.map(toGround);
+  const shape = new THREE.Shape(pts);
+  return shape;
+}
+
+function buildGround(plan) {
+  const shape = shapeFromPolygon(plan.green_boundary);
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.6, bevelEnabled: false });
+  geo.rotateX(-Math.PI / 2);
+  const mat = new THREE.MeshStandardMaterial({ color: 0xa9c98a, roughness: 0.95 });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.y = -0.6;
+  mesh.receiveShadow = true;
+  scene.add(mesh);
+
+  const roadGroup = new THREE.Group();
+  for (const r of plan.roads) {
+    const pts = extractPathPoints(r.path).map(toGround);
+    if (pts.length < 2) continue;
+    const curve = new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(p.x, 0, p.y)));
+    const tubeGeo = new THREE.TubeGeometry(curve, Math.max(8, pts.length * 2), (r.width * M_PER_UNIT) / 2, 6, false);
+    const tubeMat = new THREE.MeshStandardMaterial({ color: 0xd7d2c6, roughness: 0.9 });
+    const tube = new THREE.Mesh(tubeGeo, tubeMat);
+    tube.position.y = 0.03;
+    tube.receiveShadow = true;
+    roadGroup.add(tube);
+  }
+  scene.add(roadGroup);
+}
+
+function buildCityContext(plan) {
+  const group = new THREE.Group();
+  const mat = new THREE.MeshStandardMaterial({ color: 0xcec3a3, roughness: 1 });
+  for (const poly of plan.city_context.buildings) {
+    if (poly.length < 3) continue;
+    const shape = shapeFromPolygon(poly);
+    const h = 3 + (poly.length % 5) * 1.4;
+    const geo = new THREE.ExtrudeGeometry(shape, { depth: h, bevelEnabled: false });
+    geo.rotateX(-Math.PI / 2);
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.y = h;
+    mesh.receiveShadow = true;
+    group.add(mesh);
+  }
+  scene.add(group);
+}
+
+function buildTrees(plan) {
+  const trunkGeo = new THREE.CylinderGeometry(0.15, 0.2, 1.4, 6);
+  const trunkMat = new THREE.MeshStandardMaterial({ color: 0x6b5539 });
+  const canopyGeo = new THREE.ConeGeometry(1.6, 3, 7);
+  const canopyMat = new THREE.MeshStandardMaterial({ color: 0x4a7a3d, roughness: 0.9 });
+
+  for (const [x, y] of plan.trees) {
+    const g = toGround([x, y]);
+    const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+    trunk.position.set(g.x, 0.7, g.y);
+    trunk.castShadow = true;
+    scene.add(trunk);
+    const canopy = new THREE.Mesh(canopyGeo, canopyMat);
+    canopy.position.set(g.x, 2.6, g.y);
+    canopy.castShadow = true;
+    scene.add(canopy);
+  }
+}
+
+function buildBuildings(plan, buildings) {
+  const byId = Object.fromEntries(plan.buildings.map(b => [b.id, b]));
+
+  for (const b of buildings) {
+    const planB = byId[b.id];
+    if (!planB) continue;
+    const shape = shapeFromPolygon(planB.polygon);
+    const color = TYPE_COLOR[b.type] ?? 0x17b3a3;
+    const group = new THREE.Group();
+    group.userData = { kind: "building", id: b.id };
+
+    for (const f of b.floors) {
+      const base = f.elevation_base_m;
+      const height = Math.max(0.4, f.elevation_top_m - f.elevation_base_m);
+      const geo = new THREE.ExtrudeGeometry(shape, { depth: height, bevelEnabled: false });
+      geo.rotateX(-Math.PI / 2);
+
+      const mat = new THREE.MeshStandardMaterial({
+        color, roughness: 0.55, metalness: 0.05,
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.y = base;
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      mesh.userData = {
+        kind: "floor", buildingId: b.id, buildingName: b.name, buildingType: b.type,
+        floorLabel: f.floor_label, floorUlpin: f.ulpin, unitCount: f.units.length,
+        baseColor: color,
+      };
+
+      const edges = new THREE.EdgesGeometry(geo);
+      const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x0d3a35, opacity: 0.35, transparent: true }));
+      mesh.add(line);
+
+      group.add(mesh);
+    }
+    scene.add(group);
+  }
+}
+
+function extractPathPoints(d) {
+  // pulls every numeric coordinate pair out of an SVG path 'd' string
+  // (M/L/C commands) - good enough for a smooth-ish 3D road ribbon
+  const nums = d.match(/-?\d+\.?\d*/g)?.map(Number) ?? [];
+  const pts = [];
+  for (let i = 0; i + 1 < nums.length; i += 2) pts.push([nums[i], nums[i + 1]]);
+  return pts;
+}
+
+function onHover(evt) {
+  const hit = pick(evt);
+  const tip = document.getElementById("tooltip");
+  if (hit) {
+    tip.style.display = "block";
+    tip.style.left = (evt.clientX + 14) + "px";
+    tip.style.top = (evt.clientY + 14) + "px";
+    tip.innerHTML = `<div class="t-name">${hit.buildingName} — ${hit.floorLabel}</div><div class="t-ulpin">${hit.floorUlpin}</div>`;
+    document.body.style.cursor = "pointer";
+  } else {
+    tip.style.display = "none";
+    document.body.style.cursor = "default";
+  }
+}
+
+function onClick(evt) {
+  const hit = pick(evt);
+  if (!hit) return;
+  selectFloor(hit);
+}
+
+function pick(evt) {
+  const rect = renderer.domElement.getBoundingClientRect();
+  pointer.x = ((evt.clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((evt.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects(scene.children, true);
+  const hit = hits.find(h => h.object.userData && h.object.userData.kind === "floor");
+  return hit ? hit.object.userData : null;
+}
+
+async function selectFloor(hit) {
+  if (selectedMesh) selectedMesh.material.emissive?.setHex(0x000000);
+
+  const b = buildingCache[hit.buildingId];
+  const panel = document.getElementById("panel");
+
+  let html = `<a class="close" onclick="window.__deselect3d()">&times; close</a>`;
+  html += `<h2>${b.name} <span class="badge">${b.type.replace(/_/g, " ")}</span></h2>`;
+  html += `<div class="ulpin">${b.ulpin}</div>`;
+  html += `<div class="grid">
+    <div class="stat"><div class="v">${b.floor_count}</div><div class="k">Floors</div></div>
+    <div class="stat"><div class="v">${b.unit_count}</div><div class="k">Units</div></div>
+    <div class="stat"><div class="v">${b.room_count}</div><div class="k">Rooms</div></div>
+    <div class="stat"><div class="v">${(b.vertical_parcel.top_elevation_m - b.vertical_parcel.base_elevation_m).toFixed(1)}m</div><div class="k">Height (base→top)</div></div>
+  </div>`;
+
+  html += `<h3>Floors (click to expand units)</h3>`;
+  for (const f of b.floors) {
+    const active = f.ulpin === hit.floorUlpin;
+    html += `<div class="floor-row ${active ? "active-floor" : ""}">
+      <div class="floor-head" onclick="window.__toggleFloor3d(this)">
+        <span><span class="fl-label">${f.floor_type === "residential" ? "Floor " + f.floor_label : f.floor_label}</span>
+          <span class="badge">${f.units.length ? f.units.length + " units" : (f.rooms || []).length + " rooms"}</span></span>
+        <span class="fl-ulpin">${f.ulpin}</span>
+      </div>
+      <div class="units ${active ? "open" : ""}">`;
+    if (f.units.length) {
+      for (const u of f.units) {
+        html += `<div class="unit-row"><span>${u.unit} <span class="badge">${u.type}</span></span><span class="u-ulpin">${u.ulpin}</span></div>`;
+      }
+    } else {
+      for (const r of (f.rooms || [])) {
+        html += `<div class="unit-row"><span>${r.type.replace(/_/g, " ")}</span><span class="u-ulpin">${r.area_sq_m} m²</span></div>`;
+      }
+    }
+    html += `</div></div>`;
+  }
+  panel.innerHTML = html;
+}
+
+window.__toggleFloor3d = (headEl) => headEl.nextElementSibling.classList.toggle("open");
+window.__deselect3d = () => {
+  document.getElementById("panel").innerHTML =
+    `<div class="placeholder">Click a floor in the 3D scene to see its ULPIN and units. Click a building's ground footprint to see the whole building.</div>`;
+};
+
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+init().catch(err => {
+  document.getElementById("loading").textContent = "Failed to load — is the API running?";
+  console.error(err);
+});
+</script>
+</body>
+</html>
