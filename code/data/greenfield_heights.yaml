@@ -1,0 +1,884 @@
+society:
+  id: "SOC-001"
+  name: "Greenfield Heights"
+  display_name: "Greenfield Heights — 3D Cadastral Demonstration Society"
+  dataset_version: "1.0.0"
+  data_type: "synthetic_demo_data"
+  purpose: "SIH 2026 Round 1 prototype"
+  coordinate_reference_system:
+    horizontal: "WGS84"
+    vertical: "AMSL"
+    epsg: "EPSG:4979"
+
+  origin:
+    latitude: 13.082680
+    longitude: 80.270718
+    elevation_amsl_m: 18.5
+
+  site_boundary:
+    southwest:
+      latitude: 13.081920
+      longitude: 80.269820
+    northeast:
+      latitude: 13.083620
+      longitude: 80.271820
+
+  site_area_sq_m: 21800
+  total_buildings: 15
+  total_floors: 79
+  total_units: 474
+  total_rooms: 1896
+
+  visualization:
+    terrain:
+      enabled: true
+      base_elevation_m: 18.5
+      surface_variation_m: 1.8
+
+    layers:
+      cadastral_parcels: true
+      buildings: true
+      apartment_units: true
+      roads: true
+      pedestrian_paths: true
+      underground_utilities: true
+      parking: true
+      vegetation: true
+
+    colors:
+      parcel_boundary: "#22d3ee"
+      building: "#334155"
+      selected_property: "#06b6d4"
+      underground: "#38bdf8"
+      road: "#475569"
+      vegetation: "#166534"
+
+  buildings:
+
+    # ============================================================
+    # BUILDING 01
+    # ============================================================
+
+    - id: "BLDG-001"
+      name: "Tower Alpha"
+      type: "residential_tower"
+      block: "A"
+      status: "registered"
+
+      coordinates:
+        center:
+          latitude: 13.082180
+          longitude: 80.270120
+          elevation_amsl_m: 19.2
+        corners:
+          - [13.082280, 80.270020]
+          - [13.082280, 80.270220]
+          - [13.082080, 80.270220]
+          - [13.082080, 80.270020]
+
+      footprint:
+        shape: "rectangle"
+        length_m: 42.0
+        width_m: 28.0
+        area_sq_m: 1176.0
+
+      height:
+        ground_clearance_m: 0.0
+        floor_to_floor_m: 3.2
+        roof_height_m: 2.0
+        total_height_m: 50.0
+
+      floors:
+        total: 15
+        basement: 1
+        residential: 14
+        roof: 1
+
+        basement:
+          id: "B1"
+          elevation_base_m: 14.5
+          elevation_top_m: 18.0
+          type: "parking_and_utilities"
+          units: 0
+          parking_spaces: 48
+          rooms:
+            - id: "B1-PARK"
+              type: "parking"
+              area_sq_m: 900
+            - id: "B1-MEP"
+              type: "utility_room"
+              area_sq_m: 65
+            - id: "B1-ELEC"
+              type: "electrical_room"
+              area_sq_m: 35
+            - id: "B1-PUMP"
+              type: "pump_room"
+              area_sq_m: 30
+
+        residential_floors:
+          - floor: 1
+            elevation_base_m: 18.0
+            elevation_top_m: 21.2
+            units:
+              - unit: "101"
+                type: "3BHK"
+                area_sq_m: 142
+                rooms:
+                  - {id: "101-LIV", type: "living_room", area_sq_m: 28}
+                  - {id: "101-MBR", type: "master_bedroom", area_sq_m: 20}
+                  - {id: "101-BR2", type: "bedroom", area_sq_m: 15}
+                  - {id: "101-BR3", type: "bedroom", area_sq_m: 14}
+                  - {id: "101-KIT", type: "kitchen", area_sq_m: 13}
+                  - {id: "101-DIN", type: "dining", area_sq_m: 14}
+                  - {id: "101-BATH1", type: "bathroom", area_sq_m: 5}
+                  - {id: "101-BATH2", type: "bathroom", area_sq_m: 5}
+                  - {id: "101-BAL", type: "balcony", area_sq_m: 8}
+
+              - unit: "102"
+                type: "2BHK"
+                area_sq_m: 108
+                rooms:
+                  - {id: "102-LIV", type: "living_room", area_sq_m: 25}
+                  - {id: "102-MBR", type: "master_bedroom", area_sq_m: 18}
+                  - {id: "102-BR2", type: "bedroom", area_sq_m: 14}
+                  - {id: "102-KIT", type: "kitchen", area_sq_m: 12}
+                  - {id: "102-DIN", type: "dining", area_sq_m: 12}
+                  - {id: "102-BATH1", type: "bathroom", area_sq_m: 5}
+                  - {id: "102-BAL", type: "balcony", area_sq_m: 7}
+
+              - unit: "103"
+                type: "3BHK"
+                area_sq_m: 138
+                rooms:
+                  - {id: "103-LIV", type: "living_room", area_sq_m: 27}
+                  - {id: "103-MBR", type: "master_bedroom", area_sq_m: 20}
+                  - {id: "103-BR2", type: "bedroom", area_sq_m: 15}
+                  - {id: "103-BR3", type: "bedroom", area_sq_m: 14}
+                  - {id: "103-KIT", type: "kitchen", area_sq_m: 13}
+                  - {id: "103-DIN", type: "dining", area_sq_m: 13}
+                  - {id: "103-BATH1", type: "bathroom", area_sq_m: 5}
+                  - {id: "103-BATH2", type: "bathroom", area_sq_m: 5}
+                  - {id: "103-BAL", type: "balcony", area_sq_m: 8}
+
+              - unit: "104"
+                type: "2BHK"
+                area_sq_m: 105
+                rooms:
+                  - {id: "104-LIV", type: "living_room", area_sq_m: 24}
+                  - {id: "104-MBR", type: "master_bedroom", area_sq_m: 18}
+                  - {id: "104-BR2", type: "bedroom", area_sq_m: 14}
+                  - {id: "104-KIT", type: "kitchen", area_sq_m: 12}
+                  - {id: "104-DIN", type: "dining", area_sq_m: 11}
+                  - {id: "104-BATH1", type: "bathroom", area_sq_m: 5}
+                  - {id: "104-BAL", type: "balcony", area_sq_m: 7}
+
+          - floor: 2
+            elevation_base_m: 21.2
+            elevation_top_m: 24.4
+            units: ["201", "202", "203", "204"]
+
+          - floor: 3
+            elevation_base_m: 24.4
+            elevation_top_m: 27.6
+            units: ["301", "302", "303", "304"]
+
+          - floor: 4
+            elevation_base_m: 27.6
+            elevation_top_m: 30.8
+            units: ["401", "402", "403", "404"]
+
+          - floor: 5
+            elevation_base_m: 30.8
+            elevation_top_m: 34.0
+            units:
+              - unit: "501"
+                type: "3BHK"
+                area_sq_m: 142
+              - unit: "502"
+                type: "3BHK"
+                area_sq_m: 142
+                demo_unit: true
+                demo_ulpin: "3D-IND-560012-A1-L5-502"
+              - unit: "503"
+                type: "3BHK"
+                area_sq_m: 138
+              - unit: "504"
+                type: "2BHK"
+                area_sq_m: 108
+
+          - floor: 6
+            elevation_base_m: 34.0
+            elevation_top_m: 37.2
+            units: ["601", "602", "603", "604"]
+
+          - floor: 7
+            elevation_base_m: 37.2
+            elevation_top_m: 40.4
+            units: ["701", "702", "703", "704"]
+
+          - floor: 8
+            elevation_base_m: 40.4
+            elevation_top_m: 43.6
+            units: ["801", "802", "803", "804"]
+
+          - floor: 9
+            elevation_base_m: 43.6
+            elevation_top_m: 46.8
+            units: ["901", "902", "903", "904"]
+
+          - floor: 10
+            elevation_base_m: 46.8
+            elevation_top_m: 50.0
+            units: ["1001", "1002", "1003", "1004"]
+
+          - floor: 11
+            elevation_base_m: 50.0
+            elevation_top_m: 53.2
+            units: ["1101", "1102", "1103", "1104"]
+
+          - floor: 12
+            elevation_base_m: 53.2
+            elevation_top_m: 56.4
+            units: ["1201", "1202", "1203", "1204"]
+
+          - floor: 13
+            elevation_base_m: 56.4
+            elevation_top_m: 59.6
+            units: ["1301", "1302", "1303", "1304"]
+
+          - floor: 14
+            elevation_base_m: 59.6
+            elevation_top_m: 62.8
+            units: ["1401", "1402", "1403", "1404"]
+
+      vertical_parcel:
+        base_elevation_m: 18.0
+        top_elevation_m: 62.8
+        volume_m3: 52915.2
+        topology_status: "valid"
+        collision_status: "clear"
+
+    # ============================================================
+    # BUILDINGS 02-05 : TOWERS
+    # ============================================================
+
+    - id: "BLDG-002"
+      name: "Tower Beta"
+      type: "residential_tower"
+      block: "B"
+      coordinates:
+        center: {latitude: 13.082240, longitude: 80.270540, elevation_amsl_m: 19.0}
+      footprint: {length_m: 40.0, width_m: 27.0, area_sq_m: 1080}
+      floors:
+        total: 12
+        basement: 1
+        residential: 11
+        units_per_floor: 4
+      floor_configuration:
+        floor_height_m: 3.2
+        apartments:
+          - {unit_type: "2BHK", count: 2, area_sq_m: 105}
+          - {unit_type: "3BHK", count: 2, area_sq_m: 138}
+      vertical_parcel:
+        base_elevation_m: 18.0
+        top_elevation_m: 53.2
+        topology_status: "valid"
+
+    - id: "BLDG-003"
+      name: "Tower Gamma"
+      type: "residential_tower"
+      block: "C"
+      coordinates:
+        center: {latitude: 13.082300, longitude: 80.270940, elevation_amsl_m: 19.4}
+      footprint: {length_m: 44.0, width_m: 29.0, area_sq_m: 1276}
+      floors:
+        total: 14
+        basement: 1
+        residential: 13
+        units_per_floor: 4
+      floor_configuration:
+        floor_height_m: 3.2
+        apartments:
+          - {unit_type: "3BHK", count: 3, area_sq_m: 142}
+          - {unit_type: "2BHK", count: 1, area_sq_m: 108}
+      vertical_parcel:
+        base_elevation_m: 18.0
+        top_elevation_m: 59.6
+        topology_status: "valid"
+
+    - id: "BLDG-004"
+      name: "Tower Delta"
+      type: "residential_tower"
+      block: "D"
+      coordinates:
+        center: {latitude: 13.082340, longitude: 80.271330, elevation_amsl_m: 18.8}
+      footprint: {length_m: 38.0, width_m: 26.0, area_sq_m: 988}
+      floors:
+        total: 10
+        basement: 1
+        residential: 9
+        units_per_floor: 4
+      floor_configuration:
+        floor_height_m: 3.2
+        apartments:
+          - {unit_type: "2BHK", count: 4, area_sq_m: 105}
+      vertical_parcel:
+        base_elevation_m: 18.0
+        top_elevation_m: 46.8
+        topology_status: "valid"
+
+    - id: "BLDG-005"
+      name: "Tower Epsilon"
+      type: "residential_tower"
+      block: "E"
+      coordinates:
+        center: {latitude: 13.082720, longitude: 80.270040, elevation_amsl_m: 19.1}
+      footprint: {length_m: 42.0, width_m: 28.0, area_sq_m: 1176}
+      floors:
+        total: 13
+        basement: 1
+        residential: 12
+        units_per_floor: 4
+      floor_configuration:
+        floor_height_m: 3.2
+        apartments:
+          - {unit_type: "3BHK", count: 2, area_sq_m: 140}
+          - {unit_type: "2BHK", count: 2, area_sq_m: 105}
+      vertical_parcel:
+        base_elevation_m: 18.0
+        top_elevation_m: 56.4
+        topology_status: "valid"
+
+    # ============================================================
+    # BUILDINGS 06-10 : MID-RISE
+    # ============================================================
+
+    - id: "BLDG-006"
+      name: "Block F"
+      type: "residential_midrise"
+      block: "F"
+      coordinates:
+        center: {latitude: 13.082760, longitude: 80.270430, elevation_amsl_m: 19.0}
+      footprint: {length_m: 34.0, width_m: 22.0, area_sq_m: 748}
+      floors:
+        total: 7
+        residential: 7
+        units_per_floor: 4
+      floor_configuration:
+        floor_height_m: 3.1
+        apartments:
+          - {unit_type: "2BHK", count: 4, area_sq_m: 98}
+      vertical_parcel:
+        base_elevation_m: 19.0
+        top_elevation_m: 40.7
+        topology_status: "valid"
+
+    - id: "BLDG-007"
+      name: "Block G"
+      type: "residential_midrise"
+      block: "G"
+      coordinates:
+        center: {latitude: 13.082790, longitude: 80.270820, elevation_amsl_m: 18.9}
+      footprint: {length_m: 36.0, width_m: 23.0, area_sq_m: 828}
+      floors:
+        total: 8
+        residential: 8
+        units_per_floor: 4
+      floor_configuration:
+        floor_height_m: 3.1
+        apartments:
+          - {unit_type: "2BHK", count: 4, area_sq_m: 102}
+      vertical_parcel:
+        base_elevation_m: 18.9
+        top_elevation_m: 43.7
+        topology_status: "valid"
+
+    - id: "BLDG-008"
+      name: "Block H"
+      type: "residential_midrise"
+      block: "H"
+      coordinates:
+        center: {latitude: 13.082820, longitude: 80.271200, elevation_amsl_m: 19.3}
+      footprint: {length_m: 32.0, width_m: 21.0, area_sq_m: 672}
+      floors:
+        total: 6
+        residential: 6
+        units_per_floor: 4
+      floor_configuration:
+        floor_height_m: 3.1
+        apartments:
+          - {unit_type: "2BHK", count: 4, area_sq_m: 95}
+      vertical_parcel:
+        base_elevation_m: 19.3
+        top_elevation_m: 37.9
+        topology_status: "valid"
+
+    - id: "BLDG-009"
+      name: "Block I"
+      type: "residential_midrise"
+      block: "I"
+      coordinates:
+        center: {latitude: 13.083140, longitude: 80.270080, elevation_amsl_m: 19.0}
+      footprint: {length_m: 35.0, width_m: 22.0, area_sq_m: 770}
+      floors:
+        total: 7
+        residential: 7
+        units_per_floor: 4
+      floor_configuration:
+        floor_height_m: 3.1
+        apartments:
+          - {unit_type: "2BHK", count: 2, area_sq_m: 100}
+          - {unit_type: "3BHK", count: 2, area_sq_m: 128}
+      vertical_parcel:
+        base_elevation_m: 19.0
+        top_elevation_m: 40.7
+        topology_status: "valid"
+
+    - id: "BLDG-010"
+      name: "Block J"
+      type: "residential_midrise"
+      block: "J"
+      coordinates:
+        center: {latitude: 13.083180, longitude: 80.270520, elevation_amsl_m: 19.2}
+      footprint: {length_m: 37.0, width_m: 24.0, area_sq_m: 888}
+      floors:
+        total: 8
+        residential: 8
+        units_per_floor: 4
+      floor_configuration:
+        floor_height_m: 3.1
+        apartments:
+          - {unit_type: "3BHK", count: 4, area_sq_m: 130}
+      vertical_parcel:
+        base_elevation_m: 19.2
+        top_elevation_m: 44.0
+        topology_status: "valid"
+
+    # ============================================================
+    # BUILDINGS 11-13 : LOW RISE
+    # ============================================================
+
+    - id: "BLDG-011"
+      name: "Villa Court A"
+      type: "low_rise_residential"
+      block: "K"
+      coordinates:
+        center: {latitude: 13.083200, longitude: 80.270950, elevation_amsl_m: 19.0}
+      footprint: {length_m: 28.0, width_m: 18.0, area_sq_m: 504}
+      floors:
+        total: 4
+        residential: 4
+        units_per_floor: 2
+      floor_configuration:
+        floor_height_m: 3.0
+        apartments:
+          - {unit_type: "2BHK", count: 2, area_sq_m: 92}
+      vertical_parcel:
+        base_elevation_m: 19.0
+        top_elevation_m: 31.0
+        topology_status: "valid"
+
+    - id: "BLDG-012"
+      name: "Villa Court B"
+      type: "low_rise_residential"
+      block: "L"
+      coordinates:
+        center: {latitude: 13.083220, longitude: 80.271320, elevation_amsl_m: 19.1}
+      footprint: {length_m: 29.0, width_m: 19.0, area_sq_m: 551}
+      floors:
+        total: 5
+        residential: 5
+        units_per_floor: 2
+      floor_configuration:
+        floor_height_m: 3.0
+        apartments:
+          - {unit_type: "3BHK", count: 2, area_sq_m: 120}
+      vertical_parcel:
+        base_elevation_m: 19.1
+        top_elevation_m: 34.1
+        topology_status: "valid"
+
+    - id: "BLDG-013"
+      name: "Villa Court C"
+      type: "low_rise_residential"
+      block: "M"
+      coordinates:
+        center: {latitude: 13.082480, longitude: 80.271500, elevation_amsl_m: 18.7}
+      footprint: {length_m: 30.0, width_m: 20.0, area_sq_m: 600}
+      floors:
+        total: 4
+        residential: 4
+        units_per_floor: 2
+      floor_configuration:
+        floor_height_m: 3.0
+        apartments:
+          - {unit_type: "2BHK", count: 2, area_sq_m: 96}
+      vertical_parcel:
+        base_elevation_m: 18.7
+        top_elevation_m: 30.7
+        topology_status: "valid"
+
+    # ============================================================
+    # BUILDING 14 : CLUBHOUSE
+    # ============================================================
+
+    - id: "BLDG-014"
+      name: "Central Clubhouse"
+      type: "community_facility"
+      block: "CLUB"
+      coordinates:
+        center: {latitude: 13.082620, longitude: 80.270760, elevation_amsl_m: 19.0}
+      footprint:
+        shape: "rectangle"
+        length_m: 48.0
+        width_m: 30.0
+        area_sq_m: 1440
+      floors:
+        total: 2
+        basement: 0
+        above_ground: 2
+      floor_configuration:
+        floor_height_m: 4.0
+        ground_floor:
+          spaces:
+            - {id: "CLUB-GYM", type: "gym", area_sq_m: 240}
+            - {id: "CLUB-HALL", type: "multipurpose_hall", area_sq_m: 420}
+            - {id: "CLUB-RECEPTION", type: "reception", area_sq_m: 80}
+            - {id: "CLUB-CAFE", type: "cafe", area_sq_m: 120}
+            - {id: "CLUB-STORE", type: "storage", area_sq_m: 45}
+        first_floor:
+          spaces:
+            - {id: "CLUB-OFFICE", type: "management_office", area_sq_m: 90}
+            - {id: "CLUB-LIB", type: "library", area_sq_m: 150}
+            - {id: "CLUB-GAME", type: "games_room", area_sq_m: 180}
+            - {id: "CLUB-ROOF", type: "terrace", area_sq_m: 400}
+      vertical_parcel:
+        base_elevation_m: 19.0
+        top_elevation_m: 27.0
+        topology_status: "valid"
+
+    # ============================================================
+    # BUILDING 15 : SECURITY / SERVICES
+    # ============================================================
+
+    - id: "BLDG-015"
+      name: "Security and Services Centre"
+      type: "utility_facility"
+      block: "SERVICE"
+      coordinates:
+        center: {latitude: 13.082020, longitude: 80.271420, elevation_amsl_m: 18.8}
+      footprint:
+        shape: "rectangle"
+        length_m: 24.0
+        width_m: 16.0
+        area_sq_m: 384
+      floors:
+        total: 2
+        ground_floor:
+          spaces:
+            - {id: "SEC-CONTROL", type: "security_control_room", area_sq_m: 80}
+            - {id: "SEC-SERVER", type: "server_room", area_sq_m: 35}
+            - {id: "SEC-STAFF", type: "staff_room", area_sq_m: 40}
+            - {id: "SEC-STORAGE", type: "storage", area_sq_m: 30}
+        first_floor:
+          spaces:
+            - {id: "SEC-OFFICE", type: "administration", area_sq_m: 75}
+            - {id: "SEC-MEETING", type: "meeting_room", area_sq_m: 45}
+      vertical_parcel:
+        base_elevation_m: 18.8
+        top_elevation_m: 25.0
+        topology_status: "valid"
+
+
+  # ==============================================================
+  # COMMON FLOOR TEMPLATE FOR MOCK APARTMENTS
+  # ==============================================================
+
+  apartment_templates:
+
+    "2BHK":
+      room_count: 7
+      rooms:
+        - type: "living_room"
+          area_sq_m: 24
+        - type: "master_bedroom"
+          area_sq_m: 18
+        - type: "bedroom"
+          area_sq_m: 14
+        - type: "kitchen"
+          area_sq_m: 12
+        - type: "dining"
+          area_sq_m: 11
+        - type: "bathroom"
+          area_sq_m: 5
+        - type: "balcony"
+          area_sq_m: 7
+
+    "3BHK":
+      room_count: 9
+      rooms:
+        - type: "living_room"
+          area_sq_m: 28
+        - type: "master_bedroom"
+          area_sq_m: 20
+        - type: "bedroom"
+          area_sq_m: 15
+        - type: "bedroom"
+          area_sq_m: 14
+        - type: "kitchen"
+          area_sq_m: 13
+        - type: "dining"
+          area_sq_m: 14
+        - type: "bathroom"
+          area_sq_m: 5
+        - type: "bathroom"
+          area_sq_m: 5
+        - type: "balcony"
+          area_sq_m: 8
+
+
+  # ==============================================================
+  # UNDERGROUND INFRASTRUCTURE
+  # ==============================================================
+
+  underground_infrastructure:
+
+    - id: "UTIL-WATER-001"
+      type: "water_pipeline"
+      diameter_mm: 450
+      depth_m: 3.8
+      start:
+        latitude: 13.081950
+        longitude: 80.269900
+      end:
+        latitude: 13.083550
+        longitude: 80.271700
+      status: "active"
+      ownership: "society"
+
+    - id: "UTIL-WATER-002"
+      type: "water_pipeline"
+      diameter_mm: 250
+      depth_m: 2.6
+      start:
+        latitude: 13.082180
+        longitude: 80.270120
+      end:
+        latitude: 13.082820
+        longitude: 80.271200
+      status: "active"
+
+    - id: "UTIL-SEWER-001"
+      type: "sewer"
+      diameter_mm: 600
+      depth_m: 4.5
+      start:
+        latitude: 13.082000
+        longitude: 80.270000
+      end:
+        latitude: 13.083400
+        longitude: 80.271600
+      status: "active"
+
+    - id: "UTIL-ELEC-001"
+      type: "electrical_cable"
+      voltage_kv: 11
+      depth_m: 1.8
+      start:
+        latitude: 13.082100
+        longitude: 80.269950
+      end:
+        latitude: 13.083450
+        longitude: 80.271500
+      status: "active"
+
+    - id: "UTIL-FIBER-001"
+      type: "fiber_optic"
+      depth_m: 1.2
+      start:
+        latitude: 13.082050
+        longitude: 80.270000
+      end:
+        latitude: 13.083500
+        longitude: 80.271650
+      status: "active"
+
+
+  # ==============================================================
+  # ROADS
+  # ==============================================================
+
+  roads:
+
+    - id: "ROAD-001"
+      name: "Central Avenue"
+      type: "internal_road"
+      width_m: 9.0
+      surface: "asphalt"
+
+    - id: "ROAD-002"
+      name: "Alpha Boulevard"
+      type: "internal_road"
+      width_m: 7.5
+      surface: "asphalt"
+
+    - id: "ROAD-003"
+      name: "Residential Lane"
+      type: "internal_road"
+      width_m: 6.0
+      surface: "paver"
+
+    - id: "ROAD-004"
+      name: "Service Road"
+      type: "service_road"
+      width_m: 5.5
+      surface: "concrete"
+
+
+  # ==============================================================
+  # DEMO PROPERTIES
+  # ==============================================================
+
+  demo_properties:
+
+    - ulpin: "3D-IND-560012-A1-L5-502"
+      building_id: "BLDG-001"
+      building_name: "Tower Alpha"
+      floor: 5
+      unit: "502"
+      property_type: "apartment"
+      room_count: 9
+      base_elevation_m: 30.8
+      top_elevation_m: 34.0
+      volume_m3: 142.5
+      horizontal_area_sq_m: 44.5
+      owner: "Demo Owner"
+      legal_status: "registered"
+      topology_status: "valid"
+      collision_status: "clear"
+      confidence: 0.968
+
+    - ulpin: "3D-IND-560012-A1-L5-501"
+      building_id: "BLDG-001"
+      building_name: "Tower Alpha"
+      floor: 5
+      unit: "501"
+      property_type: "apartment"
+      room_count: 9
+      base_elevation_m: 30.8
+      top_elevation_m: 34.0
+      volume_m3: 142.5
+      owner: "Demo Owner"
+      legal_status: "registered"
+      topology_status: "valid"
+      collision_status: "clear"
+      confidence: 0.961
+
+    - ulpin: "3D-IND-560012-A1-L5-503"
+      building_id: "BLDG-001"
+      building_name: "Tower Alpha"
+      floor: 5
+      unit: "503"
+      property_type: "apartment"
+      room_count: 9
+      base_elevation_m: 30.8
+      top_elevation_m: 34.0
+      volume_m3: 138.0
+      owner: "Demo Owner"
+      legal_status: "registered"
+      topology_status: "valid"
+      collision_status: "clear"
+      confidence: 0.974
+
+
+  # ==============================================================
+  # SOCIETY STATISTICS
+  # ==============================================================
+
+  statistics:
+    total_buildings: 15
+    residential_buildings: 13
+    community_buildings: 1
+    utility_buildings: 1
+
+    high_rise_buildings: 5
+    mid_rise_buildings: 5
+    low_rise_buildings: 3
+
+    maximum_building_floors: 15
+    maximum_building_height_m: 62.8
+
+    total_apartment_units: 474
+
+    property_types:
+      "2BHK": 218
+      "3BHK": 256
+
+    underground_assets:
+      water_pipelines: 2
+      sewer_networks: 1
+      electrical_networks: 1
+      fiber_networks: 1
+
+    validation:
+      spatial_collisions: 0
+      invalid_boundaries: 0
+      disconnected_parcels: 0
+      topology_status: "PASS"
+
+
+  # ==============================================================
+  # MOCK AI PROCESSING RESULTS
+  # ==============================================================
+
+  ai_processing:
+
+    engine_name: "3D Cadastre Intelligence Engine"
+    engine_version: "demo-1.0"
+
+    processing_stages:
+
+      - stage: "data_ingestion"
+        label: "Spatial Data Ingestion"
+        duration_ms: 850
+        status: "completed"
+
+      - stage: "coordinate_alignment"
+        label: "GNSS / Coordinate Alignment"
+        duration_ms: 1100
+        status: "completed"
+
+      - stage: "building_detection"
+        label: "Automated Building Extraction"
+        duration_ms: 1450
+        status: "completed"
+
+      - stage: "floor_segmentation"
+        label: "Vertical Floor Segmentation"
+        duration_ms: 1700
+        status: "completed"
+
+      - stage: "parcel_generation"
+        label: "3D Parcel Delineation"
+        duration_ms: 1250
+        status: "completed"
+
+      - stage: "topology_validation"
+        label: "Spatial Topology Validation"
+        duration_ms: 900
+        status: "completed"
+
+      - stage: "ulpin_generation"
+        label: "3D ULPIN Generation"
+        duration_ms: 650
+        status: "completed"
+
+    results:
+      buildings_detected: 15
+      floors_detected: 79
+      property_volumes_generated: 474
+      underground_assets_detected: 5
+      spatial_conflicts: 0
+      boundary_errors: 0
+      average_confidence: 0.964
+      processing_status: "SUCCESS"
