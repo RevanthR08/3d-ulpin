@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <title>Greenfield Heights — Map</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" />
 <style>
   :root {
     --bg-panel: #ffffff;
@@ -19,7 +19,7 @@
   #map-wrap { flex: 1; position: relative; }
   #map { height: 100%; width: 100%; }
 
-  header { position: absolute; top: 0; left: 0; right: 0; padding: 14px 18px; z-index: 1000;
+  header { position: absolute; top: 0; left: 0; right: 0; padding: 14px 18px; z-index: 5;
     display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none; }
   header .left { pointer-events: auto; }
   header h1 { font-size: 16px; margin: 0; font-weight: 700; }
@@ -32,6 +32,10 @@
   header a.view-toggle { display: inline-block; font-size: 11px; color: var(--accent);
     text-decoration: none; background: rgba(255,255,255,0.9); padding: 4px 9px; border-radius: 999px;
     border: 1px solid var(--panel-border); pointer-events: auto; margin-right: 6px; }
+
+  #hint { position: absolute; left: 18px; bottom: 18px; z-index: 5; font-size: 11.5px; color: var(--text-dim);
+    background: rgba(255,255,255,0.9); padding: 8px 11px; border-radius: 8px; border: 1px solid var(--panel-border);
+    line-height: 1.5; }
 
   #panel { width: 340px; flex: none; background: var(--bg-panel); border-left: 1px solid var(--panel-border);
     overflow-y: auto; padding: 18px; }
@@ -59,9 +63,9 @@
     background: #f6f4ec; border: 1px solid var(--panel-border); color: var(--text-dim); margin-left: 6px; }
   #panel a.close { float: right; color: var(--text-dim); cursor: pointer; font-size: 12px; }
 
-  .gh-label { background: none; border: none; box-shadow: none; font-weight: 700; font-size: 11px;
-    color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
-  .leaflet-popup-content-wrapper { border-radius: 8px; }
+  .maplibregl-popup-content { border-radius: 8px; font-size: 12px; }
+  .mp-name { font-weight: 700; }
+  .mp-ulpin { color: var(--accent); font-family: monospace; }
 </style>
 </head>
 <body>
@@ -69,34 +73,35 @@
   <div id="map-wrap">
     <header>
       <div class="left">
-        <h1>Greenfield Heights — Real Map</h1>
-        <div class="sub">Real OpenStreetMap basemap. The 15 buildings use their real footprint dimensions, arranged legibly (source coordinates overlap - see README).</div>
+        <h1>Greenfield Heights — Real 3D Map</h1>
+        <div class="sub">Real basemap, real building heights. Drag to pan, right-drag (or two fingers) to tilt/rotate, scroll to zoom.</div>
         <div class="links">
           <a class="view-toggle" href="/viewer/">2D schematic</a>
-          <a class="view-toggle" href="/viewer3d/">3D view</a>
+          <a class="view-toggle" href="/viewer3d/">3D orbit view</a>
         </div>
       </div>
       <div class="stats" id="stats">loading…</div>
     </header>
     <div id="map"></div>
+    <div id="hint">Right-drag / Ctrl-drag: tilt &amp; rotate &nbsp;·&nbsp; Scroll: zoom &nbsp;·&nbsp; Click a building: ULPIN detail</div>
   </div>
   <div id="panel">
     <div class="placeholder">Click a building on the map to see its ULPIN, floors and units.</div>
   </div>
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
 <script>
 const TYPE_COLOR = {
   residential_tower: "#17b3a3", residential_midrise: "#17b3a3", low_rise_residential: "#17b3a3",
   community_facility: "#7c5cd4", utility_facility: "#e08a2c",
 };
-const TYPE_STROKE = {
-  residential_tower: "#0d7d71", residential_midrise: "#0d7d71", low_rise_residential: "#0d7d71",
-  community_facility: "#4f3593", utility_facility: "#a35e14",
-};
 
 let map;
+const heightByBuilding = {};
+
+function toLngLat(latlon) { return [latlon[1], latlon[0]]; }
+function ringLngLat(points) { const r = points.map(toLngLat); r.push(r[0]); return r; }
 
 async function init() {
   const [plan, society] = await Promise.all([
@@ -109,51 +114,104 @@ async function init() {
     `<b>${society.computed_totals.total_floors}</b> floors &nbsp;·&nbsp; ` +
     `<b>${society.computed_totals.total_units}</b> units`;
 
-  map = L.map("map", { zoomControl: true }).setView([plan.origin.latitude, plan.origin.longitude], 17);
+  const buildingDetails = await Promise.all(plan.buildings.map(b => fetch(`/building/${b.id}`).then(r => r.json())));
+  buildingDetails.forEach(b => { heightByBuilding[b.id] = b.vertical_parcel.top_elevation_m - b.vertical_parcel.base_elevation_m; });
 
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: "abcd",
-    maxZoom: 20,
-  }).addTo(map);
+  map = new maplibregl.Map({
+    container: "map",
+    style: {
+      version: 8,
+      sources: {
+        carto: {
+          type: "raster",
+          tiles: ["https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                   "https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                   "https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"],
+          tileSize: 256,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        },
+      },
+      layers: [{ id: "carto", type: "raster", source: "carto" }],
+      glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+    },
+    center: [plan.origin.longitude, plan.origin.latitude],
+    zoom: 17.3,
+    pitch: 55,
+    bearing: -18,
+    antialias: true,
+  });
 
-  L.polygon(plan.green_boundary, { color: "#8fb56e", weight: 2, fillColor: "#a9c98a", fillOpacity: 0.55 }).addTo(map);
+  map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
+  map.dragRotate.enable();
+  map.touchZoomRotate.enableRotation();
 
-  for (const w of plan.walkways) {
-    L.polyline(w.points, { color: "#cabb95", weight: 2, dashArray: "1 5", opacity: 0.9 }).addTo(map);
-  }
+  map.on("load", () => {
+    // ground layers
+    map.addSource("green", { type: "geojson", data: polygonFeature(plan.green_boundary) });
+    map.addLayer({ id: "green", type: "fill", source: "green", paint: { "fill-color": "#a9c98a", "fill-opacity": 0.55 } });
+    map.addLayer({ id: "green-outline", type: "line", source: "green", paint: { "line-color": "#8fb56e", "line-width": 2 } });
 
-  for (const r of plan.roads) {
-    L.polyline(r.points, { color: "#8b8570", weight: 6, opacity: 0.8, lineCap: "round", lineJoin: "round" }).addTo(map);
-    L.polyline(r.points, { color: "#ffffff", weight: 1.4, opacity: 0.9, dashArray: "8 7" }).addTo(map);
-  }
+    map.addSource("walkways", { type: "geojson", data: { type: "FeatureCollection", features: plan.walkways.map(w => lineFeature(w.points)) } });
+    map.addLayer({ id: "walkways", type: "line", source: "walkways", paint: { "line-color": "#cabb95", "line-width": 2, "line-dasharray": [1, 3] } });
 
-  for (const p of plan.parking_lots) {
-    L.polygon(p.polygon, { color: "#a29c8a", weight: 1, fillColor: "#c7c2b3", fillOpacity: 0.8 }).addTo(map);
-  }
+    map.addSource("roads", { type: "geojson", data: { type: "FeatureCollection", features: plan.roads.map(r => lineFeature(r.points)) } });
+    map.addLayer({ id: "roads", type: "line", source: "roads", paint: { "line-color": "#8b8570", "line-width": 6, "line-opacity": 0.8 } });
+    map.addLayer({ id: "roads-center", type: "line", source: "roads", paint: { "line-color": "#ffffff", "line-width": 1.4, "line-dasharray": [2, 2] } });
 
-  for (const [lat, lon] of plan.trees) {
-    L.circleMarker([lat, lon], { radius: 3.2, color: "#35592c", weight: 0.6, fillColor: "#4a7a3d", fillOpacity: 0.9 }).addTo(map);
-  }
+    map.addSource("parking", { type: "geojson", data: { type: "FeatureCollection", features: plan.parking_lots.map(p => polygonFeature(p.polygon)) } });
+    map.addLayer({ id: "parking", type: "fill", source: "parking", paint: { "fill-color": "#c7c2b3", "fill-opacity": 0.8 } });
 
-  for (const b of plan.buildings) {
-    const layer = L.polygon(b.polygon, {
-      color: TYPE_STROKE[b.type] || "#0d7d71",
-      weight: 1.6,
-      fillColor: TYPE_COLOR[b.type] || "#17b3a3",
-      fillOpacity: 0.92,
-    }).addTo(map);
+    map.addSource("trees", { type: "geojson", data: { type: "FeatureCollection", features: plan.trees.map(t => ({ type: "Feature", geometry: { type: "Point", coordinates: toLngLat(t) }, properties: {} })) } });
+    map.addLayer({ id: "trees", type: "circle", source: "trees", paint: { "circle-radius": 3, "circle-color": "#4a7a3d", "circle-stroke-color": "#35592c", "circle-stroke-width": 0.6 } });
 
-    layer.bindTooltip(`<b>${b.name}</b><br><span style="font-family:monospace;color:#0f9d8f">${b.ulpin}</span><br>${b.floor_count} floors · ${b.unit_count} units`, { sticky: true });
-    layer.on("click", () => selectBuilding(b.id));
-    layer.on("mouseover", () => layer.setStyle({ weight: 3, color: "#0aa79a" }));
-    layer.on("mouseout", () => layer.setStyle({ weight: 1.6, color: TYPE_STROKE[b.type] || "#0d7d71" }));
+    // extruded buildings, real height
+    const buildingFeatures = plan.buildings.map(b => ({
+      type: "Feature",
+      geometry: { type: "Polygon", coordinates: [ringLngLat(b.polygon)] },
+      properties: {
+        id: b.id, name: b.name, ulpin: b.ulpin, block: b.block,
+        color: TYPE_COLOR[b.type] || "#17b3a3",
+        height: heightByBuilding[b.id] || 20,
+      },
+    }));
+    map.addSource("buildings", { type: "geojson", data: { type: "FeatureCollection", features: buildingFeatures } });
+    map.addLayer({
+      id: "buildings-3d", type: "fill-extrusion", source: "buildings",
+      paint: {
+        "fill-extrusion-color": ["get", "color"],
+        "fill-extrusion-height": ["get", "height"],
+        "fill-extrusion-base": 0,
+        "fill-extrusion-opacity": 0.92,
+      },
+    });
+    map.addLayer({
+      id: "buildings-label", type: "symbol", source: "buildings",
+      layout: { "text-field": ["get", "block"], "text-size": 12, "text-allow-overlap": true },
+      paint: { "text-color": "#ffffff", "text-halo-color": "#0d3a35", "text-halo-width": 1 },
+    });
 
-    L.marker(b.centroid, {
-      icon: L.divIcon({ className: "gh-label", html: b.block, iconSize: [30, 14] }),
-      interactive: false,
-    }).addTo(map);
-  }
+    let hoverPopup = null;
+    map.on("mousemove", "buildings-3d", (e) => {
+      map.getCanvas().style.cursor = "pointer";
+      const f = e.features[0];
+      if (!hoverPopup) hoverPopup = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 8 });
+      hoverPopup.setLngLat(e.lngLat)
+        .setHTML(`<div class="mp-name">${f.properties.name}</div><div class="mp-ulpin">${f.properties.ulpin}</div>`)
+        .addTo(map);
+    });
+    map.on("mouseleave", "buildings-3d", () => {
+      map.getCanvas().style.cursor = "";
+      if (hoverPopup) { hoverPopup.remove(); hoverPopup = null; }
+    });
+    map.on("click", "buildings-3d", (e) => selectBuilding(e.features[0].properties.id));
+  });
+}
+
+function polygonFeature(points) {
+  return { type: "Feature", geometry: { type: "Polygon", coordinates: [ringLngLat(points)] }, properties: {} };
+}
+function lineFeature(points) {
+  return { type: "Feature", geometry: { type: "LineString", coordinates: points.map(toLngLat) }, properties: {} };
 }
 
 async function selectBuilding(id) {

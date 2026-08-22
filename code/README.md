@@ -136,22 +136,29 @@ are exposed side-by-side in `/society` as `declared_totals` vs
 
 ## Real map viewer (`/viewer-map`)
 
-The most visually accurate of the three: a real [Leaflet](https://leafletjs.com/)
-map over a real basemap (CARTO Positron tiles, OSM data) - actual street
-names, actual neighborhood labels, actual water features, rendered by a
-real cartographic engine instead of hand-drawn SVG. The 15 buildings are
-drawn as a polygon overlay using their **real** `footprint.length_m`/
-`width_m` from the dataset (not the schematic `SIZE_BY_TYPE` guesses the
-other two views use), at a freshly authored, collision-checked
-arrangement (`GEO_BUILDING_OFFSETS` in `app/site_plan.py` - verified with
-an actual rotated-rect separating-axis overlap test, not just eyeballed)
-since the source YAML's literal coordinates put two pairs of buildings on
-top of each other. The campus boundary itself was also checked against
-the real OSM road geometry in `data/osm_context.json` and sized/
-positioned to sit inside the real street block there, rather than
-cutting across actual roads the way an arbitrary shape would. Same
-click-to-drill-down ULPIN panel as the other views. Powered by
-`GET /geo-site-plan`.
+The most visually accurate of the three: a real [MapLibre GL](https://maplibre.org/)
+map over a real basemap (CARTO Positron raster tiles, OSM data) - actual
+street names, actual neighborhood labels, actual water features, real
+extruded building heights, and full pitch/rotate ("tilt the map into 3D
+like Google Maps") since MapLibre is a WebGL map engine, not a flat 2D
+one. The 15 buildings are extruded polygons (`fill-extrusion`) using
+their **real** `footprint.length_m`/`width_m` and real total height
+(`vertical_parcel.top_elevation_m - base_elevation_m`) from the dataset -
+not the schematic `SIZE_BY_TYPE` guesses the other two views use.
+
+Placement (`GEO_BUILDING_OFFSETS`/`GEO_GREEN_BOUNDARY_M` in
+`app/site_plan.py`) is checked, not eyeballed: every building is verified
+overlap-free against every other (rotated-rect separating-axis test), and
+every building corner *and* every boundary vertex is checked against the
+actual distance to every real road segment in `data/osm_context.json`.
+The immediate area around the dataset's origin turned out to be a finely
+gridded old residential neighbourhood with real lanes every ~50-80m - a
+first attempt that only checked the two most visible roads still crossed
+several others, so the campus was moved and shelf-packed tighter to sit
+in an actual ~200m x 130m gap (an open field ~300m from the origin, real
+building-free per the OSM data) found by grid-searching clearance to
+every real road, not guessed. Same click-to-drill-down ULPIN panel as the
+other views. Powered by `GET /geo-site-plan`.
 
 ## 3D viewer (`/viewer3d`)
 

@@ -324,45 +324,48 @@ GEO_ORIGIN_LAT, GEO_ORIGIN_LON = 13.082680, 80.270718
 _M_PER_DEG_LAT = 111320.0
 _M_PER_DEG_LON = _M_PER_DEG_LAT * math.cos(math.radians(GEO_ORIGIN_LAT))
 
-# Real-metre (east, north) offsets from the origin, authored fresh for the
-# real-map view: a grid packed from each building's *actual*
-# footprint.length_m/width_m with a 20-24m gap, verified by a proper
-# rotated-rect separating-axis overlap check to guarantee nothing collides
-# (unlike the source YAML's literal coordinates, where 2 pairs of
-# buildings overlap - see module docstring). Sized and positioned to fit
-# *inside* the real street block here - checked against the actual OSM
-# road geometry in data/osm_context.json so the campus boundary doesn't
-# cut across real roads the way an arbitrary blob would (real residential
-# road runs ~east-west around 137-155m north of the origin; real roads
-# bound the south side around -130 to -170m).
+# The immediate area around the dataset's origin turned out to be a very
+# finely gridded old residential neighbourhood (real service/residential
+# lanes every ~50-80m) - checking distance from every building corner to
+# every real road (not just eyeballing the two obviously visible ones)
+# showed the first attempt still crossed several minor real streets. A
+# grid search over the surrounding ~300m for the largest real gap free of
+# roads found one ~300m NNE of the origin (an open field/ground with no
+# real buildings nearby - data/osm_context.json confirms it), so the
+# campus sits there instead. Real-metre (east, north) offsets from
+# GEO_ORIGIN, shelf-packed from each building's *actual*
+# footprint.length_m/width_m (6m gaps - tight, because even this open
+# pocket is only ~200m x 130m) and verified with an actual rotated-rect
+# separating-axis overlap check (buildings) and point-to-real-road-segment
+# distance check (buildings AND the boundary polygon) - every corner
+# clears the nearest real road by at least ~3m, not just "looks fine."
 GEO_BUILDING_OFFSETS = {
-    "BLDG-001": (-122.0, 82.0, 0), "BLDG-002": (-61.0, 82.0, 0), "BLDG-003": (1.0, 82.0, 0),
-    "BLDG-004": (62.0, 82.0, 0), "BLDG-005": (122.0, 82.0, 0),
-    "BLDG-006": (-110.0, 0.0, 0), "BLDG-007": (-55.0, 0.0, 0), "BLDG-008": (-1.0, 0.0, 0),
-    "BLDG-009": (52.5, 0.0, 0), "BLDG-010": (108.5, 0.0, 0),
-    "BLDG-011": (-49.5, -68.0, 0), "BLDG-012": (-1.0, -68.0, 0), "BLDG-013": (48.5, -68.0, 0),
-    "BLDG-014": (0.0, -100.0, 0), "BLDG-015": (-185.0, 82.0, 0),
+    "BLDG-001": (35.0, 365.0, 0), "BLDG-002": (82.0, 365.0, 0), "BLDG-003": (130.0, 365.0, 0),
+    "BLDG-004": (177.0, 365.0, 0),
+    "BLDG-005": (45.0, 330.5, 0), "BLDG-006": (89.0, 330.5, 0), "BLDG-007": (130.0, 330.5, 0),
+    "BLDG-008": (170.0, 330.5, 0),
+    "BLDG-009": (49.0, 298.5, 0), "BLDG-010": (91.0, 298.5, 0), "BLDG-011": (129.5, 298.5, 0),
+    "BLDG-012": (164.0, 298.5, 0),
+    "BLDG-013": (63.0, 265.5, 0), "BLDG-014": (108.0, 265.5, 0), "BLDG-015": (150.0, 265.5, 0),
 }
 
 # every building corner falls inside this polygon (checked, not eyeballed)
-# and the whole thing sits inside the real street block around the origin
+# and every vertex clears the nearest real road (checked - min ~3m)
 GEO_GREEN_BOUNDARY_M = [
-    (-215, 98), (-40, 118), (140, 112), (168, 65), (155, 10),
-    (130, -55), (70, -110), (-20, -122), (-110, -105), (-180, -60), (-215, 20), (-215, 70),
+    (5, 258), (0, 340), (10, 383), (110, 396), (198, 385),
+    (204, 328), (200, 258), (150, 230), (60, 227),
 ]
 
 GEO_ROADS_M = {
-    "main": [(-210, 42), (-120, 41), (-20, 40), (80, 41), (150, 40)],
-    "connector": [(0, 38), (0, 0), (0, -40), (0, -75), (0, -100)],
-    "entrance": [(-215, 82), (-185, 82), (-122, 82)],
+    "main_1": [(0, 346), (60, 347), (120, 346), (195, 347)],
+    "main_2": [(0, 315), (60, 314), (120, 315), (195, 314)],
+    "main_3": [(0, 283), (60, 282), (120, 283), (195, 282)],
+    "connector": [(105, 396), (105, 315), (105, 227)],
 }
 
 GEO_PARKING_LOTS_M = [
-    {"cx": -91, "cy": 62, "w": 58, "h": 16, "angle": 0},
-    {"cx": 91, "cy": 62, "w": 58, "h": 16, "angle": 0},
-    {"cx": -55, "cy": -24, "w": 52, "h": 16, "angle": 0},
-    {"cx": 52.5, "cy": -24, "w": 52, "h": 16, "angle": 0},
-    {"cx": 25, "cy": -88, "w": 48, "h": 16, "angle": 0},
+    {"cx": 55, "cy": 388, "w": 50, "h": 10, "angle": 0},
+    {"cx": 150, "cy": 240, "w": 50, "h": 10, "angle": 0},
 ]
 
 # real-metre tree-avoidance margins (the canvas-unit TREE_MARGIN_* above
