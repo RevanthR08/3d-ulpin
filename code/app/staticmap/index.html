@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Greenfield Heights — Map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  :root {
+    --bg-panel: #ffffff;
+    --panel-border: #ddd6c4;
+    --text: #2b2a25;
+    --text-dim: #7a7566;
+    --accent: #0f9d8f;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--text); }
+  #app { display: flex; height: 100vh; width: 100vw; }
+  #map-wrap { flex: 1; position: relative; }
+  #map { height: 100%; width: 100%; }
+
+  header { position: absolute; top: 0; left: 0; right: 0; padding: 14px 18px; z-index: 1000;
+    display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none; }
+  header .left { pointer-events: auto; }
+  header h1 { font-size: 16px; margin: 0; font-weight: 700; }
+  header .sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; max-width: 460px; }
+  header .stats { font-size: 12px; color: var(--text-dim); text-align: right;
+    background: rgba(255,255,255,0.9); padding: 6px 10px; border-radius: 8px;
+    border: 1px solid var(--panel-border); pointer-events: auto; }
+  header .stats b { color: var(--text); }
+  header .links { margin-top: 6px; }
+  header a.view-toggle { display: inline-block; font-size: 11px; color: var(--accent);
+    text-decoration: none; background: rgba(255,255,255,0.9); padding: 4px 9px; border-radius: 999px;
+    border: 1px solid var(--panel-border); pointer-events: auto; margin-right: 6px; }
+
+  #panel { width: 340px; flex: none; background: var(--bg-panel); border-left: 1px solid var(--panel-border);
+    overflow-y: auto; padding: 18px; }
+  #panel h2 { font-size: 15px; margin: 0 0 2px; }
+  #panel .ulpin { font-family: monospace; color: var(--accent); font-size: 12px; margin-bottom: 14px; word-break: break-all; }
+  #panel .placeholder { color: var(--text-dim); font-size: 13px; line-height: 1.6; }
+  #panel .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  #panel .stat { background: #f6f4ec; border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px 10px; }
+  #panel .stat .v { font-size: 16px; font-weight: 700; }
+  #panel .stat .k { font-size: 11px; color: var(--text-dim); }
+  #panel h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); margin: 18px 0 8px; }
+  #panel .floor-row { border: 1px solid var(--panel-border); border-radius: 6px; margin-bottom: 6px; overflow: hidden; }
+  #panel .floor-head { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px;
+    cursor: pointer; font-size: 12px; background: #f6f4ec; }
+  #panel .floor-head:hover { background: #efebdd; }
+  #panel .floor-head .fl-label { font-weight: 700; }
+  #panel .floor-head .fl-ulpin { color: var(--text-dim); font-family: monospace; font-size: 11px; }
+  #panel .units { padding: 6px 10px; display: none; }
+  #panel .units.open { display: block; }
+  #panel .unit-row { font-size: 11.5px; padding: 4px 0; border-bottom: 1px dashed var(--panel-border);
+    display: flex; justify-content: space-between; gap: 6px; }
+  #panel .unit-row:last-child { border-bottom: none; }
+  #panel .unit-row .u-ulpin { color: var(--text-dim); font-family: monospace; }
+  #panel .badge { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 999px;
+    background: #f6f4ec; border: 1px solid var(--panel-border); color: var(--text-dim); margin-left: 6px; }
+  #panel a.close { float: right; color: var(--text-dim); cursor: pointer; font-size: 12px; }
+
+  .gh-label { background: none; border: none; box-shadow: none; font-weight: 700; font-size: 11px;
+    color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+  .leaflet-popup-content-wrapper { border-radius: 8px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="map-wrap">
+    <header>
+      <div class="left">
+        <h1>Greenfield Heights — Real Map</h1>
+        <div class="sub">Real OpenStreetMap basemap. The 15 buildings use their real footprint dimensions, arranged legibly (source coordinates overlap - see README).</div>
+        <div class="links">
+          <a class="view-toggle" href="/viewer/">2D schematic</a>
+          <a class="view-toggle" href="/viewer3d/">3D view</a>
+        </div>
+      </div>
+      <div class="stats" id="stats">loading…</div>
+    </header>
+    <div id="map"></div>
+  </div>
+  <div id="panel">
+    <div class="placeholder">Click a building on the map to see its ULPIN, floors and units.</div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const TYPE_COLOR = {
+  residential_tower: "#17b3a3", residential_midrise: "#17b3a3", low_rise_residential: "#17b3a3",
+  community_facility: "#7c5cd4", utility_facility: "#e08a2c",
+};
+const TYPE_STROKE = {
+  residential_tower: "#0d7d71", residential_midrise: "#0d7d71", low_rise_residential: "#0d7d71",
+  community_facility: "#4f3593", utility_facility: "#a35e14",
+};
+
+let map;
+
+async function init() {
+  const [plan, society] = await Promise.all([
+    fetch("/geo-site-plan").then(r => r.json()),
+    fetch("/society").then(r => r.json()),
+  ]);
+
+  document.getElementById("stats").innerHTML =
+    `<b>${society.computed_totals.total_buildings}</b> buildings &nbsp;·&nbsp; ` +
+    `<b>${society.computed_totals.total_floors}</b> floors &nbsp;·&nbsp; ` +
+    `<b>${society.computed_totals.total_units}</b> units`;
+
+  map = L.map("map", { zoomControl: true }).setView([plan.origin.latitude, plan.origin.longitude], 17);
+
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: "abcd",
+    maxZoom: 20,
+  }).addTo(map);
+
+  L.polygon(plan.green_boundary, { color: "#8fb56e", weight: 2, fillColor: "#a9c98a", fillOpacity: 0.55 }).addTo(map);
+
+  for (const w of plan.walkways) {
+    L.polyline(w.points, { color: "#cabb95", weight: 2, dashArray: "1 5", opacity: 0.9 }).addTo(map);
+  }
+
+  for (const r of plan.roads) {
+    L.polyline(r.points, { color: "#8b8570", weight: 6, opacity: 0.8, lineCap: "round", lineJoin: "round" }).addTo(map);
+    L.polyline(r.points, { color: "#ffffff", weight: 1.4, opacity: 0.9, dashArray: "8 7" }).addTo(map);
+  }
+
+  for (const p of plan.parking_lots) {
+    L.polygon(p.polygon, { color: "#a29c8a", weight: 1, fillColor: "#c7c2b3", fillOpacity: 0.8 }).addTo(map);
+  }
+
+  for (const [lat, lon] of plan.trees) {
+    L.circleMarker([lat, lon], { radius: 3.2, color: "#35592c", weight: 0.6, fillColor: "#4a7a3d", fillOpacity: 0.9 }).addTo(map);
+  }
+
+  for (const b of plan.buildings) {
+    const layer = L.polygon(b.polygon, {
+      color: TYPE_STROKE[b.type] || "#0d7d71",
+      weight: 1.6,
+      fillColor: TYPE_COLOR[b.type] || "#17b3a3",
+      fillOpacity: 0.92,
+    }).addTo(map);
+
+    layer.bindTooltip(`<b>${b.name}</b><br><span style="font-family:monospace;color:#0f9d8f">${b.ulpin}</span><br>${b.floor_count} floors · ${b.unit_count} units`, { sticky: true });
+    layer.on("click", () => selectBuilding(b.id));
+    layer.on("mouseover", () => layer.setStyle({ weight: 3, color: "#0aa79a" }));
+    layer.on("mouseout", () => layer.setStyle({ weight: 1.6, color: TYPE_STROKE[b.type] || "#0d7d71" }));
+
+    L.marker(b.centroid, {
+      icon: L.divIcon({ className: "gh-label", html: b.block, iconSize: [30, 14] }),
+      interactive: false,
+    }).addTo(map);
+  }
+}
+
+async function selectBuilding(id) {
+  const panel = document.getElementById("panel");
+  panel.innerHTML = `<div class="placeholder">Loading ${id}…</div>`;
+  const b = await fetch(`/building/${id}`).then(r => r.json());
+
+  let html = `<a class="close" onclick="window.__deselectMap()">&times; close</a>`;
+  html += `<h2>${b.name} <span class="badge">${b.type.replace(/_/g, " ")}</span></h2>`;
+  html += `<div class="ulpin">${b.ulpin}</div>`;
+  html += `<div class="grid">
+    <div class="stat"><div class="v">${b.floor_count}</div><div class="k">Floors</div></div>
+    <div class="stat"><div class="v">${b.unit_count}</div><div class="k">Units</div></div>
+    <div class="stat"><div class="v">${b.room_count}</div><div class="k">Rooms</div></div>
+    <div class="stat"><div class="v">${(b.vertical_parcel.top_elevation_m - b.vertical_parcel.base_elevation_m).toFixed(1)}m</div><div class="k">Height (base→top)</div></div>
+  </div>`;
+
+  html += `<h3>Floors (click to expand units)</h3>`;
+  for (const f of b.floors) {
+    html += `<div class="floor-row">
+      <div class="floor-head" onclick="window.__toggleFloorMap(this)">
+        <span><span class="fl-label">${f.floor_type === "residential" ? "Floor " + f.floor_label : f.floor_label}</span>
+          <span class="badge">${f.units.length ? f.units.length + " units" : (f.rooms || []).length + " rooms"}</span></span>
+        <span class="fl-ulpin">${f.ulpin}</span>
+      </div>
+      <div class="units">`;
+    if (f.units.length) {
+      for (const u of f.units) {
+        html += `<div class="unit-row"><span>${u.unit} <span class="badge">${u.type}</span></span><span class="u-ulpin">${u.ulpin}</span></div>`;
+      }
+    } else {
+      for (const r of (f.rooms || [])) {
+        html += `<div class="unit-row"><span>${r.type.replace(/_/g, " ")}</span><span class="u-ulpin">${r.area_sq_m} m²</span></div>`;
+      }
+    }
+    html += `</div></div>`;
+  }
+  panel.innerHTML = html;
+}
+
+window.__toggleFloorMap = (headEl) => headEl.nextElementSibling.classList.toggle("open");
+window.__deselectMap = () => {
+  document.getElementById("panel").innerHTML =
+    `<div class="placeholder">Click a building on the map to see its ULPIN, floors and units.</div>`;
+};
+
+init().catch(err => {
+  document.getElementById("stats").textContent = "failed to load — is the API running?";
+  console.error(err);
+});
+</script>
+</body>
+</html>

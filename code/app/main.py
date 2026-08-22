@@ -12,6 +12,7 @@ from .validation import validate_society
 DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "greenfield_heights.yaml")
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 STATIC3D_DIR = os.path.join(os.path.dirname(__file__), "static3d")
+STATICMAP_DIR = os.path.join(os.path.dirname(__file__), "staticmap")
 
 app = FastAPI(
     title="3D ULPIN Vertical Property Mapping System — Data API",
@@ -49,10 +50,12 @@ def startup():
     _state["violations"] = violations
     _state["project"] = geo.make_projector(origin["latitude"], origin["longitude"])
     _state["site_plan"] = site_plan_mod.generate_site_plan(society["buildings"])
+    _state["geo_site_plan"] = site_plan_mod.generate_geo_site_plan(society["buildings"])
 
 
 app.mount("/viewer", StaticFiles(directory=STATIC_DIR, html=True), name="viewer")
 app.mount("/viewer3d", StaticFiles(directory=STATIC3D_DIR, html=True), name="viewer3d")
+app.mount("/viewer-map", StaticFiles(directory=STATICMAP_DIR, html=True), name="viewer_map")
 
 
 @app.get("/")
@@ -66,10 +69,12 @@ def root():
             "/underground",
             "/footprints",
             "/site-plan",
+            "/geo-site-plan",
             "/processing-status",
         ],
         "viewer": "/viewer",
         "viewer3d": "/viewer3d",
+        "viewer_map": "/viewer-map",
     }
 
 
@@ -206,6 +211,13 @@ def get_site_plan():
     buildings placed along a generated curved road network with parking
     and green grounds. Presentation-only - see app/site_plan.py for why."""
     return _state["site_plan"]
+
+
+@app.get("/geo-site-plan")
+def get_geo_site_plan():
+    """Real [lat, lon] version of the site plan for a real map library
+    (Leaflet) to render over an actual OSM basemap - powers /viewer-map."""
+    return _state["geo_site_plan"]
 
 
 @app.get("/processing-status")

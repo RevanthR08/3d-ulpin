@@ -70,6 +70,7 @@ code/
     main.py            # FastAPI app + endpoints
     static/index.html  # 2D site plan viewer (served at /viewer)
     static3d/index.html # 3D orbit-able viewer (served at /viewer3d, Three.js)
+    staticmap/index.html # real-map viewer (served at /viewer-map, Leaflet)
 ```
 
 ## ULPIN pattern
@@ -132,6 +133,21 @@ and don't fully reconcile with what full expansion produces (117 / 406 /
 3201) — this is a property of the synthetic source data, not a bug. Both
 are exposed side-by-side in `/society` as `declared_totals` vs
 `computed_totals` so it's visible rather than silently papered over.
+
+## Real map viewer (`/viewer-map`)
+
+The most visually accurate of the three: a real [Leaflet](https://leafletjs.com/)
+map over a real basemap (CARTO Positron tiles, OSM data) - actual street
+names, actual neighborhood labels, actual water features, rendered by a
+real cartographic engine instead of hand-drawn SVG. The 15 buildings are
+drawn as a polygon overlay using their **real** `footprint.length_m`/
+`width_m` from the dataset (not the schematic `SIZE_BY_TYPE` guesses the
+other two views use), at a freshly authored, collision-checked
+arrangement (`GEO_BUILDING_OFFSETS` in `app/site_plan.py` - verified with
+an actual rotated-rect separating-axis overlap test, not just eyeballed)
+since the source YAML's literal coordinates put two pairs of buildings on
+top of each other. Same click-to-drill-down ULPIN panel as the other
+views. Powered by `GET /geo-site-plan`.
 
 ## 3D viewer (`/viewer3d`)
 

@@ -317,6 +317,146 @@ def _load_real_city_context():
     return {"roads": roads, "buildings": buildings}
 
 
+# ------------------------------------------------------- real-geo variant
+
+# same origin as data/osm_context.json / geo.py's projector
+GEO_ORIGIN_LAT, GEO_ORIGIN_LON = 13.082680, 80.270718
+_M_PER_DEG_LAT = 111320.0
+_M_PER_DEG_LON = _M_PER_DEG_LAT * math.cos(math.radians(GEO_ORIGIN_LAT))
+
+# Real-metre (east, north) offsets from the origin, authored fresh for the
+# real-map view: a grid packed from each building's *actual*
+# footprint.length_m/width_m with a 24m gap, verified by a proper rotated-
+# rect separating-axis overlap check to guarantee nothing collides (unlike
+# the source YAML's literal coordinates, where 2 pairs of buildings
+# overlap - see module docstring). Not the schematic canvas layout scaled
+# up: real footprints are ~1.5-2x the schematic guesses, so that layout's
+# spacing wouldn't hold at real size.
+GEO_BUILDING_OFFSETS = {
+    "BLDG-001": (-130.0, 95.0, 0), "BLDG-002": (-65.0, 95.0, 0), "BLDG-003": (1.0, 95.0, 0),
+    "BLDG-004": (66.0, 95.0, 0), "BLDG-005": (130.0, 95.0, 0),
+    "BLDG-006": (-118.0, 0.0, 0), "BLDG-007": (-59.0, 0.0, 0), "BLDG-008": (-1.0, 0.0, 0),
+    "BLDG-009": (56.5, 0.0, 0), "BLDG-010": (116.5, 0.0, 0),
+    "BLDG-011": (-53.5, -85.0, 0), "BLDG-012": (-1.0, -85.0, 0), "BLDG-013": (52.5, -85.0, 0),
+    "BLDG-014": (0.0, -150.0, 0), "BLDG-015": (-195.0, 45.0, 0),
+}
+
+GEO_GREEN_BOUNDARY_M = [
+    (-230, 140), (-40, 155), (160, 140), (225, 70), (215, -20),
+    (150, -100), (60, -190), (-40, -195), (-140, -155), (-220, -60), (-245, 40),
+]
+
+GEO_ROADS_M = {
+    "main": [(-260, 45), (-150, 48), (-40, 40), (60, 46), (150, 44), (260, 48)],
+    "connector": [(0, 40), (0, -10), (0, -60), (0, -115), (0, -150)],
+    "entrance": [(-260, 45), (-195, 45), (-118, 20)],
+}
+
+GEO_PARKING_LOTS_M = [
+    {"cx": -130, "cy": 60, "w": 60, "h": 16, "angle": 0},
+    {"cx": 66, "cy": 60, "w": 60, "h": 16, "angle": 0},
+    {"cx": -59, "cy": -32, "w": 55, "h": 16, "angle": 0},
+    {"cx": 56.5, "cy": -32, "w": 55, "h": 16, "angle": 0},
+    {"cx": 30, "cy": -140, "w": 50, "h": 16, "angle": 0},
+]
+
+# real-metre tree-avoidance margins (the canvas-unit TREE_MARGIN_* above
+# would be the wrong scale here - this layout is authored directly in
+# metres, not canvas units)
+GEO_TREE_MARGIN_BUILDING = 4
+GEO_TREE_MARGIN_PARKING = 3
+GEO_TREE_MARGIN_ROAD = 6
+
+
+def _m_to_latlon(dx, dy):
+    """Real metre offset (dx=east, dy=north) from GEO_ORIGIN -> [lat, lon]."""
+    lat = GEO_ORIGIN_LAT + dy / _M_PER_DEG_LAT
+    lon = GEO_ORIGIN_LON + dx / _M_PER_DEG_LON
+    return [round(lat, 7), round(lon, 7)]
+
+
+def generate_geo_site_plan(buildings: list) -> dict:
+    """Real [lat, lon] version of the campus for a real map library
+    (Leaflet/MapLibre) to render over an actual OSM basemap. Buildings use
+    each one's *real* footprint.length_m/width_m from the dataset (not the
+    schematic SIZE_BY_TYPE guesses) at a freshly authored, verified
+    non-overlapping arrangement (GEO_BUILDING_OFFSETS) - real size, real
+    map, legible position."""
+    building_shapes = []
+    for b in buildings:
+        offset = GEO_BUILDING_OFFSETS.get(b["id"])
+        if not offset:
+            continue
+        dx, dy, angle = offset
+        fp = b.get("footprint") or {}
+        w = fp.get("length_m") or SIZE_BY_TYPE.get(b["type"], (60, 40))[0]
+        h = fp.get("width_m") or SIZE_BY_TYPE.get(b["type"], (60, 40))[1]
+        notch = IRREGULAR_NOTCH.get(b["id"])
+        corners_m = _l_shaped_polygon(dx, dy, w, h, notch, angle) if notch else _rotated_rect(dx, dy, w, h, angle)
+        building_shapes.append({
+            "id": b["id"], "ulpin": b["ulpin"], "name": b["name"], "type": b["type"],
+            "block": b["block"], "status": b["status"],
+            "polygon": [_m_to_latlon(x, y) for x, y in corners_m],
+            "centroid": _m_to_latlon(dx, dy),
+            "floor_count": b["floor_count"], "unit_count": b["unit_count"], "room_count": b["room_count"],
+        })
+
+    road_sample_map = {rid: _sample_curve(pts) for rid, pts in GEO_ROADS_M.items()}
+    roads = [{"id": rid, "points": [_m_to_latlon(x, y) for x, y in pts]} for rid, pts in road_sample_map.items()]
+    all_road_samples = [pt for pts in road_sample_map.values() for pt in pts]
+
+    parking_lots = [
+        {"id": f"P{i+1}", "polygon": [_m_to_latlon(x, y) for x, y in _rotated_rect(p["cx"], p["cy"], p["w"], p["h"], p["angle"])]}
+        for i, p in enumerate(GEO_PARKING_LOTS_M)
+    ]
+
+    walkways = [
+        {"building_id": bid, "points": [_m_to_latlon(dx, dy), _m_to_latlon(*_nearest_point((dx, dy), all_road_samples))]}
+        for bid, (dx, dy, angle) in GEO_BUILDING_OFFSETS.items()
+    ]
+
+    building_type_by_id = {b["id"]: b["type"] for b in buildings}
+    building_rects = []
+    for bid, (dx, dy, angle) in GEO_BUILDING_OFFSETS.items():
+        b = next((bb for bb in buildings if bb["id"] == bid), None)
+        if not b:
+            continue
+        fp = b.get("footprint") or {}
+        w = fp.get("length_m") or SIZE_BY_TYPE.get(b["type"], (60, 40))[0]
+        h = fp.get("width_m") or SIZE_BY_TYPE.get(b["type"], (60, 40))[1]
+        building_rects.append((dx, dy, w, h, angle))
+
+    rng = random.Random(TREE_SEED)
+    trees = []
+    attempts = 0
+    minx = min(p[0] for p in GEO_GREEN_BOUNDARY_M)
+    maxx = max(p[0] for p in GEO_GREEN_BOUNDARY_M)
+    miny = min(p[1] for p in GEO_GREEN_BOUNDARY_M)
+    maxy = max(p[1] for p in GEO_GREEN_BOUNDARY_M)
+    while len(trees) < TREE_COUNT and attempts < TREE_COUNT * 40:
+        attempts += 1
+        pt = (rng.uniform(minx, maxx), rng.uniform(miny, maxy))
+        if not _point_in_polygon(pt, GEO_GREEN_BOUNDARY_M):
+            continue
+        if _dist_point_to_points(pt, all_road_samples) < GEO_TREE_MARGIN_ROAD:
+            continue
+        if any(_point_in_rotated_rect(pt, cx, cy, w, h, angle, GEO_TREE_MARGIN_BUILDING) for cx, cy, w, h, angle in building_rects):
+            continue
+        if any(_point_in_rotated_rect(pt, p["cx"], p["cy"], p["w"], p["h"], p["angle"], GEO_TREE_MARGIN_PARKING) for p in GEO_PARKING_LOTS_M):
+            continue
+        trees.append(_m_to_latlon(*pt))
+
+    return {
+        "origin": {"latitude": GEO_ORIGIN_LAT, "longitude": GEO_ORIGIN_LON},
+        "green_boundary": [_m_to_latlon(x, y) for x, y in GEO_GREEN_BOUNDARY_M],
+        "roads": roads,
+        "parking_lots": parking_lots,
+        "walkways": walkways,
+        "buildings": building_shapes,
+        "trees": trees,
+    }
+
+
 # ----------------------------------------------------------------- build
 
 def generate_site_plan(buildings: list) -> dict:
