@@ -18,12 +18,21 @@ python -m uvicorn app.main:app --reload --port 8000
 Startup prints a topology validation report to the console. The API is
 then live at `http://127.0.0.1:8000` (CORS is open to any origin).
 
-Open **http://127.0.0.1:8000/viewer/** for a 2D top-down site plan —
-real building footprint polygons projected from the GNSS coordinates,
-pan/zoom, hover tooltips, and a click-to-drill-down panel showing a
-building's ULPIN, every floor's ULPIN, and every unit's ULPIN/owner. This
-is a QA/debug view of the data layer, not the 3D viewer (that's the
-Three.js frontend).
+Open **http://127.0.0.1:8000/viewer/** for a 2D campus-style site plan —
+curved roads, parking, green grounds and trees, with the same 15
+buildings placed legibly along the road network. Pan/zoom, hover
+tooltips, and a click-to-drill-down panel showing a building's ULPIN,
+every floor's ULPIN, and every unit's ULPIN/owner. This is a QA/debug
+view of the data layer, not the 3D viewer (that's the Three.js frontend).
+
+Note: the source YAML's real lat/lon values don't form a coherent layout
+(no road geometry exists in the data at all, and several buildings' real
+centers are close enough to overlap), so `/viewer` uses a **generated
+schematic layout** (`app/site_plan.py`) - same buildings, same ULPINs,
+new positions chosen purely for legibility. The real geo-referenced data
+is untouched and still served as-is by `/society`, `/building`, `/ulpin`
+and `/footprints` (which projects the *real* lat/lon into local metres,
+for anything that needs geographic accuracy instead of a pretty picture).
 
 ## Project layout
 
@@ -34,7 +43,8 @@ code/
     loader.py       # YAML -> expanded data tree, unit/room generation
     rooms.py         # per-unit room generation from apartment_templates
     ulpin.py          # ULPIN generation
-    geo.py             # lat/lon -> local metres projection + footprint polygons
+    geo.py             # lat/lon -> local metres projection + real footprint polygons
+    site_plan.py     # generated schematic campus layout (roads/parking/trees/buildings)
     validation.py    # topology / referential sanity checks
     main.py            # FastAPI app + endpoints
     static/index.html  # 2D site plan viewer (served at /viewer)
@@ -282,6 +292,35 @@ rendering.
   "underground_infrastructure": [
     { "id": "UTIL-WATER-001", "type": "water_pipeline", "status": "active", "line": [[-89.6, -76.05], [122.4, 139.3]] }
   ]
+}
+```
+
+### `GET /site-plan`
+
+Powers `/viewer`'s campus-map rendering: the generated schematic layout.
+Canvas-unit coordinates (not geographic), deterministic (seeded), same
+building identity/ULPINs as everywhere else.
+
+```json
+{
+  "canvas": { "width": 1000, "height": 700 },
+  "green_boundary": [[40, 60], [300, 20], "...campus grounds polygon..."],
+  "roads": [
+    { "id": "main", "kind": "main", "width": 24, "path": "M -40 210 C -3.3 204.2, ... " }
+  ],
+  "parking_lots": [
+    { "id": "P1", "polygon": [[85, 187], [215, 179], "...4 corners..."] }
+  ],
+  "buildings": [
+    {
+      "id": "BLDG-001", "ulpin": "3D-IND-560012-A1", "name": "Tower Alpha",
+      "type": "residential_tower", "block": "A", "status": "registered",
+      "polygon": [[108.5, 118.2], "...4 corners, rotated..."],
+      "centroid": [150, 140], "angle": -6,
+      "floor_count": 15, "unit_count": 56, "room_count": 454
+    }
+  ],
+  "trees": [[231.4, 178.2], "...[x, y] points..."]
 }
 ```
 

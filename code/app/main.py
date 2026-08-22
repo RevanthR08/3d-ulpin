@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 
 from . import loader
 from . import geo
+from . import site_plan as site_plan_mod
 from .validation import validate_society
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "greenfield_heights.yaml")
@@ -46,6 +47,7 @@ def startup():
     _state["ulpin_index"] = loader.build_ulpin_index(society)
     _state["violations"] = violations
     _state["project"] = geo.make_projector(origin["latitude"], origin["longitude"])
+    _state["site_plan"] = site_plan_mod.generate_site_plan(society["buildings"])
 
 
 app.mount("/viewer", StaticFiles(directory=STATIC_DIR, html=True), name="viewer")
@@ -61,6 +63,7 @@ def root():
             "/ulpin/{ulpin}",
             "/underground",
             "/footprints",
+            "/site-plan",
             "/processing-status",
         ],
         "viewer": "/viewer",
@@ -192,6 +195,14 @@ def get_footprints():
         "buildings": buildings,
         "underground_infrastructure": underground,
     }
+
+
+@app.get("/site-plan")
+def get_site_plan():
+    """Stylized, legible 2D campus-map layout for /viewer: the same 15
+    buildings placed along a generated curved road network with parking
+    and green grounds. Presentation-only - see app/site_plan.py for why."""
+    return _state["site_plan"]
 
 
 @app.get("/processing-status")

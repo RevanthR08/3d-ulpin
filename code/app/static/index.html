@@ -6,72 +6,84 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
   :root {
-    --bg: #0b1220;
-    --panel: #121a2b;
-    --panel-border: #223049;
-    --text: #e6edf7;
-    --text-dim: #93a3bd;
-    --accent: #22d3ee;
-    --parcel: #22d3ee;
-    --building: #334155;
-    --building-stroke: #64748b;
-    --selected: #06b6d4;
-    --underground: #38bdf8;
-    --community: #a855f7;
-    --utility: #f59e0b;
+    --bg-outer: #ece7da;
+    --bg-panel: #ffffff;
+    --panel-border: #ddd6c4;
+    --text: #2b2a25;
+    --text-dim: #7a7566;
+    --accent: #0f9d8f;
+    --green: #a9c98a;
+    --green-dark: #8fb56e;
+    --road: #d7d2c6;
+    --road-edge: #b9b3a1;
+    --road-line: #ffffff;
+    --parking: #c7c2b3;
+    --parking-line: #a29c8a;
+    --building: #17b3a3;
+    --building-stroke: #0d7d71;
+    --community: #7c5cd4;
+    --community-stroke: #4f3593;
+    --utility: #e08a2c;
+    --utility-stroke: #a35e14;
+    --selected: #0aa79a;
+    --tree: #4a7a3d;
+    --tree-ring: #35592c;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+  html, body { margin: 0; height: 100%; background: var(--bg-outer); color: var(--text);
     font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
   #app { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
 
   #map-wrap { flex: 1; position: relative; }
-  #map { width: 100%; height: 100%; display: block; cursor: grab; background: var(--bg); }
+  #map { width: 100%; height: 100%; display: block; cursor: grab; background: var(--bg-outer); }
   #map.grabbing { cursor: grabbing; }
 
   header { position: absolute; top: 0; left: 0; right: 0; padding: 14px 18px;
     display: flex; justify-content: space-between; align-items: baseline;
     pointer-events: none; z-index: 5; }
-  header h1 { font-size: 16px; margin: 0; font-weight: 600; letter-spacing: 0.2px; }
+  header h1 { font-size: 16px; margin: 0; font-weight: 700; letter-spacing: 0.2px; }
   header .sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
-  header .stats { font-size: 12px; color: var(--text-dim); text-align: right; }
+  header .stats { font-size: 12px; color: var(--text-dim); text-align: right;
+    background: rgba(255,255,255,0.75); padding: 6px 10px; border-radius: 8px;
+    border: 1px solid var(--panel-border); }
   header .stats b { color: var(--text); }
 
   #legend { position: absolute; left: 18px; bottom: 18px; z-index: 5;
-    background: rgba(18,26,43,0.9); border: 1px solid var(--panel-border);
+    background: rgba(255,255,255,0.92); border: 1px solid var(--panel-border);
     border-radius: 8px; padding: 10px 12px; font-size: 12px; backdrop-filter: blur(4px); }
   #legend .row { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
-  #legend .swatch { width: 12px; height: 12px; border-radius: 3px; flex: none; }
-  #legend .line { width: 16px; height: 0; border-top: 2px dashed var(--underground); flex: none; }
+  #legend .swatch { width: 14px; height: 14px; border-radius: 3px; flex: none; border: 1px solid rgba(0,0,0,0.15); }
+  #legend .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; background: var(--tree); border: 1px solid var(--tree-ring); }
+  #legend .line { width: 18px; height: 6px; border-radius: 3px; flex: none; background: var(--road); border: 1px solid var(--road-edge); }
 
   #zoom-controls { position: absolute; right: 18px; bottom: 18px; z-index: 5;
     display: flex; flex-direction: column; gap: 6px; }
   #zoom-controls button { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--panel-border);
-    background: var(--panel); color: var(--text); font-size: 16px; cursor: pointer; }
-  #zoom-controls button:hover { background: #1a2540; }
+    background: var(--bg-panel); color: var(--text); font-size: 16px; cursor: pointer; }
+  #zoom-controls button:hover { background: #f3f0e6; }
 
-  #tooltip { position: absolute; pointer-events: none; z-index: 10; background: rgba(18,26,43,0.95);
+  #tooltip { position: absolute; pointer-events: none; z-index: 10; background: rgba(255,255,255,0.97);
     border: 1px solid var(--panel-border); border-radius: 6px; padding: 6px 10px; font-size: 12px;
-    display: none; white-space: nowrap; }
-  #tooltip .t-name { font-weight: 600; }
+    display: none; white-space: nowrap; box-shadow: 0 2px 10px rgba(0,0,0,0.12); }
+  #tooltip .t-name { font-weight: 700; }
   #tooltip .t-ulpin { color: var(--accent); font-family: monospace; }
 
-  #panel { width: 340px; flex: none; background: var(--panel); border-left: 1px solid var(--panel-border);
+  #panel { width: 340px; flex: none; background: var(--bg-panel); border-left: 1px solid var(--panel-border);
     overflow-y: auto; padding: 18px; }
   #panel h2 { font-size: 15px; margin: 0 0 2px; }
   #panel .ulpin { font-family: monospace; color: var(--accent); font-size: 12px; margin-bottom: 14px; word-break: break-all; }
   #panel .placeholder { color: var(--text-dim); font-size: 13px; line-height: 1.6; }
   #panel .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-  #panel .stat { background: #0f1729; border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px 10px; }
-  #panel .stat .v { font-size: 16px; font-weight: 600; }
+  #panel .stat { background: #f6f4ec; border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px 10px; }
+  #panel .stat .v { font-size: 16px; font-weight: 700; }
   #panel .stat .k { font-size: 11px; color: var(--text-dim); }
   #panel h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim);
     margin: 18px 0 8px; }
   #panel .floor-row { border: 1px solid var(--panel-border); border-radius: 6px; margin-bottom: 6px; overflow: hidden; }
   #panel .floor-head { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px;
-    cursor: pointer; font-size: 12px; background: #0f1729; }
-  #panel .floor-head:hover { background: #16223b; }
-  #panel .floor-head .fl-label { font-weight: 600; }
+    cursor: pointer; font-size: 12px; background: #f6f4ec; }
+  #panel .floor-head:hover { background: #efebdd; }
+  #panel .floor-head .fl-label { font-weight: 700; }
   #panel .floor-head .fl-ulpin { color: var(--text-dim); font-family: monospace; font-size: 11px; }
   #panel .units { padding: 6px 10px; display: none; }
   #panel .units.open { display: block; }
@@ -81,7 +93,7 @@
   #panel .unit-row .u-ulpin { color: var(--text-dim); font-family: monospace; }
   #panel .unit-row .u-owner { color: var(--text-dim); }
   #panel .badge { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 999px;
-    background: #0f1729; border: 1px solid var(--panel-border); color: var(--text-dim); margin-left: 6px; }
+    background: #f6f4ec; border: 1px solid var(--panel-border); color: var(--text-dim); margin-left: 6px; }
   #panel a.close { float: right; color: var(--text-dim); cursor: pointer; font-size: 12px; }
 </style>
 </head>
@@ -90,8 +102,8 @@
   <div id="map-wrap">
     <header>
       <div>
-        <h1>Greenfield Heights — 2D Site Plan</h1>
-        <div class="sub">Real building footprints, projected from GNSS coordinates. Click a building for ULPIN + unit detail.</div>
+        <h1>Greenfield Heights — Site Plan</h1>
+        <div class="sub">Schematic campus layout. Click a building for its ULPIN, floors and units.</div>
       </div>
       <div class="stats" id="stats">loading…</div>
     </header>
@@ -111,7 +123,7 @@
 
 <script>
 const NS = "http://www.w3.org/2000/svg";
-const state = { viewBox: null, dragging: false, dragStart: null, buildingsById: {} };
+const state = { viewBox: null, initialViewBox: null };
 
 function el(tag, attrs = {}, parent) {
   const e = document.createElementNS(NS, tag);
@@ -120,15 +132,20 @@ function el(tag, attrs = {}, parent) {
   return e;
 }
 
-function typeColor(type, colors) {
+function fillFor(type) {
   if (type === "community_facility") return "var(--community)";
   if (type === "utility_facility") return "var(--utility)";
-  return colors.building || "var(--building)";
+  return "var(--building)";
+}
+function strokeFor(type) {
+  if (type === "community_facility") return "var(--community-stroke)";
+  if (type === "utility_facility") return "var(--utility-stroke)";
+  return "var(--building-stroke)";
 }
 
 async function init() {
-  const [footprints, society] = await Promise.all([
-    fetch("/footprints").then(r => r.json()),
+  const [plan, society] = await Promise.all([
+    fetch("/site-plan").then(r => r.json()),
     fetch("/society").then(r => r.json()),
   ]);
 
@@ -136,111 +153,105 @@ async function init() {
     `<b>${society.computed_totals.total_buildings}</b> buildings &nbsp;·&nbsp; ` +
     `<b>${society.computed_totals.total_floors}</b> floors &nbsp;·&nbsp; ` +
     `<b>${society.computed_totals.total_units}</b> units &nbsp;·&nbsp; ` +
-    `topology: <b style="color:${society.topology_validation.violation_count ? '#f87171' : '#4ade80'}">` +
+    `topology: <b style="color:${society.topology_validation.violation_count ? '#c0392b' : '#2e7d32'}">` +
     `${society.topology_validation.violation_count ? society.topology_validation.violation_count + ' issue(s)' : 'clean'}</b>`;
 
-  renderLegend(footprints.colors);
-  renderMap(footprints);
+  renderLegend();
+  renderMap(plan);
 }
 
-function renderLegend(colors) {
-  const legend = document.getElementById("legend");
-  legend.innerHTML = `
-    <div class="row"><span class="swatch" style="background:${colors.building || '#334155'}"></span>Residential building</div>
+function renderLegend() {
+  document.getElementById("legend").innerHTML = `
+    <div class="row"><span class="swatch" style="background:var(--building)"></span>Residential building</div>
     <div class="row"><span class="swatch" style="background:var(--community)"></span>Community facility</div>
     <div class="row"><span class="swatch" style="background:var(--utility)"></span>Utility facility</div>
-    <div class="row"><span class="line"></span>Underground infrastructure</div>
-    <div class="row"><span class="swatch" style="background:none;border:1px dashed ${colors.parcel_boundary || '#22d3ee'}"></span>Site boundary</div>
+    <div class="row"><span class="line"></span>Road</div>
+    <div class="row"><span class="swatch" style="background:var(--parking)"></span>Parking</div>
+    <div class="row"><span class="dot"></span>Tree / green grounds</div>
   `;
 }
 
-function renderMap(data) {
+function polyPath(points, close = true) {
+  return points.map((p, i) => `${i === 0 ? "M" : "L"} ${p[0]} ${p[1]}`).join(" ") + (close ? " Z" : "");
+}
+
+function renderMap(plan) {
   const svg = document.getElementById("map");
   svg.innerHTML = "";
-  const colors = data.colors || {};
+  const { width: cw, height: ch } = plan.canvas;
 
-  // bounds from site boundary (fallback: bounds of all buildings)
-  let pts = data.site_boundary_polygon.length ? data.site_boundary_polygon.slice()
-    : data.buildings.flatMap(b => b.polygon);
-  const xs = pts.map(p => p[0]), ys = pts.map(p => -p[1]); // flip y: north = up
-  const minX = Math.min(...xs), maxX = Math.max(...xs);
-  const minY = Math.min(...ys), maxY = Math.max(...ys);
-  const pad = Math.max(maxX - minX, maxY - minY) * 0.08 || 10;
-  state.viewBox = { x: minX - pad, y: minY - pad, w: (maxX - minX) + pad * 2, h: (maxY - minY) + pad * 2 };
+  const pad = Math.max(cw, ch) * 0.06;
+  state.viewBox = { x: -pad, y: -pad, w: cw + pad * 2, h: ch + pad * 2 };
   state.initialViewBox = { ...state.viewBox };
   applyViewBox();
 
-  const g = el("g", { id: "world" }, svg);
+  // defs: parking hatch pattern
+  const defs = el("defs", {}, svg);
+  const pattern = el("pattern", { id: "hatch", width: 8, height: 8, patternTransform: "rotate(45)",
+    patternUnits: "userSpaceOnUse" }, defs);
+  el("rect", { width: 8, height: 8, fill: "var(--parking)" }, pattern);
+  el("line", { x1: 0, y1: 0, x2: 0, y2: 8, stroke: "var(--parking-line)", "stroke-width": 1.4, opacity: 0.5 }, pattern);
 
-  // site boundary
-  if (data.site_boundary_polygon.length) {
-    const d = polyPath(data.site_boundary_polygon);
-    el("path", { d, fill: "none", stroke: colors.parcel_boundary || "#22d3ee",
-      "stroke-width": 1.5, "stroke-dasharray": "6 4", opacity: 0.6 }, g);
+  const world = el("g", { id: "world" }, svg);
+
+  // outer background + green campus grounds
+  el("rect", { x: -pad * 3, y: -pad * 3, width: cw + pad * 6, height: ch + pad * 6, fill: "var(--bg-outer)" }, world);
+  el("path", { d: polyPath(plan.green_boundary), fill: "var(--green)", stroke: "var(--green-dark)", "stroke-width": 2 }, world);
+
+  // roads: base stroke + dashed centerline for main/secondary
+  const roadsG = el("g", {}, world);
+  for (const r of plan.roads) {
+    el("path", { d: r.path, fill: "none", stroke: "var(--road-edge)",
+      "stroke-width": r.width + 3, "stroke-linecap": "round", "stroke-linejoin": "round" }, roadsG);
+    el("path", { d: r.path, fill: "none", stroke: "var(--road)",
+      "stroke-width": r.width, "stroke-linecap": "round", "stroke-linejoin": "round" }, roadsG);
+    if (r.kind !== "loop") {
+      el("path", { d: r.path, fill: "none", stroke: "var(--road-line)",
+        "stroke-width": 1.6, "stroke-dasharray": "10 8", opacity: 0.85,
+        "stroke-linecap": "round" }, roadsG);
+    }
   }
 
-  // underground infrastructure
-  const ug = el("g", {}, g);
-  for (const u of data.underground_infrastructure) {
-    const [[x1, y1], [x2, y2]] = u.line;
-    el("line", { x1, y1: -y1, x2, y2: -y2, stroke: colors.underground || "#38bdf8",
-      "stroke-width": 1, "stroke-dasharray": "4 3", opacity: 0.45 }, ug);
+  // parking lots
+  const parkG = el("g", {}, world);
+  for (const p of plan.parking_lots) {
+    el("path", { d: polyPath(p.polygon), fill: "url(#hatch)", stroke: "var(--parking-line)", "stroke-width": 1 }, parkG);
+  }
+
+  // trees
+  const treesG = el("g", {}, world);
+  for (const [x, y] of plan.trees) {
+    el("circle", { cx: x, cy: y, r: 4.2, fill: "var(--tree)", stroke: "var(--tree-ring)", "stroke-width": 0.8 }, treesG);
   }
 
   // buildings
-  const bg = el("g", {}, g);
-  for (const b of data.buildings) {
-    state.buildingsById[b.id] = b;
-    const d = polyPath(b.polygon);
-    const color = typeColor(b.type, colors);
+  const bg = el("g", {}, world);
+  for (const b of plan.buildings) {
     const shape = el("path", {
-      d, fill: color, stroke: colors.building_stroke || "#64748b",
-      "stroke-width": 0.6, opacity: 0.88, class: "building-shape", "data-id": b.id,
+      d: polyPath(b.polygon), fill: fillFor(b.type), stroke: strokeFor(b.type),
+      "stroke-width": 1.4, "data-id": b.id,
     }, bg);
     shape.style.cursor = "pointer";
-    shape.style.transition = "opacity 0.1s, filter 0.1s";
 
-    shape.addEventListener("mouseenter", (e) => {
-      shape.setAttribute("opacity", "1");
-      shape.setAttribute("stroke", colors.selected_property || "#06b6d4");
-      shape.setAttribute("stroke-width", "1.4");
-      showTooltip(e, b);
-    });
+    shape.addEventListener("mouseenter", (e) => { shape.setAttribute("stroke", "var(--selected)");
+      shape.setAttribute("stroke-width", "2.6"); showTooltip(e, b); });
     shape.addEventListener("mousemove", (e) => showTooltip(e, b));
-    shape.addEventListener("mouseleave", () => {
-      shape.setAttribute("opacity", "0.88");
-      shape.setAttribute("stroke", colors.building_stroke || "#64748b");
-      shape.setAttribute("stroke-width", "0.6");
-      hideTooltip();
-    });
-    shape.addEventListener("click", () => selectBuilding(b.id));
+    shape.addEventListener("mouseleave", () => { shape.setAttribute("stroke", strokeFor(b.type));
+      shape.setAttribute("stroke-width", "1.4"); hideTooltip(); });
+    shape.addEventListener("click", () => selectBuilding(b.id, shape));
 
-    if (b.centroid) {
-      const [cx, cy] = b.centroid;
-      const label = el("text", {
-        x: cx, y: -cy, "text-anchor": "middle", "font-size": labelSize(),
-        fill: "#e6edf7", "pointer-events": "none", opacity: 0.85, class: "b-label",
-      }, bg);
-      label.textContent = b.block;
-    }
+    const [cx, cy] = b.centroid;
+    const label = el("text", { x: cx, y: cy, "text-anchor": "middle", "dominant-baseline": "middle",
+      "font-size": 10.5, "font-weight": 700, fill: "#ffffff", "pointer-events": "none" }, bg);
+    label.textContent = b.block;
   }
 
   setupPanZoom(svg);
 }
 
-function labelSize() {
-  const vb = state.viewBox;
-  return Math.max(2.2, (vb ? vb.w : 400) * 0.012);
-}
-
-function polyPath(points) {
-  return points.map((p, i) => `${i === 0 ? "M" : "L"} ${p[0]} ${-p[1]}`).join(" ") + " Z";
-}
-
 function applyViewBox() {
   const vb = state.viewBox;
   document.getElementById("map").setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
-  document.querySelectorAll(".b-label").forEach(l => l.setAttribute("font-size", labelSize()));
 }
 
 function showTooltip(evt, b) {
