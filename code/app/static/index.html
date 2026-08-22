@@ -31,8 +31,9 @@
     --sidewalk: #e8e2d0;
     --walkway: #cabb95;
     --shadow: rgba(30, 26, 15, 0.16);
-    --city-grid: #ddd6c3;
-    --city-block: #ddd8c9;
+    --city-grid: #b7ac8c;
+    --city-block: #cec3a3;
+    --city-block-stroke: #a99a71;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: var(--bg-outer); color: var(--text);
@@ -128,7 +129,7 @@
     <div id="compass" title="North">
       <svg viewBox="0 0 24 24"><path d="M12 2 L15 12 L12 10 L9 12 Z" fill="#c0392b"/><path d="M12 22 L15 12 L12 14 L9 12 Z" fill="#7a7566"/></svg>
     </div>
-    <div id="scale-note">Schematic layout — not to scale</div>
+    <div id="scale-note">Schematic layout — not to scale<br>Surrounding streets/buildings © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener" style="color:inherit">OpenStreetMap</a> contributors</div>
     <div id="legend"></div>
     <div id="zoom-controls">
       <button id="zoom-in" title="Zoom in">+</button>
@@ -219,13 +220,16 @@ function renderMap(plan) {
   // outer background
   el("rect", { x: -pad * 3, y: -pad * 3, width: cw + pad * 6, height: ch + pad * 6, fill: "var(--bg-outer)" }, world);
 
-  // faint surrounding city grid + blocks, for scale/context - purely decorative
-  const cityG = el("g", { opacity: 0.55 }, world);
-  for (const [[x1, y1], [x2, y2]] of plan.city_context.grid_lines) {
-    el("line", { x1, y1, x2, y2, stroke: "var(--city-grid)", "stroke-width": 1.2 }, cityG);
+  // real surrounding Chennai street/building geometry (OpenStreetMap),
+  // reprojected around the fictional campus for authentic scale/density
+  const cityG = el("g", { opacity: 0.9 }, world);
+  for (const b of plan.city_context.buildings) {
+    el("path", { d: polyPath(b), fill: "var(--city-block)", stroke: "var(--city-block-stroke)", "stroke-width": 0.6 }, cityG);
   }
-  for (const block of plan.city_context.blocks) {
-    el("path", { d: polyPath(block), fill: "var(--city-block)", stroke: "var(--road-edge)", "stroke-width": 0.5, opacity: 0.7 }, cityG);
+  const cityRoadsG = el("g", { opacity: 0.95 }, world);
+  for (const r of plan.city_context.roads) {
+    el("path", { d: r.path, fill: "none", stroke: "var(--city-grid)",
+      "stroke-width": r.width, "stroke-linecap": "round", "stroke-linejoin": "round" }, cityRoadsG);
   }
 
   // green campus grounds

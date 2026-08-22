@@ -37,6 +37,24 @@ is untouched and still served as-is by `/society`, `/building`, `/ulpin`
 and `/footprints` (which projects the *real* lat/lon into local metres,
 for anything that needs geographic accuracy instead of a pretty picture).
 
+The area surrounding the fictional campus in `/viewer` is **real
+OpenStreetMap road and building geometry** for the dataset's actual
+coordinates (13.08268°N, 80.270718°E - Chennai) - 586 real roads and
+1,237 real building footprints, pulled once via the public Overpass API
+and committed as `data/osm_context.json` (so the server doesn't need
+internet access at runtime, and Overpass isn't hit on every restart).
+This is genuine map data, not invented - it's there purely to give the
+fictional campus authentic scale/density context, the same way the
+reference campus map you'd compare this to sits inside a real city grid.
+Map data © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright),
+ODbL-licensed - credited in the viewer itself.
+
+To regenerate `osm_context.json` (e.g. for a different area or after an
+OSM edit), see the Overpass query and projection logic at the top of
+`app/site_plan.py` (`_load_real_city_context` / `OSM_ANCHOR` /
+`METERS_PER_UNIT`) - it's a one-off fetch + `json.dump`, not part of the
+app's runtime.
+
 ## Project layout
 
 ```
@@ -309,8 +327,10 @@ building identity/ULPINs as everywhere else.
   "canvas": { "width": 1000, "height": 700 },
   "green_boundary": [[40, 60], [300, 20], "...campus grounds polygon..."],
   "city_context": {
-    "grid_lines": [[[-420, -240], [-420, 1420]], "...faint surrounding street grid..."],
-    "blocks": [[[10, 20], "...4 corners..."], "...faint surrounding city buildings..."]
+    "roads": [
+      { "kind": "primary", "width": 8, "path": "M -2571.5 -2707.3 L ... " }
+    ],
+    "buildings": [[[10.2, 20.4], "...real OSM building footprint, N corners..."]]
   },
   "roads": [
     {

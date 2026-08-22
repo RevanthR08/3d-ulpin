@@ -10,16 +10,47 @@ centers are close enough to overlap) - so plotting them literally just
 produces scattered rectangles.
 
 Here we place the same 15 buildings, grouped by type, along a procedurally
-curved road network - with sidewalks, walkways, parking stalls, a couple
-of irregular (L-shaped) footprints, and a faint surrounding street grid
-for scale context - in fixed (seeded, deterministic) canvas positions,
-purely so the shape reads as an actual site plan.
+curved road network - with sidewalks, walkways, parking stalls, and a
+couple of irregular (L-shaped) footprints - in fixed (seeded,
+deterministic) canvas positions, purely so the shape reads as an actual
+site plan. The surrounding context beyond the campus boundary is real
+OpenStreetMap road/building geometry for the dataset's actual coordinates
+(see data/osm_context.json + README) - genuine Chennai street fabric,
+reprojected into the same canvas space, giving real scale/density context
+around the fictional campus without pretending the campus itself is real.
 """
 
+import json
 import math
+import os
 import random
 
 CANVAS = {"width": 1000, "height": 700}
+
+OSM_CONTEXT_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "osm_context.json")
+
+# Places the fictional campus (authored in the 0-1000 x 0-700 canvas above)
+# onto real OpenStreetMap road/building geometry pulled for the dataset's
+# actual origin coordinates (13.08268 N, 80.270718 E - Chennai). ANCHOR is
+# that real site_boundary's center, in local metres around the same origin
+# geo.py projects from; METERS_PER_UNIT scales the schematic canvas to
+# roughly the real site_boundary's ~217m x 189m footprint. Real geometry
+# outside the campus is real Chennai streets/buildings - not invented, but
+# also not literally where Greenfield Heights exists (it's fictional).
+OSM_ANCHOR = (11.0, -10.0)
+METERS_PER_UNIT = 0.26
+CAMPUS_CENTER = (CANVAS["width"] / 2, CANVAS["height"] / 2)
+
+# stroke widths (canvas units, not metres) giving the real surrounding
+# roads a visual hierarchy - kept thin/subdued relative to the fictional
+# campus roads so the campus still reads as the focal point.
+ROAD_HIERARCHY_WIDTH = {
+    "trunk": 9, "trunk_link": 6, "primary": 8, "primary_link": 5,
+    "secondary": 6, "secondary_link": 4, "tertiary": 4.5,
+    "residential": 3, "living_street": 2.6, "service": 1.8,
+    "pedestrian": 1.2, "footway": 0.9, "path": 0.9,
+}
+DEFAULT_ROAD_WIDTH = 2.5
 
 ROAD_WIDTH = {"main": 24, "secondary": 16, "loop": 14}
 ROAD_NAME = {
@@ -105,12 +136,6 @@ TREE_SEED = 42
 TREE_MARGIN_BUILDING = 14
 TREE_MARGIN_PARKING = 10
 TREE_MARGIN_ROAD = 16
-
-CITY_SEED = 7
-CITY_GRID_STEP = 68
-CITY_GRID_ANGLE = 11  # degrees - gives the surrounding grid an organic, non axis-aligned feel
-CITY_EXTENT = 420      # how far past the canvas edge the fake city grid extends
-
 
 # ---------------------------------------------------------------- geometry
 
@@ -260,37 +285,36 @@ def _road_label_anchor(samples):
     return [round(mid[0], 1), round(mid[1], 1)], round(angle, 1)
 
 
-def _generate_city_context():
-    """A faint, generic surrounding street grid + a scatter of small city
-    blocks outside the campus boundary - pure decoration for scale/context,
-    not meant to represent any real place."""
-    rng = random.Random(CITY_SEED)
-    lo, hi = -CITY_EXTENT, max(CANVAS["width"], CANVAS["height"]) + CITY_EXTENT
-    ccx, ccy = CANVAS["width"] / 2, CANVAS["height"] / 2
+def _osm_to_canvas(x, y):
+    """Real local metres (from data/osm_context.json, projected around the
+    dataset's real origin) -> the same canvas-unit space the fictional
+    campus is authored in."""
+    ax, ay = OSM_ANCHOR
+    ccx, ccy = CAMPUS_CENTER
+    return [round(ccx + (x - ax) / METERS_PER_UNIT, 1), round(ccy + (y - ay) / METERS_PER_UNIT, 1)]
 
-    grid_lines = []
-    steps = list(range(int(lo), int(hi), CITY_GRID_STEP))
-    for s in steps:
-        p1 = _rotate_point(s, lo, ccx, ccy, CITY_GRID_ANGLE)
-        p2 = _rotate_point(s, hi, ccx, ccy, CITY_GRID_ANGLE)
-        grid_lines.append([p1, p2])
-        p3 = _rotate_point(lo, s, ccx, ccy, CITY_GRID_ANGLE)
-        p4 = _rotate_point(hi, s, ccx, ccy, CITY_GRID_ANGLE)
-        grid_lines.append([p3, p4])
 
-    blocks = []
-    for gx in steps:
-        for gy in steps:
-            if rng.random() > 0.4:
-                continue
-            bw = rng.uniform(20, CITY_GRID_STEP - 14)
-            bh = rng.uniform(20, CITY_GRID_STEP - 14)
-            bx = gx + CITY_GRID_STEP / 2 + rng.uniform(-6, 6)
-            by = gy + CITY_GRID_STEP / 2 + rng.uniform(-6, 6)
-            angle = CITY_GRID_ANGLE + rng.uniform(-3, 3)
-            blocks.append(_rotated_rect(*_rotate_point(bx, by, ccx, ccy, CITY_GRID_ANGLE), bw, bh, angle))
+def _load_real_city_context():
+    """Real OpenStreetMap road + building geometry around the dataset's
+    actual coordinates (fetched once via the Overpass API, see README),
+    reprojected into the campus's canvas-unit space. This is genuine
+    Chennai street/building geometry - not invented - used purely as
+    authentic surrounding context; Greenfield Heights itself is fictional
+    and doesn't literally sit in these buildings' place."""
+    with open(OSM_CONTEXT_PATH, "r", encoding="utf-8") as f:
+        raw = json.load(f)
 
-    return {"grid_lines": grid_lines, "blocks": blocks}
+    roads = []
+    for r in raw["roads"]:
+        pts = [_osm_to_canvas(x, y) for x, y in r["points"]]
+        roads.append({
+            "kind": r["kind"],
+            "width": ROAD_HIERARCHY_WIDTH.get(r["kind"], DEFAULT_ROAD_WIDTH),
+            "path": _polyline_path(pts),
+        })
+    buildings = [[_osm_to_canvas(x, y) for x, y in b["polygon"]] for b in raw["buildings"]]
+
+    return {"roads": roads, "buildings": buildings}
 
 
 # ----------------------------------------------------------------- build
@@ -399,7 +423,7 @@ def generate_site_plan(buildings: list) -> dict:
     return {
         "canvas": CANVAS,
         "green_boundary": [list(p) for p in GREEN_BOUNDARY],
-        "city_context": _generate_city_context(),
+        "city_context": _load_real_city_context(),
         "roads": roads,
         "sidewalks": sidewalks,
         "walkways": walkways,
