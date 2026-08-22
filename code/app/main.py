@@ -1,18 +1,20 @@
 import os
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from . import loader
 from . import geo
 from . import site_plan as site_plan_mod
+from . import footprint_extraction
 from .validation import validate_society
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "greenfield_heights.yaml")
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 STATIC3D_DIR = os.path.join(os.path.dirname(__file__), "static3d")
 STATICMAP_DIR = os.path.join(os.path.dirname(__file__), "staticmap")
+STATICEXTRACT_DIR = os.path.join(os.path.dirname(__file__), "staticextract")
 
 app = FastAPI(
     title="3D ULPIN Vertical Property Mapping System — Data API",
@@ -56,6 +58,7 @@ def startup():
 app.mount("/viewer", StaticFiles(directory=STATIC_DIR, html=True), name="viewer")
 app.mount("/viewer3d", StaticFiles(directory=STATIC3D_DIR, html=True), name="viewer3d")
 app.mount("/viewer-map", StaticFiles(directory=STATICMAP_DIR, html=True), name="viewer_map")
+app.mount("/extract", StaticFiles(directory=STATICEXTRACT_DIR, html=True), name="extract")
 
 
 @app.get("/")
@@ -71,10 +74,12 @@ def root():
             "/site-plan",
             "/geo-site-plan",
             "/processing-status",
+            "POST /extract-footprint",
         ],
         "viewer": "/viewer",
         "viewer3d": "/viewer3d",
         "viewer_map": "/viewer-map",
+        "extract": "/extract",
     }
 
 
@@ -203,6 +208,24 @@ def get_footprints():
         "buildings": buildings,
         "underground_infrastructure": underground,
     }
+
+
+@app.post("/extract-footprint")
+async def extract_footprint(
+    file: UploadFile = File(...),
+    sigma: float = Query(0.33, ge=0.05, le=1.0),
+    min_area_frac: float = Query(0.015, ge=0.0, le=0.5),
+):
+    """PS Stage 3A: building extraction. Upload a top-down (drone/satellite)
+    image, get back its detected footprint polygon in pixel coordinates.
+    sigma/min_area_frac tune edge sensitivity if the first result is off -
+    no re-upload needed. Powers /extract."""
+    content = await file.read()
+    try:
+        result = footprint_extraction.extract_footprint(content, sigma=sigma, min_area_frac=min_area_frac)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return result
 
 
 @app.get("/site-plan")

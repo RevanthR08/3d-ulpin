@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Footprint Extraction</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --bg: #ece7da;
+    --panel: #ffffff;
+    --panel-border: #ddd6c4;
+    --text: #2b2a25;
+    --text-dim: #7a7566;
+    --accent: #0f9d8f;
+    --building: #17b3a3;
+    --building-stroke: #0d7d71;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text);
+    font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+  #app { display: flex; min-height: 100vh; }
+  #left { flex: 1; padding: 24px 28px; }
+  #right { width: 380px; flex: none; background: var(--panel); border-left: 1px solid var(--panel-border);
+    padding: 24px; overflow-y: auto; }
+
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  .sub { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; max-width: 640px; line-height: 1.5; }
+
+  #dropzone { border: 2px dashed var(--panel-border); border-radius: 12px; padding: 40px;
+    text-align: center; color: var(--text-dim); cursor: pointer; background: var(--panel);
+    transition: border-color 0.15s, background 0.15s; }
+  #dropzone.drag { border-color: var(--accent); background: #eef8f6; }
+  #dropzone input { display: none; }
+  #dropzone .icon { font-size: 32px; margin-bottom: 8px; }
+
+  #canvas-wrap { position: relative; margin-top: 18px; display: none; max-width: 100%; width: fit-content; }
+  #canvas-wrap img { max-width: 100%; display: block; border-radius: 8px; border: 1px solid var(--panel-border); }
+  #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+
+  .controls { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .controls button { background: var(--accent); color: #fff; border: none; border-radius: 6px;
+    padding: 8px 14px; font-size: 13px; cursor: pointer; }
+  .controls button.secondary { background: var(--panel); color: var(--text); border: 1px solid var(--panel-border); }
+  .controls button:disabled { opacity: 0.5; cursor: default; }
+
+  .slider-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-dim); margin-top: 10px; }
+  .slider-row input[type=range] { width: 160px; }
+  .slider-row .val { width: 34px; text-align: right; font-family: monospace; color: var(--text); }
+
+  #right h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-dim); margin: 0 0 10px; }
+  #status { font-size: 13px; line-height: 1.6; color: var(--text-dim); }
+  #status .ok { color: #2e7d32; font-weight: 600; }
+  #status .bad { color: #c0392b; font-weight: 600; }
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+  .stat { background: #f6f4ec; border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px 10px; }
+  .stat .v { font-size: 15px; font-weight: 700; }
+  .stat .k { font-size: 10.5px; color: var(--text-dim); }
+  pre#polygon { font-size: 11px; background: #f6f4ec; border: 1px solid var(--panel-border); border-radius: 6px;
+    padding: 10px; overflow-x: auto; max-height: 220px; margin-top: 10px; }
+  a.copy { font-size: 11px; color: var(--accent); cursor: pointer; text-decoration: none; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="left">
+    <h1>Building Footprint Extraction</h1>
+    <div class="sub">PS Stage 3A: image in, 2D footprint polygon out. Upload a top-down (drone/satellite)
+      image cropped reasonably tightly around one building for best results — OpenCV auto-detects the
+      outline, no manual tracing.</div>
+
+    <div id="dropzone">
+      <div class="icon">⬆</div>
+      <div><b>Click to choose an image</b> or drag one here</div>
+      <div style="font-size:11px;margin-top:6px">JPG or PNG</div>
+      <input type="file" id="file-input" accept="image/*" />
+    </div>
+
+    <div id="canvas-wrap">
+      <img id="preview" />
+      <svg id="overlay"></svg>
+    </div>
+
+    <div class="controls">
+      <button id="extract-btn" disabled>Extract footprint</button>
+      <button class="secondary" id="reset-btn" style="display:none">Choose another image</button>
+    </div>
+    <div class="slider-row">
+      <span>Edge sensitivity</span>
+      <input type="range" id="sigma" min="0.1" max="0.7" step="0.01" value="0.33" />
+      <span class="val" id="sigma-val">0.33</span>
+    </div>
+    <div class="slider-row">
+      <span>Min area %</span>
+      <input type="range" id="minarea" min="0" max="0.2" step="0.005" value="0.015" />
+      <span class="val" id="minarea-val">1.5%</span>
+    </div>
+  </div>
+
+  <div id="right">
+    <h2>Result</h2>
+    <div id="status">Upload an image to begin.</div>
+    <div id="result-body"></div>
+  </div>
+</div>
+
+<script>
+const dropzone = document.getElementById("dropzone");
+const fileInput = document.getElementById("file-input");
+const preview = document.getElementById("preview");
+const canvasWrap = document.getElementById("canvas-wrap");
+const overlay = document.getElementById("overlay");
+const extractBtn = document.getElementById("extract-btn");
+const resetBtn = document.getElementById("reset-btn");
+const statusEl = document.getElementById("status");
+const resultBody = document.getElementById("result-body");
+const sigmaInput = document.getElementById("sigma");
+const sigmaVal = document.getElementById("sigma-val");
+const minareaInput = document.getElementById("minarea");
+const minareaVal = document.getElementById("minarea-val");
+
+let currentFile = null;
+
+dropzone.addEventListener("click", () => fileInput.click());
+dropzone.addEventListener("dragover", (e) => { e.preventDefault(); dropzone.classList.add("drag"); });
+dropzone.addEventListener("dragleave", () => dropzone.classList.remove("drag"));
+dropzone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dropzone.classList.remove("drag");
+  if (e.dataTransfer.files.length) loadFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener("change", () => { if (fileInput.files.length) loadFile(fileInput.files[0]); });
+
+function loadFile(file) {
+  currentFile = file;
+  const url = URL.createObjectURL(file);
+  preview.src = url;
+  canvasWrap.style.display = "block";
+  extractBtn.disabled = false;
+  resetBtn.style.display = "inline-block";
+  overlay.innerHTML = "";
+  statusEl.innerHTML = `Loaded <b>${file.name}</b> — click "Extract footprint" to run detection.`;
+  resultBody.innerHTML = "";
+}
+
+resetBtn.addEventListener("click", () => {
+  currentFile = null;
+  fileInput.value = "";
+  canvasWrap.style.display = "none";
+  extractBtn.disabled = true;
+  resetBtn.style.display = "none";
+  statusEl.textContent = "Upload an image to begin.";
+  resultBody.innerHTML = "";
+});
+
+sigmaInput.addEventListener("input", () => { sigmaVal.textContent = sigmaInput.value; });
+minareaInput.addEventListener("input", () => { minareaVal.textContent = (minareaInput.value * 100).toFixed(1) + "%"; });
+
+extractBtn.addEventListener("click", async () => {
+  if (!currentFile) return;
+  extractBtn.disabled = true;
+  statusEl.innerHTML = "Running edge detection…";
+  overlay.innerHTML = "";
+
+  const form = new FormData();
+  form.append("file", currentFile);
+  const params = new URLSearchParams({ sigma: sigmaInput.value, min_area_frac: minareaInput.value });
+
+  try {
+    const res = await fetch(`/extract-footprint?${params}`, { method: "POST", body: form });
+    if (!res.ok) throw new Error(`server returned ${res.status}`);
+    const data = await res.json();
+    render(data);
+  } catch (err) {
+    statusEl.innerHTML = `<span class="bad">Failed:</span> ${err.message}`;
+  } finally {
+    extractBtn.disabled = false;
+  }
+});
+
+function render(data) {
+  if (!data.found || data.polygon.length < 3) {
+    statusEl.innerHTML = `<span class="bad">No plausible building outline found.</span> Try lowering "min area %" or adjusting sensitivity, or use a more tightly cropped image.`;
+    resultBody.innerHTML = "";
+    return;
+  }
+
+  statusEl.innerHTML = `<span class="ok">Footprint detected.</span> ${data.candidate_count} candidate contour(s) considered.`;
+
+  resultBody.innerHTML = `
+    <div class="stat-grid">
+      <div class="stat"><div class="v">${data.polygon.length}</div><div class="k">Vertices</div></div>
+      <div class="stat"><div class="v">${(data.area_frac * 100).toFixed(1)}%</div><div class="k">Of image area</div></div>
+      <div class="stat"><div class="v">${data.width}×${data.height}</div><div class="k">Image px</div></div>
+      <div class="stat"><div class="v">${Math.round(data.area_px).toLocaleString()}</div><div class="k">Area (px²)</div></div>
+    </div>
+    <a class="copy" onclick="copyPolygon()">Copy polygon as JSON</a>
+    <pre id="polygon">${JSON.stringify(data.polygon)}</pre>
+  `;
+  window.__polygon = data.polygon;
+
+  drawOverlay(data.polygon, data.width, data.height);
+}
+
+function drawOverlay(polygon, imgW, imgH) {
+  overlay.setAttribute("viewBox", `0 0 ${imgW} ${imgH}`);
+  overlay.setAttribute("preserveAspectRatio", "none");
+
+  const ns = "http://www.w3.org/2000/svg";
+  const path = document.createElementNS(ns, "path");
+  const d = polygon.map((p, i) => `${i === 0 ? "M" : "L"} ${p[0]} ${p[1]}`).join(" ") + " Z";
+  path.setAttribute("d", d);
+  path.setAttribute("fill", "rgba(23,179,163,0.32)");
+  path.setAttribute("stroke", "#0d7d71");
+  path.setAttribute("stroke-width", Math.max(2, imgW * 0.004));
+  overlay.appendChild(path);
+
+  for (const [x, y] of polygon) {
+    const c = document.createElementNS(ns, "circle");
+    c.setAttribute("cx", x); c.setAttribute("cy", y);
+    c.setAttribute("r", Math.max(3, imgW * 0.006));
+    c.setAttribute("fill", "#0d7d71");
+    overlay.appendChild(c);
+  }
+}
+
+window.copyPolygon = () => {
+  navigator.clipboard.writeText(JSON.stringify(window.__polygon));
+};
+
+window.addEventListener("resize", () => {
+  if (window.__polygon) drawOverlay(window.__polygon, ...[preview.naturalWidth, preview.naturalHeight]);
+});
+</script>
+</body>
+</html>

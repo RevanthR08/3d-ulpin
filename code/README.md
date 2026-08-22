@@ -70,7 +70,9 @@ code/
     main.py            # FastAPI app + endpoints
     static/index.html  # 2D site plan viewer (served at /viewer)
     static3d/index.html # 3D orbit-able viewer (served at /viewer3d, Three.js)
-    staticmap/index.html # real-map viewer (served at /viewer-map, Leaflet)
+    staticmap/index.html # real-map viewer (served at /viewer-map, MapLibre)
+    staticextract/index.html # footprint extraction UI (served at /extract)
+    footprint_extraction.py # OpenCV building-outline detection (PS Stage 3A)
 ```
 
 ## ULPIN pattern
@@ -133,6 +135,27 @@ and don't fully reconcile with what full expansion produces (117 / 406 /
 3201) — this is a property of the synthetic source data, not a bug. Both
 are exposed side-by-side in `/society` as `declared_totals` vs
 `computed_totals` so it's visible rather than silently papered over.
+
+## Building footprint extraction (`/extract`)
+
+**PS Stage 3A** — the actual step this project was missing: image in, 2D
+footprint polygon out, via real OpenCV edge/contour detection (not
+hand-placed geometry). Upload a top-down drone/satellite image cropped
+reasonably tightly around one building; the pipeline (`app/footprint_extraction.py`)
+grayscales it, runs auto-thresholded Canny edge detection (with a
+fixed-threshold fallback for low-contrast images, so a subtle real photo
+doesn't just silently fail), finds the largest plausible external
+contour, and simplifies it to a clean polygon with `approxPolyDP`. Two
+sliders (edge sensitivity, minimum area %) let you retune a bad result
+without re-uploading. The result overlays directly on the source image so
+you can see exactly what was detected, plus the raw `[[x,y], ...]`
+polygon to copy out. Powered by `POST /extract-footprint`.
+
+This is deliberately **fully automatic** (no manual corner-clicking) per
+the PS's own suggested approach ("OpenCV contours") — which means it can
+be thrown off by low contrast, shadows, trees, or several buildings of
+similar size in one frame. Crop the source image tightly around just the
+target building for the most reliable result.
 
 ## Real map viewer (`/viewer-map`)
 
