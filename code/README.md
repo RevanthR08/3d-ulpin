@@ -146,8 +146,12 @@ other two views use), at a freshly authored, collision-checked
 arrangement (`GEO_BUILDING_OFFSETS` in `app/site_plan.py` - verified with
 an actual rotated-rect separating-axis overlap test, not just eyeballed)
 since the source YAML's literal coordinates put two pairs of buildings on
-top of each other. Same click-to-drill-down ULPIN panel as the other
-views. Powered by `GET /geo-site-plan`.
+top of each other. The campus boundary itself was also checked against
+the real OSM road geometry in `data/osm_context.json` and sized/
+positioned to sit inside the real street block there, rather than
+cutting across actual roads the way an arbitrary shape would. Same
+click-to-drill-down ULPIN panel as the other views. Powered by
+`GET /geo-site-plan`.
 
 ## 3D viewer (`/viewer3d`)
 

@@ -326,38 +326,43 @@ _M_PER_DEG_LON = _M_PER_DEG_LAT * math.cos(math.radians(GEO_ORIGIN_LAT))
 
 # Real-metre (east, north) offsets from the origin, authored fresh for the
 # real-map view: a grid packed from each building's *actual*
-# footprint.length_m/width_m with a 24m gap, verified by a proper rotated-
-# rect separating-axis overlap check to guarantee nothing collides (unlike
-# the source YAML's literal coordinates, where 2 pairs of buildings
-# overlap - see module docstring). Not the schematic canvas layout scaled
-# up: real footprints are ~1.5-2x the schematic guesses, so that layout's
-# spacing wouldn't hold at real size.
+# footprint.length_m/width_m with a 20-24m gap, verified by a proper
+# rotated-rect separating-axis overlap check to guarantee nothing collides
+# (unlike the source YAML's literal coordinates, where 2 pairs of
+# buildings overlap - see module docstring). Sized and positioned to fit
+# *inside* the real street block here - checked against the actual OSM
+# road geometry in data/osm_context.json so the campus boundary doesn't
+# cut across real roads the way an arbitrary blob would (real residential
+# road runs ~east-west around 137-155m north of the origin; real roads
+# bound the south side around -130 to -170m).
 GEO_BUILDING_OFFSETS = {
-    "BLDG-001": (-130.0, 95.0, 0), "BLDG-002": (-65.0, 95.0, 0), "BLDG-003": (1.0, 95.0, 0),
-    "BLDG-004": (66.0, 95.0, 0), "BLDG-005": (130.0, 95.0, 0),
-    "BLDG-006": (-118.0, 0.0, 0), "BLDG-007": (-59.0, 0.0, 0), "BLDG-008": (-1.0, 0.0, 0),
-    "BLDG-009": (56.5, 0.0, 0), "BLDG-010": (116.5, 0.0, 0),
-    "BLDG-011": (-53.5, -85.0, 0), "BLDG-012": (-1.0, -85.0, 0), "BLDG-013": (52.5, -85.0, 0),
-    "BLDG-014": (0.0, -150.0, 0), "BLDG-015": (-195.0, 45.0, 0),
+    "BLDG-001": (-122.0, 82.0, 0), "BLDG-002": (-61.0, 82.0, 0), "BLDG-003": (1.0, 82.0, 0),
+    "BLDG-004": (62.0, 82.0, 0), "BLDG-005": (122.0, 82.0, 0),
+    "BLDG-006": (-110.0, 0.0, 0), "BLDG-007": (-55.0, 0.0, 0), "BLDG-008": (-1.0, 0.0, 0),
+    "BLDG-009": (52.5, 0.0, 0), "BLDG-010": (108.5, 0.0, 0),
+    "BLDG-011": (-49.5, -68.0, 0), "BLDG-012": (-1.0, -68.0, 0), "BLDG-013": (48.5, -68.0, 0),
+    "BLDG-014": (0.0, -100.0, 0), "BLDG-015": (-185.0, 82.0, 0),
 }
 
+# every building corner falls inside this polygon (checked, not eyeballed)
+# and the whole thing sits inside the real street block around the origin
 GEO_GREEN_BOUNDARY_M = [
-    (-230, 140), (-40, 155), (160, 140), (225, 70), (215, -20),
-    (150, -100), (60, -190), (-40, -195), (-140, -155), (-220, -60), (-245, 40),
+    (-215, 98), (-40, 118), (140, 112), (168, 65), (155, 10),
+    (130, -55), (70, -110), (-20, -122), (-110, -105), (-180, -60), (-215, 20), (-215, 70),
 ]
 
 GEO_ROADS_M = {
-    "main": [(-260, 45), (-150, 48), (-40, 40), (60, 46), (150, 44), (260, 48)],
-    "connector": [(0, 40), (0, -10), (0, -60), (0, -115), (0, -150)],
-    "entrance": [(-260, 45), (-195, 45), (-118, 20)],
+    "main": [(-210, 42), (-120, 41), (-20, 40), (80, 41), (150, 40)],
+    "connector": [(0, 38), (0, 0), (0, -40), (0, -75), (0, -100)],
+    "entrance": [(-215, 82), (-185, 82), (-122, 82)],
 }
 
 GEO_PARKING_LOTS_M = [
-    {"cx": -130, "cy": 60, "w": 60, "h": 16, "angle": 0},
-    {"cx": 66, "cy": 60, "w": 60, "h": 16, "angle": 0},
-    {"cx": -59, "cy": -32, "w": 55, "h": 16, "angle": 0},
-    {"cx": 56.5, "cy": -32, "w": 55, "h": 16, "angle": 0},
-    {"cx": 30, "cy": -140, "w": 50, "h": 16, "angle": 0},
+    {"cx": -91, "cy": 62, "w": 58, "h": 16, "angle": 0},
+    {"cx": 91, "cy": 62, "w": 58, "h": 16, "angle": 0},
+    {"cx": -55, "cy": -24, "w": 52, "h": 16, "angle": 0},
+    {"cx": 52.5, "cy": -24, "w": 52, "h": 16, "angle": 0},
+    {"cx": 25, "cy": -88, "w": 48, "h": 16, "angle": 0},
 ]
 
 # real-metre tree-avoidance margins (the canvas-unit TREE_MARGIN_* above
