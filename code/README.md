@@ -19,11 +19,14 @@ Startup prints a topology validation report to the console. The API is
 then live at `http://127.0.0.1:8000` (CORS is open to any origin).
 
 Open **http://127.0.0.1:8000/viewer/** for a 2D campus-style site plan —
-curved roads, parking, green grounds and trees, with the same 15
-buildings placed legibly along the road network. Pan/zoom, hover
-tooltips, and a click-to-drill-down panel showing a building's ULPIN,
-every floor's ULPIN, and every unit's ULPIN/owner. This is a QA/debug
-view of the data layer, not the 3D viewer (that's the Three.js frontend).
+curved roads with sidewalks, walkways connecting every building to the
+road, parking lots with stall striping, a couple of L-shaped building
+footprints for silhouette variety, road name labels, a compass, and a
+faint surrounding city grid for scale context, with the same 15 buildings
+placed legibly along the road network. Pan/zoom, hover tooltips, and a
+click-to-drill-down panel showing a building's ULPIN, every floor's
+ULPIN, and every unit's ULPIN/owner. This is a QA/debug view of the data
+layer, not the 3D viewer (that's the Three.js frontend).
 
 Note: the source YAML's real lat/lon values don't form a coherent layout
 (no road geometry exists in the data at all, and several buildings' real
@@ -305,17 +308,34 @@ building identity/ULPINs as everywhere else.
 {
   "canvas": { "width": 1000, "height": 700 },
   "green_boundary": [[40, 60], [300, 20], "...campus grounds polygon..."],
+  "city_context": {
+    "grid_lines": [[[-420, -240], [-420, 1420]], "...faint surrounding street grid..."],
+    "blocks": [[[10, 20], "...4 corners..."], "...faint surrounding city buildings..."]
+  },
   "roads": [
-    { "id": "main", "kind": "main", "width": 24, "path": "M -40 210 C -3.3 204.2, ... " }
+    {
+      "id": "main", "kind": "main", "width": 24, "name": "Greenfield Boulevard",
+      "path": "M -40 210 C -3.3 204.2, ... ",
+      "label_pos": [560.0, 210.0], "label_angle": 6.6
+    }
+  ],
+  "sidewalks": [
+    { "id": "main_left", "path": "M -40.0 195.5 L ... " }
+  ],
+  "walkways": [
+    { "building_id": "BLDG-001", "path": "M 150 140 L 178.2 197.4" }
   ],
   "parking_lots": [
-    { "id": "P1", "polygon": [[85, 187], [215, 179], "...4 corners..."] }
+    {
+      "id": "P1", "polygon": [[85, 187], [215, 179], "...4 corners..."],
+      "stalls": [[[102.1, 188.9], [104.6, 222.3]], "...divider lines..."]
+    }
   ],
   "buildings": [
     {
       "id": "BLDG-001", "ulpin": "3D-IND-560012-A1", "name": "Tower Alpha",
       "type": "residential_tower", "block": "A", "status": "registered",
-      "polygon": [[108.5, 118.2], "...4 corners, rotated..."],
+      "polygon": [[108.5, 118.2], "...4 (or 6, for the L-shaped ones) corners, rotated..."],
       "centroid": [150, 140], "angle": -6,
       "floor_count": 15, "unit_count": 56, "room_count": 454
     }

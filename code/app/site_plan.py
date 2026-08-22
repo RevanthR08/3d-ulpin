@@ -10,10 +10,10 @@ centers are close enough to overlap) - so plotting them literally just
 produces scattered rectangles.
 
 Here we place the same 15 buildings, grouped by type, along a procedurally
-curved road network with parking and green campus grounds, in fixed
-(seeded, deterministic) canvas positions - purely so the shape reads as an
-actual site plan, the way greenfield_heights' fictional buildings "should"
-look if someone had actually mapped them.
+curved road network - with sidewalks, walkways, parking stalls, a couple
+of irregular (L-shaped) footprints, and a faint surrounding street grid
+for scale context - in fixed (seeded, deterministic) canvas positions,
+purely so the shape reads as an actual site plan.
 """
 
 import math
@@ -22,6 +22,13 @@ import random
 CANVAS = {"width": 1000, "height": 700}
 
 ROAD_WIDTH = {"main": 24, "secondary": 16, "loop": 14}
+ROAD_NAME = {
+    "main": "Greenfield Boulevard",
+    "cross_1": "Elm Cross Street",
+    "cross_2": "Cedar Cross Street",
+    "loop": "Villa Loop Road",
+}
+SIDEWALK_GAP = 7  # distance from road edge to sidewalk centerline
 
 # schematic footprint size (canvas units) by building type - not to scale
 # with real length_m/width_m, just relatively sized so towers read larger
@@ -58,6 +65,16 @@ BUILDING_LAYOUT = {
     "BLDG-015": (75, 250, -18),   # security - near the entrance
 }
 
+# a handful of buildings get an L-shaped (notched) footprint instead of a
+# plain rectangle, just for silhouette variety - value is how big a bite
+# is taken out of one corner (fraction of width/height).
+IRREGULAR_NOTCH = {
+    "BLDG-014": 0.42,  # clubhouse - reads as a wings-around-a-courtyard building
+    "BLDG-007": 0.30,
+    "BLDG-009": 0.26,
+    "BLDG-012": 0.32,
+}
+
 PARKING_LOTS = [
     {"cx": 150, "cy": 205, "w": 130, "h": 36, "angle": -6},
     {"cx": 620, "cy": 200, "w": 150, "h": 36, "angle": 3},
@@ -89,13 +106,44 @@ TREE_MARGIN_BUILDING = 14
 TREE_MARGIN_PARKING = 10
 TREE_MARGIN_ROAD = 16
 
+CITY_SEED = 7
+CITY_GRID_STEP = 68
+CITY_GRID_ANGLE = 11  # degrees - gives the surrounding grid an organic, non axis-aligned feel
+CITY_EXTENT = 420      # how far past the canvas edge the fake city grid extends
 
-def _rotated_rect(cx, cy, w, h, angle_deg):
+
+# ---------------------------------------------------------------- geometry
+
+def _rotate_point(x, y, cx, cy, angle_deg):
     a = math.radians(angle_deg)
     ca, sa = math.cos(a), math.sin(a)
+    dx, dy = x - cx, y - cy
+    return [round(cx + dx * ca - dy * sa, 1), round(cy + dx * sa + dy * ca, 1)]
+
+
+def _rotated_rect(cx, cy, w, h, angle_deg):
     hw, hh = w / 2, h / 2
     corners = [(-hw, -hh), (hw, -hh), (hw, hh), (-hw, hh)]
-    return [[round(cx + x * ca - y * sa, 1), round(cy + x * sa + y * ca, 1)] for x, y in corners]
+    return [_rotate_point(cx + x, cy + y, cx, cy, angle_deg) for x, y in corners]
+
+
+def _l_shaped_polygon(cx, cy, w, h, notch_frac, angle_deg):
+    """A rectangle with one corner (top-right, in local frame) notched out -
+    reads as a simple L / wings-around-a-courtyard footprint."""
+    hw, hh = w / 2, h / 2
+    nw, nh = w * notch_frac, h * notch_frac
+    local = [
+        (-hw, hh), (-hw, -hh), (hw - nw, -hh),
+        (hw - nw, -hh + nh), (hw, -hh + nh), (hw, hh),
+    ]
+    return [_rotate_point(cx + x, cy + y, cx, cy, angle_deg) for x, y in local]
+
+
+def _building_polygon(building_id, cx, cy, w, h, angle_deg):
+    notch = IRREGULAR_NOTCH.get(building_id)
+    if notch:
+        return _l_shaped_polygon(cx, cy, w, h, notch, angle_deg)
+    return _rotated_rect(cx, cy, w, h, angle_deg)
 
 
 def _catmull_rom_to_bezier(points, closed=False):
@@ -117,8 +165,8 @@ def _catmull_rom_to_bezier(points, closed=False):
 
 
 def _sample_curve(points, closed=False, samples_per_seg=12):
-    """Densely sampled (x, y) points along the same catmull-rom curve, used
-    only for tree placement to avoid roads - doesn't need to be exact."""
+    """Densely sampled (x, y) points along the same catmull-rom curve -
+    used for tree/sidewalk placement and doesn't need to be exact."""
     pts = list(points)
     if closed:
         pts = [pts[-2]] + pts + [pts[1]]
@@ -139,8 +187,34 @@ def _sample_curve(points, closed=False, samples_per_seg=12):
     return out
 
 
+def _offset_polyline(samples, offset):
+    """Parallel curve at a fixed perpendicular distance from a sampled
+    curve - used to draw sidewalks alongside a road."""
+    n = len(samples)
+    pts = []
+    for i in range(n):
+        if i == 0:
+            tx, ty = samples[1][0] - samples[0][0], samples[1][1] - samples[0][1]
+        elif i == n - 1:
+            tx, ty = samples[-1][0] - samples[-2][0], samples[-1][1] - samples[-2][1]
+        else:
+            tx, ty = samples[i + 1][0] - samples[i - 1][0], samples[i + 1][1] - samples[i - 1][1]
+        length = math.hypot(tx, ty) or 1
+        nx, ny = -ty / length, tx / length
+        pts.append((samples[i][0] + nx * offset, samples[i][1] + ny * offset))
+    return pts
+
+
+def _polyline_path(points):
+    return "M " + " L ".join(f"{x:.1f} {y:.1f}" for x, y in points)
+
+
 def _dist_point_to_points(pt, points):
     return min(math.hypot(pt[0] - p[0], pt[1] - p[1]) for p in points)
+
+
+def _nearest_point(pt, points):
+    return min(points, key=lambda p: (pt[0] - p[0]) ** 2 + (pt[1] - p[1]) ** 2)
 
 
 def _point_in_rotated_rect(pt, cx, cy, w, h, angle_deg, margin):
@@ -163,6 +237,64 @@ def _point_in_polygon(pt, polygon):
     return inside
 
 
+def _parking_stalls(cx, cy, w, h, angle_deg):
+    """Perpendicular divider lines striping a parking lot into stalls."""
+    hw, hh = w / 2, h / 2
+    stall_w = 16
+    count = max(3, round(w / stall_w))
+    lines = []
+    for i in range(1, count):
+        lx = -hw + i * (w / count)
+        p1 = _rotate_point(cx + lx, cy - hh, cx, cy, angle_deg)
+        p2 = _rotate_point(cx + lx, cy + hh, cx, cy, angle_deg)
+        lines.append([p1, p2])
+    return lines
+
+
+def _road_label_anchor(samples):
+    mid = samples[len(samples) // 2]
+    a, b = samples[len(samples) // 2 - 3], samples[len(samples) // 2 + 3]
+    angle = math.degrees(math.atan2(b[1] - a[1], b[0] - a[0]))
+    if angle > 90 or angle < -90:
+        angle += 180
+    return [round(mid[0], 1), round(mid[1], 1)], round(angle, 1)
+
+
+def _generate_city_context():
+    """A faint, generic surrounding street grid + a scatter of small city
+    blocks outside the campus boundary - pure decoration for scale/context,
+    not meant to represent any real place."""
+    rng = random.Random(CITY_SEED)
+    lo, hi = -CITY_EXTENT, max(CANVAS["width"], CANVAS["height"]) + CITY_EXTENT
+    ccx, ccy = CANVAS["width"] / 2, CANVAS["height"] / 2
+
+    grid_lines = []
+    steps = list(range(int(lo), int(hi), CITY_GRID_STEP))
+    for s in steps:
+        p1 = _rotate_point(s, lo, ccx, ccy, CITY_GRID_ANGLE)
+        p2 = _rotate_point(s, hi, ccx, ccy, CITY_GRID_ANGLE)
+        grid_lines.append([p1, p2])
+        p3 = _rotate_point(lo, s, ccx, ccy, CITY_GRID_ANGLE)
+        p4 = _rotate_point(hi, s, ccx, ccy, CITY_GRID_ANGLE)
+        grid_lines.append([p3, p4])
+
+    blocks = []
+    for gx in steps:
+        for gy in steps:
+            if rng.random() > 0.4:
+                continue
+            bw = rng.uniform(20, CITY_GRID_STEP - 14)
+            bh = rng.uniform(20, CITY_GRID_STEP - 14)
+            bx = gx + CITY_GRID_STEP / 2 + rng.uniform(-6, 6)
+            by = gy + CITY_GRID_STEP / 2 + rng.uniform(-6, 6)
+            angle = CITY_GRID_ANGLE + rng.uniform(-3, 3)
+            blocks.append(_rotated_rect(*_rotate_point(bx, by, ccx, ccy, CITY_GRID_ANGLE), bw, bh, angle))
+
+    return {"grid_lines": grid_lines, "blocks": blocks}
+
+
+# ----------------------------------------------------------------- build
+
 def generate_site_plan(buildings: list) -> dict:
     building_shapes = []
     for b in buildings:
@@ -178,7 +310,7 @@ def generate_site_plan(buildings: list) -> dict:
             "type": b["type"],
             "block": b["block"],
             "status": b["status"],
-            "polygon": _rotated_rect(cx, cy, w, h, angle),
+            "polygon": _building_polygon(b["id"], cx, cy, w, h, angle),
             "centroid": [cx, cy],
             "angle": angle,
             "floor_count": b["floor_count"],
@@ -186,26 +318,51 @@ def generate_site_plan(buildings: list) -> dict:
             "room_count": b["room_count"],
         })
 
-    roads = [
-        {"id": "main", "kind": "main", "width": ROAD_WIDTH["main"],
-         "path": _catmull_rom_to_bezier(ROAD_PATHS["main"])},
-        {"id": "cross_1", "kind": "secondary", "width": ROAD_WIDTH["secondary"],
-         "path": _catmull_rom_to_bezier(ROAD_PATHS["cross_1"])},
-        {"id": "cross_2", "kind": "secondary", "width": ROAD_WIDTH["secondary"],
-         "path": _catmull_rom_to_bezier(ROAD_PATHS["cross_2"])},
-        {"id": "loop", "kind": "loop", "width": ROAD_WIDTH["loop"],
-         "path": _catmull_rom_to_bezier(LOOP_ROAD, closed=True)},
-    ]
+    road_sample_map = {
+        "main": _sample_curve(ROAD_PATHS["main"]),
+        "cross_1": _sample_curve(ROAD_PATHS["cross_1"]),
+        "cross_2": _sample_curve(ROAD_PATHS["cross_2"]),
+        "loop": _sample_curve(LOOP_ROAD, closed=True),
+    }
+
+    roads = []
+    sidewalks = []
+    for rid, kind, path_pts in [
+        ("main", "main", ROAD_PATHS["main"]),
+        ("cross_1", "secondary", ROAD_PATHS["cross_1"]),
+        ("cross_2", "secondary", ROAD_PATHS["cross_2"]),
+        ("loop", "loop", LOOP_ROAD),
+    ]:
+        width = ROAD_WIDTH[kind]
+        closed = rid == "loop"
+        label_pos, label_angle = _road_label_anchor(road_sample_map[rid])
+        roads.append({
+            "id": rid, "kind": kind, "width": width, "name": ROAD_NAME[rid],
+            "path": _catmull_rom_to_bezier(path_pts, closed=closed),
+            "label_pos": label_pos, "label_angle": label_angle,
+        })
+        offset = width / 2 + SIDEWALK_GAP
+        for side, sign in (("left", -1), ("right", 1)):
+            sidewalks.append({
+                "id": f"{rid}_{side}",
+                "path": _polyline_path(_offset_polyline(road_sample_map[rid], offset * sign)),
+            })
 
     parking_lots = [
-        {"id": f"P{i+1}", "polygon": _rotated_rect(p["cx"], p["cy"], p["w"], p["h"], p["angle"])}
+        {
+            "id": f"P{i+1}",
+            "polygon": _rotated_rect(p["cx"], p["cy"], p["w"], p["h"], p["angle"]),
+            "stalls": _parking_stalls(p["cx"], p["cy"], p["w"], p["h"], p["angle"]),
+        }
         for i, p in enumerate(PARKING_LOTS)
     ]
 
-    road_samples = (
-        _sample_curve(ROAD_PATHS["main"]) + _sample_curve(ROAD_PATHS["cross_1"])
-        + _sample_curve(ROAD_PATHS["cross_2"]) + _sample_curve(LOOP_ROAD, closed=True)
-    )
+    all_road_samples = [pt for pts in road_sample_map.values() for pt in pts]
+
+    walkways = [
+        {"building_id": bid, "path": _polyline_path([(cx, cy), _nearest_point((cx, cy), all_road_samples)])}
+        for bid, (cx, cy, angle) in BUILDING_LAYOUT.items()
+    ]
 
     building_type_by_id = {b["id"]: b["type"] for b in buildings}
     building_rects = [
@@ -228,7 +385,7 @@ def generate_site_plan(buildings: list) -> dict:
 
         if not _point_in_polygon(pt, GREEN_BOUNDARY):
             continue
-        if _dist_point_to_points(pt, road_samples) < TREE_MARGIN_ROAD:
+        if _dist_point_to_points(pt, all_road_samples) < TREE_MARGIN_ROAD:
             continue
         if any(_point_in_rotated_rect(pt, cx, cy, w, h, angle, TREE_MARGIN_BUILDING)
                for cx, cy, w, h, angle in building_rects):
@@ -242,7 +399,10 @@ def generate_site_plan(buildings: list) -> dict:
     return {
         "canvas": CANVAS,
         "green_boundary": [list(p) for p in GREEN_BOUNDARY],
+        "city_context": _generate_city_context(),
         "roads": roads,
+        "sidewalks": sidewalks,
+        "walkways": walkways,
         "parking_lots": parking_lots,
         "buildings": building_shapes,
         "trees": trees,

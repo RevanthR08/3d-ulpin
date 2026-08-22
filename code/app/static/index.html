@@ -28,6 +28,11 @@
     --selected: #0aa79a;
     --tree: #4a7a3d;
     --tree-ring: #35592c;
+    --sidewalk: #e8e2d0;
+    --walkway: #cabb95;
+    --shadow: rgba(30, 26, 15, 0.16);
+    --city-grid: #ddd6c3;
+    --city-block: #ddd8c9;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: var(--bg-outer); color: var(--text);
@@ -55,6 +60,18 @@
   #legend .swatch { width: 14px; height: 14px; border-radius: 3px; flex: none; border: 1px solid rgba(0,0,0,0.15); }
   #legend .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; background: var(--tree); border: 1px solid var(--tree-ring); }
   #legend .line { width: 18px; height: 6px; border-radius: 3px; flex: none; background: var(--road); border: 1px solid var(--road-edge); }
+
+  #compass { position: absolute; right: 18px; top: 84px; z-index: 5; width: 44px; height: 44px;
+    background: rgba(255,255,255,0.92); border: 1px solid var(--panel-border); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; }
+  #compass svg { width: 26px; height: 26px; }
+
+  #scale-note { position: absolute; right: 18px; top: 134px; z-index: 5; font-size: 10.5px;
+    color: var(--text-dim); background: rgba(255,255,255,0.85); padding: 3px 8px; border-radius: 6px;
+    border: 1px solid var(--panel-border); }
+
+  .road-label { font-size: 9.5px; fill: var(--text-dim); font-weight: 600; letter-spacing: 0.3px;
+    paint-order: stroke; stroke: #faf8f0; stroke-width: 3px; stroke-linejoin: round; }
 
   #zoom-controls { position: absolute; right: 18px; bottom: 18px; z-index: 5;
     display: flex; flex-direction: column; gap: 6px; }
@@ -108,6 +125,10 @@
       <div class="stats" id="stats">loading…</div>
     </header>
     <svg id="map"></svg>
+    <div id="compass" title="North">
+      <svg viewBox="0 0 24 24"><path d="M12 2 L15 12 L12 10 L9 12 Z" fill="#c0392b"/><path d="M12 22 L15 12 L12 14 L9 12 Z" fill="#7a7566"/></svg>
+    </div>
+    <div id="scale-note">Schematic layout — not to scale</div>
     <div id="legend"></div>
     <div id="zoom-controls">
       <button id="zoom-in" title="Zoom in">+</button>
@@ -165,8 +186,9 @@ function renderLegend() {
     <div class="row"><span class="swatch" style="background:var(--building)"></span>Residential building</div>
     <div class="row"><span class="swatch" style="background:var(--community)"></span>Community facility</div>
     <div class="row"><span class="swatch" style="background:var(--utility)"></span>Utility facility</div>
-    <div class="row"><span class="line"></span>Road</div>
+    <div class="row"><span class="line"></span>Road + sidewalk</div>
     <div class="row"><span class="swatch" style="background:var(--parking)"></span>Parking</div>
+    <div class="row"><span class="swatch" style="background:var(--walkway); border-radius:50%"></span>Walkway</div>
     <div class="row"><span class="dot"></span>Tree / green grounds</div>
   `;
 }
@@ -194,9 +216,27 @@ function renderMap(plan) {
 
   const world = el("g", { id: "world" }, svg);
 
-  // outer background + green campus grounds
+  // outer background
   el("rect", { x: -pad * 3, y: -pad * 3, width: cw + pad * 6, height: ch + pad * 6, fill: "var(--bg-outer)" }, world);
+
+  // faint surrounding city grid + blocks, for scale/context - purely decorative
+  const cityG = el("g", { opacity: 0.55 }, world);
+  for (const [[x1, y1], [x2, y2]] of plan.city_context.grid_lines) {
+    el("line", { x1, y1, x2, y2, stroke: "var(--city-grid)", "stroke-width": 1.2 }, cityG);
+  }
+  for (const block of plan.city_context.blocks) {
+    el("path", { d: polyPath(block), fill: "var(--city-block)", stroke: "var(--road-edge)", "stroke-width": 0.5, opacity: 0.7 }, cityG);
+  }
+
+  // green campus grounds
   el("path", { d: polyPath(plan.green_boundary), fill: "var(--green)", stroke: "var(--green-dark)", "stroke-width": 2 }, world);
+
+  // sidewalks (drawn under the road surface, poking out along both edges)
+  const sidewalkG = el("g", {}, world);
+  for (const s of plan.sidewalks) {
+    el("path", { d: s.path, fill: "none", stroke: "var(--sidewalk)", "stroke-width": 4,
+      "stroke-linecap": "round", "stroke-dasharray": "1 5.5" }, sidewalkG);
+  }
 
   // roads: base stroke + dashed centerline for main/secondary
   const roadsG = el("g", {}, world);
@@ -212,21 +252,46 @@ function renderMap(plan) {
     }
   }
 
-  // parking lots
+  // walkways connecting each building to the nearest road
+  const walkG = el("g", {}, world);
+  for (const w of plan.walkways) {
+    el("path", { d: w.path, fill: "none", stroke: "var(--walkway)", "stroke-width": 2.4,
+      "stroke-dasharray": "1 4", "stroke-linecap": "round", opacity: 0.8 }, walkG);
+  }
+
+  // parking lots + stall striping
   const parkG = el("g", {}, world);
   for (const p of plan.parking_lots) {
     el("path", { d: polyPath(p.polygon), fill: "url(#hatch)", stroke: "var(--parking-line)", "stroke-width": 1 }, parkG);
+    for (const [[x1, y1], [x2, y2]] of p.stalls) {
+      el("line", { x1, y1, x2, y2, stroke: "#ffffff", "stroke-width": 1, opacity: 0.6 }, parkG);
+    }
   }
 
-  // trees
+  // road name labels - drawn after parking so a lot never occludes a label
+  const roadLabelG = el("g", {}, world);
+  for (const r of plan.roads) {
+    const [lx, ly] = r.label_pos;
+    const label = el("text", { x: lx, y: ly - r.width / 2 - 5, "text-anchor": "middle",
+      class: "road-label", transform: `rotate(${r.label_angle} ${lx} ${ly - r.width / 2 - 5})` }, roadLabelG);
+    label.textContent = r.name;
+  }
+
+  // trees - size/shade varied by index for an organic canopy look
   const treesG = el("g", {}, world);
-  for (const [x, y] of plan.trees) {
-    el("circle", { cx: x, cy: y, r: 4.2, fill: "var(--tree)", stroke: "var(--tree-ring)", "stroke-width": 0.8 }, treesG);
-  }
+  const treeShades = ["#4a7a3d", "#588a49", "#3f6c34"];
+  plan.trees.forEach(([x, y], i) => {
+    const r = 3.2 + (i % 5) * 0.9;
+    el("circle", { cx: x, cy: y, r, fill: treeShades[i % treeShades.length],
+      stroke: "var(--tree-ring)", "stroke-width": 0.7, opacity: 0.92 }, treesG);
+  });
 
-  // buildings
+  // buildings (with a soft drop shadow for depth)
+  const shadowG = el("g", { opacity: 0.5 }, world);
   const bg = el("g", {}, world);
   for (const b of plan.buildings) {
+    el("path", { d: polyPath(offsetPolygon(b.polygon, 3, 4)), fill: "var(--shadow)" }, shadowG);
+
     const shape = el("path", {
       d: polyPath(b.polygon), fill: fillFor(b.type), stroke: strokeFor(b.type),
       "stroke-width": 1.4, "data-id": b.id,
@@ -247,6 +312,10 @@ function renderMap(plan) {
   }
 
   setupPanZoom(svg);
+}
+
+function offsetPolygon(points, dx, dy) {
+  return points.map(([x, y]) => [x + dx, y + dy]);
 }
 
 function applyViewBox() {
