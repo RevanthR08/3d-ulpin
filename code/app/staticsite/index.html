@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Command Center — 3D ULPIN Registry</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="/portal/shared/theme.css" />
+<style>
+  .quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 14px; }
+  .quick-actions a.btn { justify-content: center; padding: 14px; font-size: 13.5px; }
+  .two-col { display: grid; grid-template-columns: 1.3fr 1fr; gap: 18px; margin-top: 14px; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+  .mini-list .row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0;
+    border-bottom: 1px dashed var(--border); font-size: 12.5px; }
+  .mini-list .row:last-child { border-bottom: none; }
+  .mini-list .row .name { font-weight: 600; }
+  .mini-list .row .ulpin { font-family: monospace; color: var(--text-dim); font-size: 11px; }
+  .validation-summary { display: flex; align-items: center; gap: 14px; }
+  .validation-summary .big { font-size: 34px; font-weight: 800; }
+  .validation-summary .big.ok { color: var(--green-ok); }
+  .validation-summary .big.bad { color: var(--red-bad); }
+</style>
+</head>
+<body data-page="index" data-title="Command Center" data-crumbs="3D ULPIN Registry">
+<div id="page-content">
+  <h2 class="section-title">Registry Overview</h2>
+  <div class="stat-grid" id="stat-grid">
+    <div class="stat-card"><div class="v">…</div><div class="k">Total Buildings</div></div>
+  </div>
+
+  <div class="quick-actions" id="quick-actions">
+    <a class="btn secondary" href="/viewer3d/">Open 3D Registry</a>
+    <a class="btn secondary" href="/portal/ulpin.html">Search ULPIN Registry</a>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <h2 class="section-title" style="margin-top:0">Registered Buildings</h2>
+      <div class="mini-list" id="building-list"></div>
+    </div>
+    <div class="card">
+      <h2 class="section-title" style="margin-top:0">Spatial Validation</h2>
+      <div class="validation-summary" id="validation-summary"></div>
+      <div style="margin-top:14px"><a class="btn secondary" href="/portal/validation.html" style="width:100%;justify-content:center">Open Validation Report</a></div>
+    </div>
+  </div>
+</div>
+
+<script src="/portal/shared/nav.js"></script>
+<script>
+try {
+  const auth = JSON.parse(localStorage.getItem("ulpin_auth") || "null");
+  if (auth && auth.role === "admin") {
+    document.getElementById("quick-actions").insertAdjacentHTML("afterbegin", `
+      <a class="btn" href="/portal/ingestion.html">Upload Spatial Data</a>
+      <a class="btn secondary" href="/portal/processing.html">AI Boundary Generation</a>
+    `);
+  }
+} catch {}
+
+async function load() {
+  const society = await fetch("/society").then(r => r.json());
+  const underground = await fetch("/underground").then(r => r.json());
+
+  const t = society.computed_totals;
+  document.getElementById("stat-grid").innerHTML = `
+    <div class="stat-card"><div class="v">${t.total_buildings}</div><div class="k">Buildings</div></div>
+    <div class="stat-card"><div class="v">${t.total_floors}</div><div class="k">Floors (3D Parcels)</div></div>
+    <div class="stat-card"><div class="v">${t.total_units}</div><div class="k">Vertical Units</div></div>
+    <div class="stat-card"><div class="v">${underground.count}</div><div class="k">Underground Assets</div></div>
+    <div class="stat-card"><div class="v">${society.topology_validation.violation_count === 0 ? "100%" : "—"}</div><div class="k">Topology Valid</div></div>
+  `;
+
+  document.getElementById("building-list").innerHTML = society.buildings.slice(0, 8).map(b => `
+    <div class="row">
+      <span><span class="name">${b.name}</span> <span class="badge">${b.type.replace(/_/g," ")}</span></span>
+      <span class="ulpin">${b.ulpin}</span>
+    </div>
+  `).join("");
+
+  const v = society.topology_validation;
+  document.getElementById("validation-summary").innerHTML = v.violation_count === 0
+    ? `<div class="big ok">✓</div><div><div style="font-weight:700">All clear</div><div style="font-size:12px;color:var(--text-dim)">0 violations across ${t.total_floors + t.total_buildings + t.total_units} spatial objects</div></div>`
+    : `<div class="big bad">${v.violation_count}</div><div><div style="font-weight:700">Issue(s) found</div><div style="font-size:12px;color:var(--text-dim)">See validation report for details</div></div>`;
+}
+load().catch(err => { document.getElementById("stat-grid").innerHTML = `<div class="placeholder-note">Failed to load registry data: ${err.message}</div>`; });
+</script>
+</body>
+</html>

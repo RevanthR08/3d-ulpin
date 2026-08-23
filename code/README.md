@@ -18,6 +18,29 @@ python -m uvicorn app.main:app --reload --port 8000
 Startup prints a topology validation report to the console. The API is
 then live at `http://127.0.0.1:8000` (CORS is open to any origin).
 
+## Portal (`/portal`) — the main demo entry point
+
+A professional multi-page front-end tying the whole project together:
+Command Center dashboard, Data Ingestion, AI Processing (animated using
+the real pipeline stage data), ULPIN Registry search, Spatial Validation
+(real results, not mocked), and Analytics — all wired to the real API
+above, with mock login (`app/staticsite/login.html`) and role-based
+access (**Admin**: ingest data, run AI processing, run validation;
+**Public User**: read-only registry browsing) enforced at the page level,
+not just by hiding sidebar links (`app/staticsite/shared/nav.js`). Auth
+is intentionally a demo/prototype mock (localStorage, no server
+validation), consistent with everything else here that's clearly labeled
+simulated rather than claimed as real security. Every page that shows
+demo/simulated data says so explicitly (e.g. Data Ingestion's LiDAR and
+floor-plan cards) - only the drone/satellite imagery + GNSS cards there
+and the Spatial Validation page are genuinely computed, not mocked.
+
+The 3D/2D/real-map viewers and the footprint extraction tool are
+deliberately **not** rebuilt inside the portal - the sidebar links out to
+the existing, already-verified `/viewer3d`, `/viewer`, `/viewer-map`, and
+`/extract` pages instead, to avoid re-implementing tested Three.js/
+MapLibre/OpenCV work inside a new shell under time pressure.
+
 Open **http://127.0.0.1:8000/viewer/** for a 2D campus-style site plan —
 curved roads with sidewalks, walkways connecting every building to the
 road, parking lots with stall striping, a couple of L-shaped building

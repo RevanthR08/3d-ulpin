@@ -29,6 +29,7 @@ STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 STATIC3D_DIR = os.path.join(os.path.dirname(__file__), "static3d")
 STATICMAP_DIR = os.path.join(os.path.dirname(__file__), "staticmap")
 STATICEXTRACT_DIR = os.path.join(os.path.dirname(__file__), "staticextract")
+STATICSITE_DIR = os.path.join(os.path.dirname(__file__), "staticsite")
 
 app = FastAPI(
     title="3D ULPIN Vertical Property Mapping System — Data API",
@@ -73,6 +74,7 @@ app.mount("/viewer", StaticFiles(directory=STATIC_DIR, html=True), name="viewer"
 app.mount("/viewer3d", StaticFiles(directory=STATIC3D_DIR, html=True), name="viewer3d")
 app.mount("/viewer-map", StaticFiles(directory=STATICMAP_DIR, html=True), name="viewer_map")
 app.mount("/extract", StaticFiles(directory=STATICEXTRACT_DIR, html=True), name="extract")
+app.mount("/portal", StaticFiles(directory=STATICSITE_DIR, html=True), name="portal")
 
 
 @app.get("/")
@@ -96,6 +98,7 @@ def root():
         "viewer3d": "/viewer3d",
         "viewer_map": "/viewer-map",
         "extract": "/extract",
+        "portal": "/portal",
     }
 
 

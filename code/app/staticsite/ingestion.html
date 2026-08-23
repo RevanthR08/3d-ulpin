@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Data Ingestion — 3D ULPIN Registry</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="/portal/shared/theme.css" />
+<style>
+  .intake-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 14px; }
+  .intake-card .head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .intake-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-dim); font-weight: 700; }
+  .intake-card .filename { font-family: monospace; font-size: 12px; margin: 6px 0 10px; word-break: break-all; }
+  .intake-card .kv { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; color: var(--text-dim); }
+  .intake-card .kv b { color: var(--text); font-weight: 600; }
+  .intake-card .footline { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+  .ready-bar { display: flex; align-items: center; justify-content: space-between; margin-top: 22px;
+    padding: 16px 20px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; }
+  .ready-bar .n { font-size: 14px; font-weight: 700; }
+</style>
+</head>
+<body data-page="ingestion" data-title="Spatial Data Ingestion" data-crumbs="Command Center / Data Ingestion">
+<div id="page-content">
+  <div class="placeholder-note">Upload heterogeneous spatial datasets to construct a unified 3D cadastral environment.
+    The <b>Drone/Satellite Imagery</b> source below is a real, working extraction pipeline (OpenCV building-outline
+    detection + GNSS georeferencing) — try it with a real image. The other four sources are shown with realistic
+    demo values, clearly marked <span class="badge sim">Simulated</span>, since this prototype's scope was 2D
+    footprint extraction, not a full LiDAR/GIS/BIM ingestion stack.</div>
+
+  <h2 class="section-title">Data Sources</h2>
+  <div class="intake-grid">
+    <div class="card intake-card">
+      <div class="head">
+        <div><div class="label">Drone / Satellite Imagery</div></div>
+        <span class="badge ok">Real pipeline</span>
+      </div>
+      <div class="filename" id="ing-filename">no file processed yet this session</div>
+      <div class="kv"><span>Extraction method</span><b>OpenCV (edge / GrabCut)</b></div>
+      <div class="kv"><span>Georeferencing</span><b>2-point similarity transform</b></div>
+      <div class="footline">
+        <a class="btn secondary" href="/extract/" style="width:100%;justify-content:center">Open Footprint Extraction Tool</a>
+      </div>
+    </div>
+
+    <div class="card intake-card">
+      <div class="head"><div class="label">LiDAR / 3D Point Cloud</div><span class="badge sim">Simulated</span></div>
+      <div class="filename">site101_lidar_scan.las</div>
+      <div class="kv"><span>Points</span><b>4.8M</b></div>
+      <div class="kv"><span>Density</span><b>82 pts/m²</b></div>
+      <div class="kv"><span>Status</span><b>Ready</b></div>
+    </div>
+
+    <div class="card intake-card">
+      <div class="head"><div class="label">Cadastral / GIS Parcel Layer</div><span class="badge ok">Real (from dataset)</span></div>
+      <div class="filename" id="gis-filename">greenfield_heights.yaml</div>
+      <div class="kv"><span>Parcels</span><b id="gis-parcels">…</b></div>
+      <div class="kv"><span>CRS</span><b id="gis-crs">…</b></div>
+      <div class="kv"><span>Status</span><b>Loaded</b></div>
+    </div>
+
+    <div class="card intake-card">
+      <div class="head"><div class="label">Architectural Floor Plans</div><span class="badge sim">Simulated</span></div>
+      <div class="filename">floor_plan_flat_502.pdf</div>
+      <div class="kv"><span>Floors detected</span><b>15</b></div>
+      <div class="kv"><span>Units detected</span><b>56</b></div>
+      <div class="kv"><span>Status</span><b>Ready</b></div>
+    </div>
+
+    <div class="card intake-card">
+      <div class="head"><div class="label">GNSS / CORS Survey</div><span class="badge ok">Real (from extraction tool)</span></div>
+      <div class="filename">2 reference-point manual survey per building</div>
+      <div class="kv"><span>Method</span><b>Right-click lat/lon in Google Maps</b></div>
+      <div class="kv"><span>Reference frame</span><b>WGS84</b></div>
+      <div class="footline">
+        <span style="font-size:11.5px;color:var(--text-dim)">Used by the Georeference panel in the extraction tool to convert pixel polygons to real-world area.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ready-bar">
+    <div class="n">5 data sources ready</div>
+    <a class="btn" href="/portal/processing.html">Initiate AI Volumetric Processing →</a>
+  </div>
+</div>
+
+<script src="/portal/shared/nav.js"></script>
+<script>
+async function load() {
+  const society = await fetch("/society").then(r => r.json());
+  document.getElementById("gis-parcels").textContent = society.computed_totals.total_buildings;
+  document.getElementById("gis-crs").textContent = (society.meta.coordinate_reference_system || {}).epsg || "EPSG:4979";
+}
+if (window.PORTAL_ACCESS_ALLOWED !== false) load().catch(() => {});
+</script>
+</body>
+</html>

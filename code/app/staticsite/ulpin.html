@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>ULPIN Registry — 3D ULPIN Registry</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="/portal/shared/theme.css" />
+<style>
+  .search-row { display: flex; gap: 10px; margin-top: 4px; }
+  .search-row input { flex: 1; padding: 10px 14px; font-size: 13px; border: 1px solid var(--border); border-radius: 8px;
+    font-family: monospace; }
+  #search-result { margin-top: 14px; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+  .detail-grid .kv { background: var(--panel-alt); border: 1px solid var(--border); border-radius: 7px; padding: 8px 11px; }
+  .detail-grid .kv .k { font-size: 10.5px; color: var(--text-dim); text-transform: uppercase; }
+  .detail-grid .kv .v { font-size: 13.5px; font-weight: 700; font-family: monospace; }
+  .floor-row { border: 1px solid var(--border); border-radius: 7px; margin-bottom: 6px; overflow: hidden; }
+  .floor-head { display: flex; justify-content: space-between; padding: 8px 12px; background: var(--panel-alt);
+    cursor: pointer; font-size: 12.5px; }
+  .floor-head:hover { background: var(--accent-tint); }
+  .floor-units { padding: 6px 12px; display: none; }
+  .floor-units.open { display: block; }
+  .unit-row { display: flex; justify-content: space-between; font-size: 11.5px; padding: 4px 0; border-bottom: 1px dashed var(--border); }
+  .unit-row:last-child { border-bottom: none; }
+  .unit-row .u-ulpin { color: var(--text-dim); font-family: monospace; }
+</style>
+</head>
+<body data-page="ulpin" data-title="ULPIN Registry" data-crumbs="Command Center / ULPIN Registry">
+<div id="page-content">
+  <div class="card">
+    <h2 class="section-title" style="margin-top:0">Search by ULPIN</h2>
+    <div class="search-row">
+      <input type="text" id="search-input" placeholder="e.g. 3D-IND-560012-A1-L5-502" />
+      <button class="btn" id="search-btn">Search</button>
+    </div>
+    <div id="search-result"></div>
+  </div>
+
+  <h2 class="section-title">All Registered Buildings</h2>
+  <div class="card">
+    <table class="data-table" id="building-table">
+      <thead><tr><th>ULPIN</th><th>Name</th><th>Type</th><th>Block</th><th>Floors</th><th>Units</th><th>Status</th></tr></thead>
+      <tbody id="building-tbody"></tbody>
+    </table>
+  </div>
+
+  <div id="building-detail"></div>
+</div>
+
+<script src="/portal/shared/nav.js"></script>
+<script>
+async function loadTable() {
+  const society = await fetch("/society").then(r => r.json());
+  document.getElementById("building-tbody").innerHTML = society.buildings.map(b => `
+    <tr class="clickable" onclick="showBuilding('${b.id}')">
+      <td class="mono">${b.ulpin}</td>
+      <td>${b.name}</td>
+      <td>${b.type.replace(/_/g, " ")}</td>
+      <td>${b.block}</td>
+      <td>${b.floor_count}</td>
+      <td>${b.unit_count}</td>
+      <td><span class="badge ${b.status === "registered" ? "ok" : "warn"}">${b.status}</span></td>
+    </tr>
+  `).join("");
+}
+loadTable().catch(err => { document.getElementById("building-tbody").innerHTML = `<tr><td colspan="7">Failed: ${err.message}</td></tr>`; });
+
+document.getElementById("search-btn").addEventListener("click", doSearch);
+document.getElementById("search-input").addEventListener("keydown", (e) => { if (e.key === "Enter") doSearch(); });
+
+async function doSearch() {
+  const val = document.getElementById("search-input").value.trim();
+  const resultEl = document.getElementById("search-result");
+  if (!val) { resultEl.innerHTML = ""; return; }
+  resultEl.innerHTML = `<div class="placeholder-note">Searching…</div>`;
+  try {
+    const res = await fetch(`/ulpin/${encodeURIComponent(val)}`);
+    if (!res.ok) throw new Error("ULPIN not found in registry");
+    const entry = await res.json();
+    resultEl.innerHTML = `
+      <div class="placeholder-note" style="background:var(--accent-tint);border-color:var(--accent)">
+        <span class="badge ok">${entry.level}</span> found — building <b>${entry.building_id}</b>
+        ${entry.floor_label ? `· floor <b>${entry.floor_label}</b>` : ""}
+        ${entry.unit ? `· unit <b>${entry.unit}</b>` : ""}
+      </div>`;
+    showBuilding(entry.building_id);
+  } catch (err) {
+    resultEl.innerHTML = `<div class="placeholder-note" style="background:#fbeceb;border-color:var(--red-bad)">${err.message}</div>`;
+  }
+}
+
+async function showBuilding(id) {
+  const detailEl = document.getElementById("building-detail");
+  detailEl.innerHTML = `<div class="placeholder-note">Loading ${id}…</div>`;
+  const b = await fetch(`/building/${id}`).then(r => r.json());
+
+  let html = `<h2 class="section-title">${b.name} <span class="badge">${b.type.replace(/_/g," ")}</span></h2>`;
+  html += `<div class="card">`;
+  html += `<div class="detail-grid">
+    <div class="kv"><div class="k">ULPIN</div><div class="v">${b.ulpin}</div></div>
+    <div class="kv"><div class="k">Status</div><div class="v">${b.status}</div></div>
+    <div class="kv"><div class="k">Floors</div><div class="v">${b.floor_count}</div></div>
+    <div class="kv"><div class="k">Units</div><div class="v">${b.unit_count}</div></div>
+    <div class="kv"><div class="k">Base Elevation</div><div class="v">${b.vertical_parcel.base_elevation_m}m</div></div>
+    <div class="kv"><div class="k">Top Elevation</div><div class="v">${b.vertical_parcel.top_elevation_m}m</div></div>
+  </div>`;
+
+  for (const f of b.floors) {
+    html += `<div class="floor-row">
+      <div class="floor-head" onclick="this.nextElementSibling.classList.toggle('open')">
+        <span>${f.floor_type === "residential" ? "Floor " + f.floor_label : f.floor_label}
+          <span class="badge">${f.units.length ? f.units.length + " units" : (f.rooms||[]).length + " rooms"}</span></span>
+        <span class="mono" style="color:var(--text-dim)">${f.ulpin}</span>
+      </div>
+      <div class="floor-units">`;
+    if (f.units.length) {
+      for (const u of f.units) {
+        html += `<div class="unit-row"><span>${u.unit} <span class="badge">${u.type}</span></span><span class="u-ulpin">${u.ulpin}</span></div>`;
+      }
+    } else {
+      for (const r of (f.rooms || [])) {
+        html += `<div class="unit-row"><span>${r.type.replace(/_/g," ")}</span><span class="u-ulpin">${r.area_sq_m} m²</span></div>`;
+      }
+    }
+    html += `</div></div>`;
+  }
+  html += `</div>`;
+  detailEl.innerHTML = html;
+  detailEl.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+window.showBuilding = showBuilding;
+</script>
+</body>
+</html>

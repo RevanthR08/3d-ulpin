@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Analytics — 3D ULPIN Registry</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="/portal/shared/theme.css" />
+<style>
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 14px; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+  .bar-chart .bar-row { display: grid; grid-template-columns: 110px 1fr 46px; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 12px; }
+  .bar-chart .bar-track { background: var(--panel-alt); border-radius: 5px; height: 14px; overflow: hidden; }
+  .bar-chart .bar-fill { height: 100%; background: var(--accent); border-radius: 5px; }
+  .bar-chart .bar-fill.purple { background: var(--purple); }
+  .bar-chart .bar-fill.orange { background: var(--orange); }
+  .bar-chart .val { text-align: right; font-weight: 700; }
+  .donut-wrap { display: flex; align-items: center; gap: 20px; }
+  .donut-legend .item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; margin-bottom: 8px; }
+  .donut-legend .sw { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+</style>
+</head>
+<body data-page="analytics" data-title="Spatial Analytics" data-crumbs="Command Center / Analytics">
+<div id="page-content">
+  <h2 class="section-title">Registry Totals</h2>
+  <div class="stat-grid" id="stat-grid"><div class="stat-card"><div class="v">…</div><div class="k">Loading</div></div></div>
+
+  <div class="two-col">
+    <div class="card">
+      <h2 class="section-title" style="margin-top:0">Buildings by Floor Count</h2>
+      <div class="bar-chart" id="floor-chart"></div>
+    </div>
+    <div class="card">
+      <h2 class="section-title" style="margin-top:0">Buildings by Type</h2>
+      <div class="donut-wrap">
+        <svg viewBox="0 0 42 42" width="150" height="150" id="donut"></svg>
+        <div class="donut-legend" id="donut-legend"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <h2 class="section-title" style="margin-top:0">Unit Mix</h2>
+      <div class="bar-chart" id="unit-chart"></div>
+    </div>
+    <div class="card">
+      <h2 class="section-title" style="margin-top:0">Underground Assets by Type</h2>
+      <div class="bar-chart" id="underground-chart"></div>
+    </div>
+  </div>
+</div>
+
+<script src="/portal/shared/nav.js"></script>
+<script>
+async function load() {
+  const [society, underground] = await Promise.all([
+    fetch("/society").then(r => r.json()),
+    fetch("/underground").then(r => r.json()),
+  ]);
+  const t = society.computed_totals;
+  const stats = society.statistics;
+
+  const siteAreaSqm = society.meta.site_area_sq_m || 0;
+  document.getElementById("stat-grid").innerHTML = `
+    <div class="stat-card"><div class="v">${siteAreaSqm.toLocaleString()} m²</div><div class="k">Total Land Area</div><div class="sub">as declared in source dataset</div></div>
+    <div class="stat-card"><div class="v">${t.total_buildings}</div><div class="k">Buildings</div></div>
+    <div class="stat-card"><div class="v">${t.total_floors}</div><div class="k">3D Vertical Parcels (Floors)</div></div>
+    <div class="stat-card"><div class="v">${t.total_units}</div><div class="k">Vertical Units</div></div>
+    <div class="stat-card"><div class="v">${t.total_rooms}</div><div class="k">Rooms (finest-grain parcels)</div></div>
+    <div class="stat-card"><div class="v">${underground.count}</div><div class="k">Underground Assets</div></div>
+  `;
+
+  // buildings by floor count
+  const byFloor = {};
+  for (const b of society.buildings) byFloor[b.floor_count] = (byFloor[b.floor_count] || 0) + 1;
+  const maxFloorCount = Math.max(...Object.values(byFloor));
+  document.getElementById("floor-chart").innerHTML = Object.entries(byFloor)
+    .sort((a, b) => b[0] - a[0])
+    .map(([floors, n]) => `
+      <div class="bar-row">
+        <span>${floors} floors</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${(n / maxFloorCount * 100).toFixed(0)}%"></div></div>
+        <span class="val">${n}</span>
+      </div>
+    `).join("");
+
+  // buildings by type -> donut
+  const typeColors = { residential_tower: "#0f9d8f", residential_midrise: "#4fb8ad", low_rise_residential: "#8fd0c8",
+    community_facility: "#7c5cd4", utility_facility: "#e08a2c" };
+  const byType = {};
+  for (const b of society.buildings) byType[b.type] = (byType[b.type] || 0) + 1;
+  let offset = 0;
+  const total = society.buildings.length;
+  const segs = Object.entries(byType).map(([type, n]) => {
+    const frac = n / total;
+    const seg = `<circle cx="21" cy="21" r="15.9" fill="transparent" stroke="${typeColors[type] || "#999"}"
+      stroke-width="6" stroke-dasharray="${(frac * 100).toFixed(2)} ${(100 - frac * 100).toFixed(2)}"
+      stroke-dashoffset="${(-offset * 100).toFixed(2)}" />`;
+    offset += frac;
+    return { svg: seg, type, n };
+  });
+  document.getElementById("donut").innerHTML = segs.map(s => s.svg).join("");
+  document.getElementById("donut-legend").innerHTML = segs.map(s => `
+    <div class="item"><span class="sw" style="background:${typeColors[s.type] || "#999"}"></span>${s.type.replace(/_/g," ")} (${s.n})</div>
+  `).join("");
+
+  // unit mix
+  const propTypes = stats.property_types || {};
+  const maxProp = Math.max(...Object.values(propTypes), 1);
+  document.getElementById("unit-chart").innerHTML = Object.entries(propTypes).map(([type, n]) => `
+    <div class="bar-row">
+      <span>${type}</span>
+      <div class="bar-track"><div class="bar-fill purple" style="width:${(n / maxProp * 100).toFixed(0)}%"></div></div>
+      <span class="val">${n}</span>
+    </div>
+  `).join("") || `<div class="placeholder-note">No unit-type breakdown in source statistics.</div>`;
+
+  // underground by type
+  const byUgType = {};
+  for (const u of underground.underground_infrastructure) byUgType[u.type] = (byUgType[u.type] || 0) + 1;
+  const maxUg = Math.max(...Object.values(byUgType), 1);
+  document.getElementById("underground-chart").innerHTML = Object.entries(byUgType).map(([type, n]) => `
+    <div class="bar-row">
+      <span>${type.replace(/_/g," ")}</span>
+      <div class="bar-track"><div class="bar-fill orange" style="width:${(n / maxUg * 100).toFixed(0)}%"></div></div>
+      <span class="val">${n}</span>
+    </div>
+  `).join("");
+}
+load().catch(err => { document.getElementById("stat-grid").innerHTML = `<div class="placeholder-note">Failed: ${err.message}</div>`; });
+</script>
+</body>
+</html>

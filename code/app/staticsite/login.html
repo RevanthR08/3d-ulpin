@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Sign In — 3D ULPIN Registry</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="/portal/shared/theme.css" />
+<style>
+  html, body { height: 100%; }
+  #login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  #login-card { width: 380px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 32px 30px; box-shadow: var(--shadow); }
+  #login-card .brand-name { font-size: 17px; font-weight: 800; }
+  #login-card .brand-tag { font-size: 12px; color: var(--text-dim); margin-top: 3px; margin-bottom: 26px; }
+  .role-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+  .role-tabs button { flex: 1; padding: 9px; border-radius: 7px; border: 1px solid var(--border); background: var(--panel);
+    font-size: 12.5px; font-weight: 600; color: var(--text-dim); cursor: pointer; }
+  .role-tabs button.active { background: var(--accent-tint); color: var(--accent-dark); border-color: var(--accent); }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 11.5px; color: var(--text-dim); margin-bottom: 5px; }
+  .field input { width: 100%; padding: 9px 11px; font-size: 13px; border: 1px solid var(--border); border-radius: 7px; }
+  #login-btn { width: 100%; margin-top: 6px; justify-content: center; }
+  .demo-note { font-size: 11px; color: var(--text-faint); margin-top: 18px; line-height: 1.5; text-align: center; }
+  .error { font-size: 12px; color: var(--red-bad); margin-top: 4px; display: none; }
+</style>
+</head>
+<body data-page="login">
+<div id="login-wrap">
+  <div id="login-card">
+    <div class="brand-name">3D ULPIN Registry</div>
+    <div class="brand-tag">Volumetric Spatial Cadastre — sign in to continue</div>
+
+    <div class="role-tabs">
+      <button type="button" id="tab-admin" class="active">Admin</button>
+      <button type="button" id="tab-user">Public User</button>
+    </div>
+
+    <div class="field">
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="e.g. admin" autocomplete="username" />
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Any password works in this demo" autocomplete="current-password" />
+    </div>
+    <div class="error" id="error">Enter a username to continue.</div>
+
+    <button class="btn" id="login-btn">Sign in</button>
+
+    <div class="demo-note">
+      Demo authentication for this prototype — any username/password combination
+      is accepted. <b>Admin</b> can ingest data, run AI processing, and run validation.
+      <b>Public User</b> gets read-only registry access.
+    </div>
+  </div>
+</div>
+
+<script>
+let role = "admin";
+const tabAdmin = document.getElementById("tab-admin");
+const tabUser = document.getElementById("tab-user");
+const errorEl = document.getElementById("error");
+
+tabAdmin.addEventListener("click", () => { role = "admin"; tabAdmin.classList.add("active"); tabUser.classList.remove("active"); });
+tabUser.addEventListener("click", () => { role = "user"; tabUser.classList.add("active"); tabAdmin.classList.remove("active"); });
+
+document.getElementById("login-btn").addEventListener("click", () => {
+  const username = document.getElementById("username").value.trim() || (role === "admin" ? "admin" : "guest");
+  localStorage.setItem("ulpin_auth", JSON.stringify({ username, role }));
+  window.location.href = "/portal/";
+});
+
+document.getElementById("password").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") document.getElementById("login-btn").click();
+});
+</script>
+</body>
+</html>
