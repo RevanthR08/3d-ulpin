@@ -3,12 +3,26 @@ import os
 from fastapi import FastAPI, HTTPException, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 from . import loader
 from . import geo
 from . import site_plan as site_plan_mod
 from . import footprint_extraction
+from . import georeference as georeference_mod
 from .validation import validate_society
+
+
+class RefPoint(BaseModel):
+    px: float
+    py: float
+    lat: float
+    lon: float
+
+
+class GeoreferenceRequest(BaseModel):
+    polygon: list[list[float]]
+    ref_points: list[RefPoint]
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "greenfield_heights.yaml")
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
@@ -76,6 +90,7 @@ def root():
             "/processing-status",
             "POST /extract-footprint",
             "POST /extract-footprint-assisted",
+            "POST /georeference",
         ],
         "viewer": "/viewer",
         "viewer3d": "/viewer3d",
@@ -242,6 +257,21 @@ async def extract_footprint_assisted(
     content = await file.read()
     try:
         result = footprint_extraction.extract_footprint_assisted(content, (x, y, w, h))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return result
+
+
+@app.post("/georeference")
+def georeference(req: GeoreferenceRequest):
+    """PS Input #5 (GNSS/CORS coordinates): converts a pixel-space
+    footprint polygon into real [lat, lon] + true area, given 2 reference
+    points (pixel coord + known real lat/lon, e.g. from right-clicking the
+    same spot in Google Maps). Powers /extract's georeference step."""
+    try:
+        result = georeference_mod.georeference_polygon(
+            req.polygon, [rp.model_dump() for rp in req.ref_points]
+        )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     return result

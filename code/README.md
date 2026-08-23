@@ -73,6 +73,7 @@ code/
     staticmap/index.html # real-map viewer (served at /viewer-map, MapLibre)
     staticextract/index.html # footprint extraction UI (served at /extract)
     footprint_extraction.py # OpenCV building-outline detection (PS Stage 3A)
+    georeference.py  # pixel polygon -> real [lat,lon] + true area (PS Input #5)
 ```
 
 ## ULPIN pattern
@@ -174,6 +175,32 @@ parameter/preprocessing attempts all produced a frame-spanning blob
 instead of a building outline. Assisted mode correctly traced the
 building's actual footprint, including both internal courtyards, on the
 first try.
+
+### Georeferencing (PS Input #5) — turning the polygon into a real parcel
+
+A pixel-space polygon isn't a cadastral record - "894.5 px²" means
+nothing legally. Once a footprint is extracted, `/extract` shows a
+**Georeference** panel: click "Pick on image" and click 2 points on the
+image (ideally 2 corners of the building), then enter each point's real
+lat/lon (e.g. right-click the same spot in Google Maps to read its
+coordinates - this *is* PS Input #5, "GNSS/CORS-based coordinates," which
+nothing else in this pipeline had used until now). `app/georeference.py`
+fits an exact similarity transform (uniform scale + rotation +
+translation - fully determined by 2 point correspondences, no
+least-squares needed) from those 2 pixel↔lat/lon pairs, then:
+
+- converts every polygon vertex to a real `[lat, lon]`
+- computes true area via the shoelace formula on real local metres (not
+  pixels) - reported in m², acres, and sqft
+- reports the fitted scale (m/px) and rotation, so you can sanity-check
+  the reference points were reasonable
+
+Validated against the same real CIT building: 2 reference points from
+Google Maps (`12°58'17.14"N 80°02'37.65"E` / `12°58'15.67"N
+80°02'36.94"E`) produced a fitted scale of ~0.107 m/px and ~22° rotation
+(both plausible for that screenshot), and a real area in the hundreds-
+to-low-thousands of m² depending on how much of the building the
+extracted polygon covers. `POST /georeference`.
 
 ## Real map viewer (`/viewer-map`)
 

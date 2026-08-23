@@ -54,6 +54,23 @@
   #canvas-wrap.assisted #overlay { pointer-events: auto; cursor: crosshair; }
   #assist-hint { display: none; font-size: 12px; color: var(--accent); margin-top: 8px; }
 
+  #geo-section { display: none; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--panel-border); }
+  #geo-section h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-dim); margin: 0 0 4px; }
+  #geo-section .geo-sub { font-size: 11.5px; color: var(--text-dim); line-height: 1.5; margin-bottom: 12px; }
+  .ref-row { border: 1px solid var(--panel-border); border-radius: 6px; padding: 10px; margin-bottom: 10px; }
+  .ref-row .ref-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .ref-row .ref-head b { font-size: 12px; }
+  .ref-row button.pick { font-size: 11px; background: var(--panel); border: 1px solid var(--panel-border);
+    border-radius: 999px; padding: 3px 10px; cursor: pointer; color: var(--text); }
+  .ref-row button.pick.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .ref-row .px-label { font-size: 10.5px; color: var(--text-dim); font-family: monospace; margin-bottom: 6px; }
+  .ref-row .latlon-inputs { display: flex; gap: 6px; }
+  .ref-row .latlon-inputs input { width: 50%; font-size: 12px; padding: 5px 7px; border: 1px solid var(--panel-border);
+    border-radius: 5px; }
+  #geo-compute-btn { width: 100%; margin-top: 4px; }
+  #geo-result { margin-top: 12px; }
+  #geo-result .stat-grid { grid-template-columns: 1fr 1fr; }
+
   #right h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-dim); margin: 0 0 10px; }
   #status { font-size: 13px; line-height: 1.6; color: var(--text-dim); }
   #status .ok { color: #2e7d32; font-weight: 600; }
@@ -113,6 +130,33 @@
     <h2>Result</h2>
     <div id="status">Upload an image to begin.</div>
     <div id="result-body"></div>
+
+    <div id="geo-section">
+      <h3>Georeference (PS Input #5)</h3>
+      <div class="geo-sub">Turn this into a real land parcel: click "Pick" then click 2 points on the image
+        (ideally 2 corners of the building), and enter each point's real lat/lon — e.g. right-click the same
+        spot in Google Maps to get its coordinates.</div>
+
+      <div class="ref-row">
+        <div class="ref-head"><b>Point 1</b><button class="pick" id="pick1">Pick on image</button></div>
+        <div class="px-label" id="px1-label">not set</div>
+        <div class="latlon-inputs">
+          <input type="text" id="lat1" placeholder="Latitude, e.g. 12.971428" />
+          <input type="text" id="lon1" placeholder="Longitude, e.g. 80.043792" />
+        </div>
+      </div>
+      <div class="ref-row">
+        <div class="ref-head"><b>Point 2</b><button class="pick" id="pick2">Pick on image</button></div>
+        <div class="px-label" id="px2-label">not set</div>
+        <div class="latlon-inputs">
+          <input type="text" id="lat2" placeholder="Latitude, e.g. 12.971019" />
+          <input type="text" id="lon2" placeholder="Longitude, e.g. 80.043594" />
+        </div>
+      </div>
+
+      <button id="geo-compute-btn" disabled>Compute real area</button>
+      <div id="geo-result"></div>
+    </div>
   </div>
 </div>
 
@@ -168,9 +212,13 @@ function imgToNatural(evt) {
 }
 
 overlay.addEventListener("mousedown", (e) => {
-  if (mode !== "assist" || !currentFile) return;
+  if (mode !== "assist" || !currentFile || picking) return;
   dragStart = imgToNatural(e);
   rectSel = null;
+});
+overlay.addEventListener("click", (e) => {
+  if (!picking) return;
+  handleRefPick(e);
 });
 window.addEventListener("mousemove", (e) => {
   if (mode !== "assist" || !dragStart) return;
@@ -279,6 +327,15 @@ function render(data) {
     ? `<span class="ok">Footprint detected.</span> ${data.candidate_count} candidate contour(s) considered.`
     : `<span class="ok">Footprint refined.</span>`;
 
+  refPoints[1] = null; refPoints[2] = null;
+  document.getElementById("px1-label").textContent = "not set";
+  document.getElementById("px2-label").textContent = "not set";
+  document.getElementById("lat1").value = ""; document.getElementById("lon1").value = "";
+  document.getElementById("lat2").value = ""; document.getElementById("lon2").value = "";
+  geoResult.innerHTML = "";
+  geoSection.style.display = "block";
+  updateGeoEnabled();
+
   resultBody.innerHTML = `
     <div class="stat-grid">
       <div class="stat"><div class="v">${data.polygon.length}</div><div class="k">Vertices</div></div>
@@ -319,6 +376,115 @@ function drawOverlay(polygon, imgW, imgH) {
 window.copyPolygon = () => {
   navigator.clipboard.writeText(JSON.stringify(window.__polygon));
 };
+
+// --- georeferencing ---
+const geoSection = document.getElementById("geo-section");
+const pick1Btn = document.getElementById("pick1");
+const pick2Btn = document.getElementById("pick2");
+const geoComputeBtn = document.getElementById("geo-compute-btn");
+const geoResult = document.getElementById("geo-result");
+const refPoints = { 1: null, 2: null };
+let picking = null;
+
+pick1Btn.addEventListener("click", () => startPicking(1));
+pick2Btn.addEventListener("click", () => startPicking(2));
+
+function startPicking(n) {
+  picking = n;
+  pick1Btn.classList.toggle("active", n === 1);
+  pick2Btn.classList.toggle("active", n === 2);
+  preview.style.cursor = "crosshair";
+}
+
+preview.addEventListener("click", (e) => {
+  if (!picking) return;
+  handleRefPick(e);
+});
+
+function handleRefPick(e) {
+  const [px, py] = imgToNatural(e);
+  refPoints[picking] = { px: Math.round(px), py: Math.round(py) };
+  document.getElementById(`px${picking}-label`).textContent = `pixel (${Math.round(px)}, ${Math.round(py)})`;
+  drawRefMarker(picking, px, py);
+  picking = null;
+  pick1Btn.classList.remove("active");
+  pick2Btn.classList.remove("active");
+  preview.style.cursor = "";
+  overlay.style.cursor = "";
+  updateGeoEnabled();
+}
+
+function drawRefMarker(n, x, y) {
+  const ns = "http://www.w3.org/2000/svg";
+  const existing = overlay.querySelector(`#ref-marker-${n}`);
+  if (existing) existing.remove();
+  const g = document.createElementNS(ns, "g");
+  g.setAttribute("id", `ref-marker-${n}`);
+  const c = document.createElementNS(ns, "circle");
+  c.setAttribute("cx", x); c.setAttribute("cy", y);
+  c.setAttribute("r", Math.max(5, preview.naturalWidth * 0.008));
+  c.setAttribute("fill", "#e08a2c");
+  c.setAttribute("stroke", "#fff");
+  c.setAttribute("stroke-width", 2);
+  g.appendChild(c);
+  const t = document.createElementNS(ns, "text");
+  t.setAttribute("x", x); t.setAttribute("y", y - Math.max(8, preview.naturalWidth * 0.012));
+  t.setAttribute("text-anchor", "middle");
+  t.setAttribute("font-size", Math.max(12, preview.naturalWidth * 0.018));
+  t.setAttribute("font-weight", "700");
+  t.setAttribute("fill", "#e08a2c");
+  t.setAttribute("stroke", "#fff");
+  t.setAttribute("stroke-width", "3");
+  t.setAttribute("paint-order", "stroke");
+  t.textContent = n;
+  g.appendChild(t);
+  overlay.appendChild(g);
+}
+
+["lat1", "lon1", "lat2", "lon2"].forEach((id) => {
+  document.getElementById(id).addEventListener("input", updateGeoEnabled);
+});
+
+function updateGeoEnabled() {
+  const lat1 = document.getElementById("lat1").value, lon1 = document.getElementById("lon1").value;
+  const lat2 = document.getElementById("lat2").value, lon2 = document.getElementById("lon2").value;
+  geoComputeBtn.disabled = !(refPoints[1] && refPoints[2] && lat1 && lon1 && lat2 && lon2);
+}
+
+geoComputeBtn.addEventListener("click", async () => {
+  geoComputeBtn.disabled = true;
+  geoResult.innerHTML = `<div style="font-size:12px;color:var(--text-dim)">Computing…</div>`;
+
+  const body = {
+    polygon: window.__polygon,
+    ref_points: [
+      { px: refPoints[1].px, py: refPoints[1].py, lat: parseFloat(document.getElementById("lat1").value), lon: parseFloat(document.getElementById("lon1").value) },
+      { px: refPoints[2].px, py: refPoints[2].py, lat: parseFloat(document.getElementById("lat2").value), lon: parseFloat(document.getElementById("lon2").value) },
+    ],
+  };
+
+  try {
+    const res = await fetch("/georeference", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || `server returned ${res.status}`);
+    const data = await res.json();
+    geoResult.innerHTML = `
+      <div class="stat-grid">
+        <div class="stat"><div class="v">${data.area_m2.toLocaleString()} m²</div><div class="k">Real area</div></div>
+        <div class="stat"><div class="v">${data.area_acres}</div><div class="k">Acres</div></div>
+        <div class="stat"><div class="v">${data.scale_m_per_px}</div><div class="k">m / pixel</div></div>
+        <div class="stat"><div class="v">${data.rotation_deg}°</div><div class="k">Rotation</div></div>
+      </div>
+      <a class="copy" onclick='navigator.clipboard.writeText(JSON.stringify(${JSON.stringify(data.polygon_latlon)}))'>Copy georeferenced polygon as JSON</a>
+      <pre id="polygon">${JSON.stringify(data.polygon_latlon)}</pre>
+    `;
+  } catch (err) {
+    geoResult.innerHTML = `<div style="font-size:12px" class="bad">Failed: ${err.message}</div>`;
+  } finally {
+    geoComputeBtn.disabled = false;
+  }
+});
 
 window.addEventListener("resize", () => {
   if (window.__polygon) drawOverlay(window.__polygon, ...[preview.naturalWidth, preview.naturalHeight]);
