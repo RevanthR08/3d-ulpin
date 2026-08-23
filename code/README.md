@@ -30,10 +30,16 @@ access (**Admin**: ingest data, run AI processing, run validation;
 not just by hiding sidebar links (`app/staticsite/shared/nav.js`). Auth
 is intentionally a demo/prototype mock (localStorage, no server
 validation), consistent with everything else here that's clearly labeled
-simulated rather than claimed as real security. Every page that shows
-demo/simulated data says so explicitly (e.g. Data Ingestion's LiDAR and
-floor-plan cards) - only the drone/satellite imagery + GNSS cards there
-and the Spatial Validation page are genuinely computed, not mocked.
+simulated rather than claimed as real security. Data Ingestion has 6 real upload widgets, one per PS input type (drone
+imagery, LiDAR point cloud, GIS parcel layers, floor plans, GNSS/CORS,
+DEM/DSM), each accepting that type's real file formats. Every upload is a
+genuine `POST /ingest` round-trip - the server reads the real file and
+returns real filename/size/type. Only drone/satellite imagery gets real
+processing (the file runs through the actual footprint extraction
+pipeline on upload); the other 5 are honestly labeled as received-but-
+not-parsed, since this prototype has no LiDAR/CAD/GIS/DEM libraries -
+nothing about them is faked as processed. The Spatial Validation page is
+likewise genuinely computed, not mocked.
 
 The 3D/2D/real-map viewers and the footprint extraction tool are
 deliberately **not** rebuilt inside the portal - the sidebar links out to

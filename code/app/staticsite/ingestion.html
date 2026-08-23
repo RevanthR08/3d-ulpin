@@ -6,13 +6,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="stylesheet" href="/portal/shared/theme.css" />
 <style>
-  .intake-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 14px; }
-  .intake-card .head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-  .intake-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-dim); font-weight: 700; }
-  .intake-card .filename { font-family: monospace; font-size: 12px; margin: 6px 0 10px; word-break: break-all; }
-  .intake-card .kv { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; color: var(--text-dim); }
-  .intake-card .kv b { color: var(--text); font-weight: 600; }
-  .intake-card .footline { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+  .intake-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 14px; }
+  .intake-card .head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+  .intake-card .label { font-size: 13px; font-weight: 700; }
+  .intake-card .formats { font-size: 11px; color: var(--text-dim); font-family: monospace; margin-bottom: 10px; }
+  .dropzone-mini { border: 1.5px dashed var(--border); border-radius: 8px; padding: 16px 12px; text-align: center;
+    cursor: pointer; font-size: 12px; color: var(--text-dim); background: var(--panel-alt); transition: border-color .15s, background .15s; }
+  .dropzone-mini:hover, .dropzone-mini.drag { border-color: var(--accent); background: var(--accent-tint); color: var(--accent-dark); }
+  .dropzone-mini input { display: none; }
+  .file-info { margin-top: 10px; font-size: 12px; display: none; }
+  .file-info.show { display: block; }
+  .file-info .fname { font-family: monospace; font-weight: 700; word-break: break-all; }
+  .file-info .kv { display: flex; justify-content: space-between; color: var(--text-dim); padding: 3px 0; }
+  .file-info .kv b { color: var(--text); font-weight: 600; }
+  .file-info .extraction-note { margin-top: 8px; padding: 8px 10px; border-radius: 6px; font-size: 11.5px; }
+  .file-info .extraction-note.ok { background: #eaf6ea; color: var(--green-ok); }
+  .file-info .extraction-note.warn { background: #fdf3e3; color: var(--amber); }
   .ready-bar { display: flex; align-items: center; justify-content: space-between; margin-top: 22px;
     padding: 16px 20px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; }
   .ready-bar .n { font-size: 14px; font-weight: 700; }
@@ -20,76 +29,128 @@
 </head>
 <body data-page="ingestion" data-title="Spatial Data Ingestion" data-crumbs="Command Center / Data Ingestion">
 <div id="page-content">
-  <div class="placeholder-note">Upload heterogeneous spatial datasets to construct a unified 3D cadastral environment.
-    The <b>Drone/Satellite Imagery</b> source below is a real, working extraction pipeline (OpenCV building-outline
-    detection + GNSS georeferencing) — try it with a real image. The other four sources are shown with realistic
-    demo values, clearly marked <span class="badge sim">Simulated</span>, since this prototype's scope was 2D
-    footprint extraction, not a full LiDAR/GIS/BIM ingestion stack.</div>
+  <div class="placeholder-note">Upload real files for each of the PS's 6 input types. <b>Drone/Satellite Imagery</b>
+    runs through the real extraction pipeline (OpenCV building-outline detection) on upload — for full
+    georeferencing and area computation, use the <a href="/extract/">Footprint Extraction Tool</a> directly. The
+    other 5 types are captured for real (filename/size sent to the server and acknowledged) but not parsed — this
+    prototype doesn't include LiDAR/CAD/GIS/DEM processing libraries, so nothing about them is faked as processed.</div>
 
   <h2 class="section-title">Data Sources</h2>
-  <div class="intake-grid">
-    <div class="card intake-card">
-      <div class="head">
-        <div><div class="label">Drone / Satellite Imagery</div></div>
-        <span class="badge ok">Real pipeline</span>
-      </div>
-      <div class="filename" id="ing-filename">no file processed yet this session</div>
-      <div class="kv"><span>Extraction method</span><b>OpenCV (edge / GrabCut)</b></div>
-      <div class="kv"><span>Georeferencing</span><b>2-point similarity transform</b></div>
-      <div class="footline">
-        <a class="btn secondary" href="/extract/" style="width:100%;justify-content:center">Open Footprint Extraction Tool</a>
-      </div>
-    </div>
-
-    <div class="card intake-card">
-      <div class="head"><div class="label">LiDAR / 3D Point Cloud</div><span class="badge sim">Simulated</span></div>
-      <div class="filename">site101_lidar_scan.las</div>
-      <div class="kv"><span>Points</span><b>4.8M</b></div>
-      <div class="kv"><span>Density</span><b>82 pts/m²</b></div>
-      <div class="kv"><span>Status</span><b>Ready</b></div>
-    </div>
-
-    <div class="card intake-card">
-      <div class="head"><div class="label">Cadastral / GIS Parcel Layer</div><span class="badge ok">Real (from dataset)</span></div>
-      <div class="filename" id="gis-filename">greenfield_heights.yaml</div>
-      <div class="kv"><span>Parcels</span><b id="gis-parcels">…</b></div>
-      <div class="kv"><span>CRS</span><b id="gis-crs">…</b></div>
-      <div class="kv"><span>Status</span><b>Loaded</b></div>
-    </div>
-
-    <div class="card intake-card">
-      <div class="head"><div class="label">Architectural Floor Plans</div><span class="badge sim">Simulated</span></div>
-      <div class="filename">floor_plan_flat_502.pdf</div>
-      <div class="kv"><span>Floors detected</span><b>15</b></div>
-      <div class="kv"><span>Units detected</span><b>56</b></div>
-      <div class="kv"><span>Status</span><b>Ready</b></div>
-    </div>
-
-    <div class="card intake-card">
-      <div class="head"><div class="label">GNSS / CORS Survey</div><span class="badge ok">Real (from extraction tool)</span></div>
-      <div class="filename">2 reference-point manual survey per building</div>
-      <div class="kv"><span>Method</span><b>Right-click lat/lon in Google Maps</b></div>
-      <div class="kv"><span>Reference frame</span><b>WGS84</b></div>
-      <div class="footline">
-        <span style="font-size:11.5px;color:var(--text-dim)">Used by the Georeference panel in the extraction tool to convert pixel polygons to real-world area.</span>
-      </div>
-    </div>
-  </div>
+  <div class="intake-grid" id="intake-grid"></div>
 
   <div class="ready-bar">
-    <div class="n">5 data sources ready</div>
+    <div class="n" id="ready-count">0 of 6 data sources uploaded</div>
     <a class="btn" href="/portal/processing.html">Initiate AI Volumetric Processing →</a>
   </div>
 </div>
 
 <script src="/portal/shared/nav.js"></script>
 <script>
-async function load() {
-  const society = await fetch("/society").then(r => r.json());
-  document.getElementById("gis-parcels").textContent = society.computed_totals.total_buildings;
-  document.getElementById("gis-crs").textContent = (society.meta.coordinate_reference_system || {}).epsg || "EPSG:4979";
+if (window.PORTAL_ACCESS_ALLOWED !== false) {
+
+const SOURCES = [
+  { kind: "drone_imagery", label: "Drone / Satellite Imagery", accept: ".jpg,.jpeg,.png,.tif,.tiff",
+    formats: ".jpg / .png / .tiff (raw) or .geotiff (georeferenced orthomosaic)" },
+  { kind: "lidar", label: "LiDAR / 3D Point Cloud", accept: ".las,.laz,.ply,.xyz",
+    formats: ".las / .laz (standard), .ply / .xyz (simpler point clouds)" },
+  { kind: "gis_parcel", label: "GIS Parcel Layers", accept: ".geojson,.json,.shp",
+    formats: ".geojson (recommended) or .shp (Shapefile bundle)" },
+  { kind: "floor_plan", label: "Building Floor Plans", accept: ".pdf,.dwg,.dxf,.png",
+    formats: ".pdf / .dwg / .dxf, or a plain .png image" },
+  { kind: "gnss", label: "GNSS / CORS Coordinates", accept: ".csv,.json",
+    formats: ".csv or .json with lat/long decimal values" },
+  { kind: "dem_dsm", label: "DEM / DSM (Elevation)", accept: ".tif,.tiff",
+    formats: ".tif / .geotiff — georeferenced elevation grid" },
+];
+
+const grid = document.getElementById("intake-grid");
+grid.innerHTML = SOURCES.map(s => `
+  <div class="card intake-card" id="card-${s.kind}">
+    <div class="head">
+      <div class="label">${s.label}</div>
+      <span class="badge" id="badge-${s.kind}">Awaiting upload</span>
+    </div>
+    <div class="formats">${s.formats}</div>
+    <div class="dropzone-mini" id="dz-${s.kind}">
+      Click or drag a file here
+      <input type="file" id="input-${s.kind}" accept="${s.accept}" />
+    </div>
+    <div class="file-info" id="info-${s.kind}"></div>
+  </div>
+`).join("");
+
+const uploaded = {};
+
+function updateReadyCount() {
+  const n = Object.values(uploaded).filter(Boolean).length;
+  document.getElementById("ready-count").textContent = `${n} of ${SOURCES.length} data sources uploaded`;
 }
-if (window.PORTAL_ACCESS_ALLOWED !== false) load().catch(() => {});
+
+function humanSize(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
+
+async function handleFile(kind, file) {
+  const badge = document.getElementById(`badge-${kind}`);
+  const info = document.getElementById(`info-${kind}`);
+  badge.textContent = "Uploading…";
+  badge.className = "badge warn";
+
+  const form = new FormData();
+  form.append("file", file);
+
+  try {
+    const res = await fetch(`/ingest?kind=${encodeURIComponent(kind)}`, { method: "POST", body: form });
+    if (!res.ok) throw new Error(`server returned ${res.status}`);
+    const data = await res.json();
+
+    badge.textContent = "Ready";
+    badge.className = "badge ok";
+    uploaded[kind] = true;
+    updateReadyCount();
+
+    let html = `
+      <div class="fname">${data.filename}</div>
+      <div class="kv"><span>Size</span><b>${humanSize(data.size_bytes)}</b></div>
+      <div class="kv"><span>Type</span><b>${data.content_type || "unknown"}</b></div>
+    `;
+    if (data.processed && data.extraction) {
+      const ex = data.extraction;
+      html += ex.found
+        ? `<div class="extraction-note ok">✓ Real extraction ran: ${ex.polygon.length}-vertex footprint detected (${(ex.area_frac * 100).toFixed(1)}% of frame). <a href="/extract/">Open in full tool →</a></div>`
+        : `<div class="extraction-note warn">Extraction ran but found no plausible outline — try the full <a href="/extract/">extraction tool</a> with sensitivity controls.</div>`;
+    } else if (kind !== "drone_imagery") {
+      html += `<div class="extraction-note warn">File received and stored — this prototype doesn't parse this format, so no automated processing ran on it.</div>`;
+    }
+    info.innerHTML = html;
+    info.classList.add("show");
+  } catch (err) {
+    badge.textContent = "Failed";
+    badge.className = "badge bad";
+    info.innerHTML = `<div class="extraction-note warn">Upload failed: ${err.message}</div>`;
+    info.classList.add("show");
+  }
+}
+
+for (const s of SOURCES) {
+  const dz = document.getElementById(`dz-${s.kind}`);
+  const input = document.getElementById(`input-${s.kind}`);
+  dz.addEventListener("click", () => input.click());
+  dz.addEventListener("dragover", (e) => { e.preventDefault(); dz.classList.add("drag"); });
+  dz.addEventListener("dragleave", () => dz.classList.remove("drag"));
+  dz.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dz.classList.remove("drag");
+    if (e.dataTransfer.files.length) handleFile(s.kind, e.dataTransfer.files[0]);
+  });
+  input.addEventListener("change", () => { if (input.files.length) handleFile(s.kind, input.files[0]); });
+}
+
+updateReadyCount();
+
+}
 </script>
 </body>
 </html>

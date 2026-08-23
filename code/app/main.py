@@ -93,6 +93,7 @@ def root():
             "POST /extract-footprint",
             "POST /extract-footprint-assisted",
             "POST /georeference",
+            "POST /ingest",
         ],
         "viewer": "/viewer",
         "viewer3d": "/viewer3d",
@@ -277,6 +278,31 @@ def georeference(req: GeoreferenceRequest):
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    return result
+
+
+@app.post("/ingest")
+async def ingest(file: UploadFile = File(...), kind: str = Query(...)):
+    """Records a real uploaded file for one of the PS's 6 input types and
+    returns real metadata (filename, size, content-type) - powers the
+    Data Ingestion page's upload cards. Only drone/satellite imagery gets
+    real processing (the footprint extraction pipeline); the other 5
+    types are captured for real but not parsed (no LiDAR/CAD/GIS/DEM
+    libraries in this prototype) - the response is honest about that."""
+    content = await file.read()
+    result = {
+        "kind": kind,
+        "filename": file.filename,
+        "size_bytes": len(content),
+        "content_type": file.content_type,
+        "processed": False,
+    }
+    if kind == "drone_imagery":
+        try:
+            result["extraction"] = footprint_extraction.extract_footprint(content)
+            result["processed"] = True
+        except ValueError as e:
+            result["extraction_error"] = str(e)
     return result
 
 
