@@ -151,11 +151,29 @@ without re-uploading. The result overlays directly on the source image so
 you can see exactly what was detected, plus the raw `[[x,y], ...]`
 polygon to copy out. Powered by `POST /extract-footprint`.
 
-This is deliberately **fully automatic** (no manual corner-clicking) per
-the PS's own suggested approach ("OpenCV contours") — which means it can
-be thrown off by low contrast, shadows, trees, or several buildings of
-similar size in one frame. Crop the source image tightly around just the
-target building for the most reliable result.
+**Two modes**, both real geometry processing (no hardcoded output):
+
+- **Automatic** (edge detection) — per the PS's own suggested approach.
+  Works well on a clean, high-contrast, tightly-cropped single building.
+  Struggles on busy real photos (dense trees, low contrast, multiple
+  similar-sized structures in frame) where nothing stands out sharply
+  enough for pure edge detection to isolate.
+- **Assisted** (drag a rectangle) — for the busy/hazy real photos where
+  automatic mode fails. You drag a rough rectangle around the building
+  (doesn't need to be precise, just contain it); [GrabCut](https://docs.opencv.org/4.x/dd/dd7/tutorial_grabcut.html)
+  then models actual foreground/background color distributions to refine
+  that into an accurate outline — much more robust than edge detection
+  alone on a real satellite screenshot with mixed roof materials and
+  similar-toned surrounding trees. `extract_footprint_assisted` in
+  `app/footprint_extraction.py` / `POST /extract-footprint-assisted`.
+
+Real-world validation: automatic mode failed on an actual Chennai
+Institute of Technology satellite screenshot (comb-shaped building, solar
+panel roofing, hazy lighting, tree cover of similar tone) — six different
+parameter/preprocessing attempts all produced a frame-spanning blob
+instead of a building outline. Assisted mode correctly traced the
+building's actual footprint, including both internal courtyards, on the
+first try.
 
 ## Real map viewer (`/viewer-map`)
 

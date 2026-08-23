@@ -47,6 +47,13 @@
   .slider-row input[type=range] { width: 160px; }
   .slider-row .val { width: 34px; text-align: right; font-family: monospace; color: var(--text); }
 
+  #mode-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+  #mode-tabs button { background: var(--panel); color: var(--text-dim); border: 1px solid var(--panel-border);
+    border-radius: 999px; padding: 6px 14px; font-size: 12.5px; cursor: pointer; }
+  #mode-tabs button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  #canvas-wrap.assisted #overlay { pointer-events: auto; cursor: crosshair; }
+  #assist-hint { display: none; font-size: 12px; color: var(--accent); margin-top: 8px; }
+
   #right h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-dim); margin: 0 0 10px; }
   #status { font-size: 13px; line-height: 1.6; color: var(--text-dim); }
   #status .ok { color: #2e7d32; font-weight: 600; }
@@ -64,9 +71,12 @@
 <div id="app">
   <div id="left">
     <h1>Building Footprint Extraction</h1>
-    <div class="sub">PS Stage 3A: image in, 2D footprint polygon out. Upload a top-down (drone/satellite)
-      image cropped reasonably tightly around one building for best results — OpenCV auto-detects the
-      outline, no manual tracing.</div>
+    <div class="sub">PS Stage 3A: image in, 2D footprint polygon out.</div>
+
+    <div id="mode-tabs">
+      <button id="tab-auto" class="active">Automatic (edge detection)</button>
+      <button id="tab-assist">Assisted (drag a box)</button>
+    </div>
 
     <div id="dropzone">
       <div class="icon">⬆</div>
@@ -79,20 +89,23 @@
       <img id="preview" />
       <svg id="overlay"></svg>
     </div>
+    <div id="assist-hint">Drag a rectangle roughly around the building — it doesn't need to be precise, just contain the whole thing.</div>
 
     <div class="controls">
       <button id="extract-btn" disabled>Extract footprint</button>
       <button class="secondary" id="reset-btn" style="display:none">Choose another image</button>
     </div>
-    <div class="slider-row">
-      <span>Edge sensitivity</span>
-      <input type="range" id="sigma" min="0.1" max="0.7" step="0.01" value="0.33" />
-      <span class="val" id="sigma-val">0.33</span>
-    </div>
-    <div class="slider-row">
-      <span>Min area %</span>
-      <input type="range" id="minarea" min="0" max="0.2" step="0.005" value="0.015" />
-      <span class="val" id="minarea-val">1.5%</span>
+    <div id="auto-controls">
+      <div class="slider-row">
+        <span>Edge sensitivity</span>
+        <input type="range" id="sigma" min="0.1" max="0.7" step="0.01" value="0.33" />
+        <span class="val" id="sigma-val">0.33</span>
+      </div>
+      <div class="slider-row">
+        <span>Min area %</span>
+        <input type="range" id="minarea" min="0" max="0.2" step="0.005" value="0.015" />
+        <span class="val" id="minarea-val">1.5%</span>
+      </div>
     </div>
   </div>
 
@@ -119,6 +132,74 @@ const minareaInput = document.getElementById("minarea");
 const minareaVal = document.getElementById("minarea-val");
 
 let currentFile = null;
+let mode = "auto";
+let rectSel = null; // {x,y,w,h} in natural image pixels
+let dragStart = null;
+
+const tabAuto = document.getElementById("tab-auto");
+const tabAssist = document.getElementById("tab-assist");
+const autoControls = document.getElementById("auto-controls");
+const assistHint = document.getElementById("assist-hint");
+
+function setMode(m) {
+  mode = m;
+  tabAuto.classList.toggle("active", m === "auto");
+  tabAssist.classList.toggle("active", m === "assist");
+  autoControls.style.display = m === "auto" ? "block" : "none";
+  assistHint.style.display = m === "assist" ? "block" : "none";
+  canvasWrap.classList.toggle("assisted", m === "assist");
+  extractBtn.textContent = m === "auto" ? "Extract footprint" : "Refine selection";
+  rectSel = null;
+  overlay.innerHTML = "";
+  updateExtractEnabled();
+}
+tabAuto.addEventListener("click", () => setMode("auto"));
+tabAssist.addEventListener("click", () => setMode("assist"));
+
+function updateExtractEnabled() {
+  extractBtn.disabled = !currentFile || (mode === "assist" && !rectSel);
+}
+
+function imgToNatural(evt) {
+  const rect = preview.getBoundingClientRect();
+  const scaleX = preview.naturalWidth / rect.width;
+  const scaleY = preview.naturalHeight / rect.height;
+  return [(evt.clientX - rect.left) * scaleX, (evt.clientY - rect.top) * scaleY];
+}
+
+overlay.addEventListener("mousedown", (e) => {
+  if (mode !== "assist" || !currentFile) return;
+  dragStart = imgToNatural(e);
+  rectSel = null;
+});
+window.addEventListener("mousemove", (e) => {
+  if (mode !== "assist" || !dragStart) return;
+  const [x2, y2] = imgToNatural(e);
+  const x = Math.min(dragStart[0], x2), y = Math.min(dragStart[1], y2);
+  const w = Math.abs(x2 - dragStart[0]), h = Math.abs(y2 - dragStart[1]);
+  rectSel = { x, y, w, h };
+  drawRectOverlay(rectSel, preview.naturalWidth, preview.naturalHeight);
+});
+window.addEventListener("mouseup", () => {
+  if (mode !== "assist") return;
+  dragStart = null;
+  updateExtractEnabled();
+});
+
+function drawRectOverlay(r, imgW, imgH) {
+  overlay.innerHTML = "";
+  overlay.setAttribute("viewBox", `0 0 ${imgW} ${imgH}`);
+  overlay.setAttribute("preserveAspectRatio", "none");
+  const ns = "http://www.w3.org/2000/svg";
+  const rectEl = document.createElementNS(ns, "rect");
+  rectEl.setAttribute("x", r.x); rectEl.setAttribute("y", r.y);
+  rectEl.setAttribute("width", r.w); rectEl.setAttribute("height", r.h);
+  rectEl.setAttribute("fill", "rgba(23,179,163,0.15)");
+  rectEl.setAttribute("stroke", "#0d7d71");
+  rectEl.setAttribute("stroke-width", Math.max(2, imgW * 0.003));
+  rectEl.setAttribute("stroke-dasharray", "8 5");
+  overlay.appendChild(rectEl);
+}
 
 dropzone.addEventListener("click", () => fileInput.click());
 dropzone.addEventListener("dragover", (e) => { e.preventDefault(); dropzone.classList.add("drag"); });
@@ -132,24 +213,28 @@ fileInput.addEventListener("change", () => { if (fileInput.files.length) loadFil
 
 function loadFile(file) {
   currentFile = file;
+  rectSel = null;
   const url = URL.createObjectURL(file);
   preview.src = url;
   canvasWrap.style.display = "block";
-  extractBtn.disabled = false;
   resetBtn.style.display = "inline-block";
   overlay.innerHTML = "";
-  statusEl.innerHTML = `Loaded <b>${file.name}</b> — click "Extract footprint" to run detection.`;
+  statusEl.innerHTML = mode === "auto"
+    ? `Loaded <b>${file.name}</b> — click "Extract footprint" to run detection.`
+    : `Loaded <b>${file.name}</b> — drag a rectangle around the building, then click "Refine selection".`;
   resultBody.innerHTML = "";
+  updateExtractEnabled();
 }
 
 resetBtn.addEventListener("click", () => {
   currentFile = null;
+  rectSel = null;
   fileInput.value = "";
   canvasWrap.style.display = "none";
-  extractBtn.disabled = true;
   resetBtn.style.display = "none";
   statusEl.textContent = "Upload an image to begin.";
   resultBody.innerHTML = "";
+  updateExtractEnabled();
 });
 
 sigmaInput.addEventListener("input", () => { sigmaVal.textContent = sigmaInput.value; });
@@ -157,34 +242,42 @@ minareaInput.addEventListener("input", () => { minareaVal.textContent = (minarea
 
 extractBtn.addEventListener("click", async () => {
   if (!currentFile) return;
+  if (mode === "assist" && !rectSel) return;
   extractBtn.disabled = true;
-  statusEl.innerHTML = "Running edge detection…";
-  overlay.innerHTML = "";
+  statusEl.innerHTML = mode === "auto" ? "Running edge detection…" : "Running GrabCut refinement…";
 
   const form = new FormData();
   form.append("file", currentFile);
-  const params = new URLSearchParams({ sigma: sigmaInput.value, min_area_frac: minareaInput.value });
+  const url = mode === "auto"
+    ? `/extract-footprint?${new URLSearchParams({ sigma: sigmaInput.value, min_area_frac: minareaInput.value })}`
+    : `/extract-footprint-assisted?${new URLSearchParams({
+        x: rectSel.x, y: rectSel.y, w: rectSel.w, h: rectSel.h,
+      })}`;
 
   try {
-    const res = await fetch(`/extract-footprint?${params}`, { method: "POST", body: form });
+    const res = await fetch(url, { method: "POST", body: form });
     if (!res.ok) throw new Error(`server returned ${res.status}`);
     const data = await res.json();
     render(data);
   } catch (err) {
     statusEl.innerHTML = `<span class="bad">Failed:</span> ${err.message}`;
   } finally {
-    extractBtn.disabled = false;
+    updateExtractEnabled();
   }
 });
 
 function render(data) {
   if (!data.found || data.polygon.length < 3) {
-    statusEl.innerHTML = `<span class="bad">No plausible building outline found.</span> Try lowering "min area %" or adjusting sensitivity, or use a more tightly cropped image.`;
+    statusEl.innerHTML = mode === "auto"
+      ? `<span class="bad">No plausible building outline found.</span> Try lowering "min area %" or adjusting sensitivity, or switch to "Assisted" mode.`
+      : `<span class="bad">GrabCut found nothing usable in that selection.</span> Try dragging a slightly larger rectangle.`;
     resultBody.innerHTML = "";
     return;
   }
 
-  statusEl.innerHTML = `<span class="ok">Footprint detected.</span> ${data.candidate_count} candidate contour(s) considered.`;
+  statusEl.innerHTML = mode === "auto"
+    ? `<span class="ok">Footprint detected.</span> ${data.candidate_count} candidate contour(s) considered.`
+    : `<span class="ok">Footprint refined.</span>`;
 
   resultBody.innerHTML = `
     <div class="stat-grid">

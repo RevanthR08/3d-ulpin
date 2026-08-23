@@ -75,6 +75,7 @@ def root():
             "/geo-site-plan",
             "/processing-status",
             "POST /extract-footprint",
+            "POST /extract-footprint-assisted",
         ],
         "viewer": "/viewer",
         "viewer3d": "/viewer3d",
@@ -223,6 +224,24 @@ async def extract_footprint(
     content = await file.read()
     try:
         result = footprint_extraction.extract_footprint(content, sigma=sigma, min_area_frac=min_area_frac)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return result
+
+
+@app.post("/extract-footprint-assisted")
+async def extract_footprint_assisted(
+    file: UploadFile = File(...),
+    x: float = Query(...), y: float = Query(...),
+    w: float = Query(...), h: float = Query(...),
+):
+    """Assisted mode: caller draws a rough rectangle around the building
+    (x,y,w,h in image pixel coords); GrabCut refines it into an accurate
+    outline. Far more robust than pure edge detection on busy/hazy real
+    photos. Powers /extract's rectangle-select mode."""
+    content = await file.read()
+    try:
+        result = footprint_extraction.extract_footprint_assisted(content, (x, y, w, h))
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     return result
