@@ -13,13 +13,11 @@ const NAV_ITEMS = [
   { group: "Registry", page: "index", label: "Command Center", href: "/portal/", roles: ["admin", "user"] },
   { group: "Registry", page: "ulpin", label: "ULPIN Registry", href: "/portal/ulpin.html", roles: ["admin", "user"] },
   { group: "Registry", page: "analytics", label: "Analytics", href: "/portal/analytics.html", roles: ["admin", "user"] },
-  { group: "Spatial Views", label: "3D Spatial Registry", href: "/viewer3d/", roles: ["admin", "user"], external: true },
-  { group: "Spatial Views", label: "2D Site Plan", href: "/viewer/", roles: ["admin", "user"], external: true },
-  { group: "Spatial Views", label: "Real-World Map", href: "/viewer-map/", roles: ["admin", "user"], external: true },
   { group: "Administration", page: "ingestion", label: "Data Ingestion", href: "/portal/ingestion.html", roles: ["admin"] },
   { group: "Administration", page: "processing", label: "AI Processing", href: "/portal/processing.html", roles: ["admin"] },
   { group: "Administration", page: "validation", label: "Spatial Validation", href: "/portal/validation.html", roles: ["admin"] },
   { group: "Administration", label: "Footprint Extraction Tool", href: "/extract/", roles: ["admin"], external: true },
+  { group: "Spatial Views", page: "spatial", label: "3D / 2D Spatial Views", href: "/portal/spatial.html", roles: ["admin", "user"] },
 ];
 
 function getAuth() {

@@ -41,11 +41,16 @@ not-parsed, since this prototype has no LiDAR/CAD/GIS/DEM libraries -
 nothing about them is faked as processed. The Spatial Validation page is
 likewise genuinely computed, not mocked.
 
-The 3D/2D/real-map viewers and the footprint extraction tool are
-deliberately **not** rebuilt inside the portal - the sidebar links out to
-the existing, already-verified `/viewer3d`, `/viewer`, `/viewer-map`, and
-`/extract` pages instead, to avoid re-implementing tested Three.js/
-MapLibre/OpenCV work inside a new shell under time pressure.
+Sidebar groups, in order: **Registry** (Command Center, ULPIN Registry,
+Analytics), **Administration** (Data Ingestion, AI Processing, Spatial
+Validation, Footprint Extraction Tool - admin-only), **Spatial Views**.
+The footprint extraction tool is deliberately **not** rebuilt inside the
+portal - that sidebar link goes out to the existing, already-verified
+`/extract` page. The 3D/2D/real-map spatial views (`/viewer3d`, `/viewer`,
+`/viewer-map` - all still fully working standalone) are intentionally
+**not** linked from the portal's Spatial Views item either - that's a
+placeholder (`app/staticsite/spatial.html`) since the team's own
+spatial-visualization integration will replace it.
 
 Open **http://127.0.0.1:8000/viewer/** for a 2D campus-style site plan —
 curved roads with sidewalks, walkways connecting every building to the
