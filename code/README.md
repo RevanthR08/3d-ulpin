@@ -184,7 +184,14 @@ nothing legally. Once a footprint is extracted, `/extract` shows a
 image (ideally 2 corners of the building), then enter each point's real
 lat/lon (e.g. right-click the same spot in Google Maps to read its
 coordinates - this *is* PS Input #5, "GNSS/CORS-based coordinates," which
-nothing else in this pipeline had used until now). `app/georeference.py`
+nothing else in this pipeline had used until now). Both decimal degrees
+(`12.971428`) and DMS (`12°58'17.14"N`) are accepted directly - DMS is
+what Google Earth/Maps often shows, and a plain `parseFloat()` on a DMS
+string silently truncates to just the leading integer degree (this broke
+in exactly that way during testing, with both real reference points
+collapsing to ~`(12, 80)` and area coming back as 0 - fixed with a
+proper DMS-aware parser plus live "parsed as ..." feedback on each
+input, rather than silently misinterpreting it). `app/georeference.py`
 fits an exact similarity transform (uniform scale + rotation +
 translation - fully determined by 2 point correspondences, no
 least-squares needed) from those 2 pixel↔lat/lon pairs, then:

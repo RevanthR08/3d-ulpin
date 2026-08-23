@@ -67,6 +67,10 @@
   .ref-row .latlon-inputs { display: flex; gap: 6px; }
   .ref-row .latlon-inputs input { width: 50%; font-size: 12px; padding: 5px 7px; border: 1px solid var(--panel-border);
     border-radius: 5px; }
+  .ref-row .latlon-inputs input.invalid { border-color: #c0392b; }
+  .parsed-hint { font-size: 10.5px; margin-top: 5px; font-family: monospace; min-height: 14px; }
+  .parsed-hint.ok { color: #2e7d32; }
+  .parsed-hint.bad { color: #c0392b; }
   #geo-compute-btn { width: 100%; margin-top: 4px; }
   #geo-result { margin-top: 12px; }
   #geo-result .stat-grid { grid-template-columns: 1fr 1fr; }
@@ -135,23 +139,26 @@
       <h3>Georeference (PS Input #5)</h3>
       <div class="geo-sub">Turn this into a real land parcel: click "Pick" then click 2 points on the image
         (ideally 2 corners of the building), and enter each point's real lat/lon — e.g. right-click the same
-        spot in Google Maps to get its coordinates.</div>
+        spot in Google Maps to get its coordinates. Decimal (12.971428) or
+        DMS (12°58'17.14"N) both work.</div>
 
       <div class="ref-row">
         <div class="ref-head"><b>Point 1</b><button class="pick" id="pick1">Pick on image</button></div>
         <div class="px-label" id="px1-label">not set</div>
         <div class="latlon-inputs">
-          <input type="text" id="lat1" placeholder="Latitude, e.g. 12.971428" />
-          <input type="text" id="lon1" placeholder="Longitude, e.g. 80.043792" />
+          <input type="text" id="lat1" placeholder="Lat: 12.971428 or 12°58'17.14&quot;N" />
+          <input type="text" id="lon1" placeholder="Lon: 80.043792 or 80°02'37.65&quot;E" />
         </div>
+        <div class="parsed-hint" id="parsed1"></div>
       </div>
       <div class="ref-row">
         <div class="ref-head"><b>Point 2</b><button class="pick" id="pick2">Pick on image</button></div>
         <div class="px-label" id="px2-label">not set</div>
         <div class="latlon-inputs">
-          <input type="text" id="lat2" placeholder="Latitude, e.g. 12.971019" />
-          <input type="text" id="lon2" placeholder="Longitude, e.g. 80.043594" />
+          <input type="text" id="lat2" placeholder="Lat: 12.971019 or 12°58'15.67&quot;N" />
+          <input type="text" id="lon2" placeholder="Lon: 80.043594 or 80°02'36.94&quot;E" />
         </div>
+        <div class="parsed-hint" id="parsed2"></div>
       </div>
 
       <button id="geo-compute-btn" disabled>Compute real area</button>
@@ -441,25 +448,72 @@ function drawRefMarker(n, x, y) {
   overlay.appendChild(g);
 }
 
+// Accepts plain decimal degrees ("12.971428", "-80.043792") or DMS
+// ("12°58'17.14"N", also tolerant of spaces/letters instead of °'" and a
+// leading -/+ instead of a direction letter). Returns NaN if unparseable -
+// callers must check for that rather than silently treating it as 0,
+// which is what plain parseFloat() did (it read "12" out of "12°58'..."
+// and stopped at the ° symbol, silently truncating real coordinates).
+function parseCoord(raw) {
+  const s = (raw || "").trim();
+  if (/^[+-]?\d+(\.\d+)?$/.test(s)) return parseFloat(s);
+
+  const m = s.match(/^([+-]?\d+(?:\.\d+)?)[°ds]?\s*(?:(\d+(?:\.\d+)?)['ms]?\s*(?:(\d+(?:\.\d+)?)["s]?)?)?\s*([NSEW])?$/i);
+  if (!m) return NaN;
+  const [, deg, min, sec, dir] = m;
+  const sign = dir ? (/[SW]/i.test(dir) ? -1 : 1) : (deg.trim().startsWith("-") ? -1 : 1);
+  const dd = Math.abs(parseFloat(deg)) + (min ? parseFloat(min) / 60 : 0) + (sec ? parseFloat(sec) / 3600 : 0);
+  return dd * sign;
+}
+
 ["lat1", "lon1", "lat2", "lon2"].forEach((id) => {
-  document.getElementById(id).addEventListener("input", updateGeoEnabled);
+  document.getElementById(id).addEventListener("input", () => { validateCoordInputs(); updateGeoEnabled(); });
 });
+
+function validateCoordInputs() {
+  let allValid = true;
+  for (const n of [1, 2]) {
+    const latEl = document.getElementById(`lat${n}`), lonEl = document.getElementById(`lon${n}`);
+    const hint = document.getElementById(`parsed${n}`);
+    const lat = parseCoord(latEl.value), lon = parseCoord(lonEl.value);
+    const latOk = latEl.value === "" || !isNaN(lat);
+    const lonOk = lonEl.value === "" || !isNaN(lon);
+    latEl.classList.toggle("invalid", !latOk);
+    lonEl.classList.toggle("invalid", !lonOk);
+    if (latEl.value && lonEl.value) {
+      if (latOk && lonOk) {
+        hint.textContent = `parsed as ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+        hint.className = "parsed-hint ok";
+      } else {
+        hint.textContent = "couldn't parse — use decimal (12.9714) or DMS (12°58'17.14\"N)";
+        hint.className = "parsed-hint bad";
+        allValid = false;
+      }
+    } else {
+      hint.textContent = "";
+    }
+    if (!latOk || !lonOk) allValid = false;
+  }
+  return allValid;
+}
 
 function updateGeoEnabled() {
   const lat1 = document.getElementById("lat1").value, lon1 = document.getElementById("lon1").value;
   const lat2 = document.getElementById("lat2").value, lon2 = document.getElementById("lon2").value;
-  geoComputeBtn.disabled = !(refPoints[1] && refPoints[2] && lat1 && lon1 && lat2 && lon2);
+  const filled = refPoints[1] && refPoints[2] && lat1 && lon1 && lat2 && lon2;
+  geoComputeBtn.disabled = !filled || !validateCoordInputs();
 }
 
 geoComputeBtn.addEventListener("click", async () => {
+  if (!validateCoordInputs()) return;
   geoComputeBtn.disabled = true;
   geoResult.innerHTML = `<div style="font-size:12px;color:var(--text-dim)">Computing…</div>`;
 
   const body = {
     polygon: window.__polygon,
     ref_points: [
-      { px: refPoints[1].px, py: refPoints[1].py, lat: parseFloat(document.getElementById("lat1").value), lon: parseFloat(document.getElementById("lon1").value) },
-      { px: refPoints[2].px, py: refPoints[2].py, lat: parseFloat(document.getElementById("lat2").value), lon: parseFloat(document.getElementById("lon2").value) },
+      { px: refPoints[1].px, py: refPoints[1].py, lat: parseCoord(document.getElementById("lat1").value), lon: parseCoord(document.getElementById("lon1").value) },
+      { px: refPoints[2].px, py: refPoints[2].py, lat: parseCoord(document.getElementById("lat2").value), lon: parseCoord(document.getElementById("lon2").value) },
     ],
   };
 
