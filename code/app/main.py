@@ -68,6 +68,7 @@ def startup():
     _state["project"] = geo.make_projector(origin["latitude"], origin["longitude"])
     _state["site_plan"] = site_plan_mod.generate_site_plan(society["buildings"])
     _state["geo_site_plan"] = site_plan_mod.generate_geo_site_plan(society["buildings"])
+    _state["blender_export"] = site_plan_mod.generate_blender_export(society["buildings"])
 
 
 app.mount("/viewer", StaticFiles(directory=STATIC_DIR, html=True), name="viewer")
@@ -89,6 +90,7 @@ def root():
             "/footprints",
             "/site-plan",
             "/geo-site-plan",
+            "/blender-export",
             "/processing-status",
             "POST /extract-footprint",
             "POST /extract-footprint-assisted",
@@ -319,6 +321,16 @@ def get_geo_site_plan():
     """Real [lat, lon] version of the site plan for a real map library
     (Leaflet) to render over an actual OSM basemap - powers /viewer-map."""
     return _state["geo_site_plan"]
+
+
+@app.get("/blender-export")
+def get_blender_export():
+    """Real, exact building footprint polygons (local metres) + real
+    per-floor elevations, for a script to generate 3D geometry
+    programmatically - no manual coordinate entry. See
+    site_plan.generate_blender_export for details, and
+    code/blender_import.py for a ready-to-run consumer script."""
+    return _state["blender_export"]
 
 
 @app.get("/processing-status")

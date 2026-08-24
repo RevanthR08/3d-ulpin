@@ -18,6 +18,29 @@ python -m uvicorn app.main:app --reload --port 8000
 Startup prints a topology validation report to the console. The API is
 then live at `http://127.0.0.1:8000` (CORS is open to any origin).
 
+## Blender export (`/blender-export`) — automated 2D→3D handoff
+
+For teammates generating 3D in Blender (e.g. via a Cursor-assisted
+script) instead of the web viewers: `GET /blender-export` returns every
+building's real footprint polygon (local metres, +x=east/+y=north, at
+its real road-verified position from `GEO_BUILDING_OFFSETS`) plus every
+floor's real base/top elevation and full per-unit data (owner, type,
+legal status) - everything a script needs to generate accurate geometry
+programmatically, with zero manual coordinate entry.
+
+`blender_import.py` (repo root of `code/`) is a ready-to-run consumer:
+open it in Blender's Scripting tab and run it (or `blender --background
+--python blender_import.py`). It fetches from the running API, falls
+back to `blender_export.json` (a committed snapshot) if the API isn't
+reachable, and generates one collection per building with one mesh
+object per floor - each extruded via `bmesh` to that floor's exact real
+elevation range, tagged with custom properties (`ulpin`, `building_id`,
+`floor_label`, `units` as a JSON string of everyone on that floor) so the
+ULPIN/ownership data travels with the geometry instead of living
+separately. Not runnable/testable outside Blender (needs `bpy`) - written
+against documented `bmesh` extrude patterns but not executed in this
+environment, since Blender isn't installed here.
+
 ## Portal (`/portal`) — the main demo entry point
 
 A professional multi-page front-end tying the whole project together:

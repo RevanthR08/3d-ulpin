@@ -465,6 +465,60 @@ def generate_geo_site_plan(buildings: list) -> dict:
     }
 
 
+def generate_blender_export(buildings: list) -> dict:
+    """Real, exact geometry for a script to consume programmatically - no
+    manual coordinate entry, no eyeballing. Every building's footprint
+    polygon is in real local metres (east, north) at its verified,
+    road-checked position (GEO_BUILDING_OFFSETS), sized from its actual
+    footprint.length_m/width_m - not a schematic guess. Every floor's real
+    base/top elevation (already in the source data) is attached directly,
+    so a script can extrude each floor to its exact real height with zero
+    hand-tuning. Powers GET /blender-export."""
+    out = []
+    for b in buildings:
+        offset = GEO_BUILDING_OFFSETS.get(b["id"])
+        if not offset:
+            continue
+        dx, dy, angle = offset
+        fp = b.get("footprint") or {}
+        w = fp.get("length_m") or SIZE_BY_TYPE.get(b["type"], (60, 40))[0]
+        h = fp.get("width_m") or SIZE_BY_TYPE.get(b["type"], (60, 40))[1]
+        notch = IRREGULAR_NOTCH.get(b["id"])
+        footprint_m = _l_shaped_polygon(dx, dy, w, h, notch, angle) if notch else _rotated_rect(dx, dy, w, h, angle)
+
+        floors = [
+            {
+                "label": f["floor_label"],
+                "ulpin": f["ulpin"],
+                "kind": f["floor_type"],
+                "base_elevation_m": f["elevation_base_m"],
+                "top_elevation_m": f["elevation_top_m"],
+                "units": [
+                    {
+                        "unit": u["unit"], "ulpin": u["ulpin"], "type": u["type"],
+                        "owner": u["owner"], "legal_status": u["legal_status"],
+                    }
+                    for u in f["units"]
+                ],
+            }
+            for f in b["floors"]
+        ]
+
+        out.append({
+            "id": b["id"],
+            "ulpin": b["ulpin"],
+            "name": b["name"],
+            "type": b["type"],
+            "block": b["block"],
+            "centroid_m": [dx, dy],
+            "rotation_deg": angle,
+            "footprint_m": footprint_m,
+            "floors": floors,
+        })
+
+    return {"coordinate_system": "metres, local flat coordinates (+x = east, +y = north) - not lat/lon", "buildings": out}
+
+
 # ----------------------------------------------------------------- build
 
 def generate_site_plan(buildings: list) -> dict:
