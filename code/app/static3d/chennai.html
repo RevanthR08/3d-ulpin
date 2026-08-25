@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chennai T. Nagar — Textured Buildings + Interiors</title>
+  <style>
+    :root {
+      --panel: rgba(255,255,255,0.95);
+      --border: #b7c9ae;
+      --text: #1a2420;
+      --text-dim: #5a6b5e;
+      --accent: #0a9d8f;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #8fb4d8; color: var(--text);
+      font-family: "Segoe UI", system-ui, sans-serif; }
+    #wrap { position: relative; width: 100vw; height: 100vh; }
+    #loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      background: #8fb4d8; z-index: 20; color: #334; font-size: 14px; }
+    #hud { position: absolute; top: 12px; left: 12px; z-index: 10; background: var(--panel);
+      border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; width: 380px; max-width: calc(100vw - 24px); }
+    #hud h1 { font-size: 14px; margin: 0 0 6px; }
+    #hud .sub { font-size: 11px; color: var(--text-dim); line-height: 1.5; }
+    #controls { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    button { font-size: 12px; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border);
+      background: #fff; cursor: pointer; }
+    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    button.active { outline: 2px solid rgba(10,157,143,0.35); border-color: var(--accent); }
+    #badge { position: absolute; right: 12px; top: 12px; z-index: 10; background: var(--panel);
+      border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; font-size: 11px; color: var(--text-dim); max-width: 280px; }
+    #badge b { color: var(--accent); }
+    #panel { position: absolute; right: 12px; top: 70px; z-index: 10; background: var(--panel);
+      border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; width: 260px;
+      font-size: 12px; display: none; }
+    #panel h2 { margin: 0 0 6px; font-size: 13px; }
+    #panel .row { color: var(--text-dim); margin: 3px 0; }
+    #tooltip { position: absolute; pointer-events: none; z-index: 15; background: rgba(255,255,255,0.96);
+      border: 1px solid var(--border); border-radius: 7px; padding: 6px 9px; font-size: 12px;
+      display: none; white-space: nowrap; box-shadow: 0 2px 10px rgba(0,0,0,0.12); }
+    kbd { display: inline-block; font-family: ui-monospace, monospace; font-size: 10px;
+      background: #eef2ea; border: 1px solid var(--border); border-radius: 4px; padding: 0 4px; color: var(--text); }
+  </style>
+</head>
+<body>
+  <div id="wrap">
+    <div id="loading">Loading Chennai T. Nagar block…</div>
+    <div id="hud">
+      <h1>Chennai T. Nagar — Full 3D / Raise / Cutaway</h1>
+      <div class="sub">
+        PBR grass + walls + roofs · per-building floors from GeoJSON · mock rooms inside.
+        <br/>Keys: <kbd>1</kbd> Full · <kbd>2</kbd> Raise · <kbd>3</kbd> Cutaway · <kbd>R</kbd> reset
+      </div>
+      <div id="controls">
+        <button id="btn-full" class="primary active" type="button">Full 3D</button>
+        <button id="btn-raise" type="button">Raise one</button>
+        <button id="btn-cut" type="button">Cutaway</button>
+        <button id="btn-reset" type="button">Reset</button>
+      </div>
+    </div>
+    <div id="badge"><b>Mode</b>: Full 3D · click a building</div>
+    <div id="panel"></div>
+    <div id="tooltip"></div>
+  </div>
+
+  <script type="importmap">
+  { "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  } }
+  </script>
+  <script type="module">
+    import * as THREE from "three";
+    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+    import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+    const MODE = { FULL: "full", RAISE: "raise", CUT: "cut" };
+    let mode = MODE.FULL;
+    let selected = null;
+
+    let scene, camera, renderer, controls, raycaster, pointer;
+    let buildingRoots = [];
+    let buildingMeshes = [];
+    let targetScale = new Map();
+    let cutawayActive = false;
+
+    function setMode(next) {
+      mode = next;
+      document.getElementById("btn-full").classList.toggle("active", mode === MODE.FULL);
+      document.getElementById("btn-raise").classList.toggle("active", mode === MODE.RAISE);
+      document.getElementById("btn-cut").classList.toggle("active", mode === MODE.CUT);
+      const labels = { full: "Full 3D", raise: "Raise one", cut: "Cutaway interiors" };
+      document.getElementById("badge").innerHTML =
+        `<b>Mode</b>: ${labels[mode]} · click buildings`;
+
+      if (mode === MODE.FULL) {
+        buildingRoots.forEach(o => setTarget(o, 1.0));
+        applyCutaway(null);
+      } else if (mode === MODE.RAISE) {
+        buildingRoots.forEach(o => setTarget(o, selected === o ? 1.0 : 0.04));
+        applyCutaway(null);
+      } else {
+        buildingRoots.forEach(o => setTarget(o, 1.0));
+        applyCutaway(selected);
+      }
+    }
+
+    function setTarget(obj, y) {
+      targetScale.set(obj.uuid, y);
+    }
+
+    function resetAll() {
+      selected = null;
+      document.getElementById("panel").style.display = "none";
+      setMode(mode === MODE.CUT ? MODE.FULL : mode);
+      if (mode === MODE.RAISE) buildingRoots.forEach(o => setTarget(o, 0.04));
+      applyCutaway(null);
+    }
+
+    function applyCutaway(root) {
+      cutawayActive = !!root;
+      for (const b of buildingRoots) {
+        b.traverse(o => {
+          if (!o.isMesh) return;
+          const n = o.name || "";
+          const isShell = n.includes("_SHELL") || n.includes("_PARAPET") || n.includes("_W");
+          const isRoofSlab = /_FLOOR_\d+$/.test(n) && n.endsWith(`_FLOOR_${b.userData.floors ?? ""}`.replace("__", "_"));
+          // Hide outer shell / windows / parapet on selected so interiors show
+          if (root && b === root) {
+            if (isShell) o.visible = false;
+            else o.visible = true;
+            // fade top roof slab of selected
+            if (n.includes("_FLOOR_") && n.endsWith(`_FLOOR_${b.userData.floors}`)) {
+              o.visible = false;
+            }
+          } else {
+            o.visible = true;
+          }
+        });
+      }
+    }
+
+    function showPanel(root) {
+      const el = document.getElementById("panel");
+      const floors = root.userData.floors ?? root.userData?.floors ?? "—";
+      const height = root.userData.height_m ?? "—";
+      el.style.display = "block";
+      el.innerHTML = `
+        <h2>${root.name}</h2>
+        <div class="row"><b>Floors</b>: ${floors}</div>
+        <div class="row"><b>Height</b>: ${typeof height === "number" ? height.toFixed(1) + " m" : height}</div>
+        <div class="row">Mock rooms on ground${Number(floors) >= 3 ? " + mid floor" : ""}</div>
+        <div class="row" style="margin-top:8px;font-size:11px">Press <kbd>3</kbd> for cutaway interiors</div>
+      `;
+    }
+
+    function setup() {
+      const wrap = document.getElementById("wrap");
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x87b7e0);
+      // NO fog — mist was washing out the site
+
+      camera = new THREE.PerspectiveCamera(45, wrap.clientWidth / wrap.clientHeight, 0.5, 8000);
+      camera.position.set(180, 140, 320);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.15;
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      wrap.appendChild(renderer.domElement);
+
+      controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.08;
+      controls.screenSpacePanning = true;
+      controls.maxPolarAngle = Math.PI * 0.49;
+      controls.minDistance = 8;
+      controls.maxDistance = 2500;
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+      scene.add(new THREE.HemisphereLight(0xd8ecff, 0x6a7a50, 0.65));
+      const sun = new THREE.DirectionalLight(0xfff2d8, 1.55);
+      sun.position.set(280, 320, 160);
+      sun.castShadow = true;
+      sun.shadow.mapSize.set(2048, 2048);
+      sun.shadow.camera.left = -700;
+      sun.shadow.camera.right = 700;
+      sun.shadow.camera.top = 700;
+      sun.shadow.camera.bottom = -700;
+      sun.shadow.camera.far = 1600;
+      sun.shadow.bias = -0.00015;
+      scene.add(sun);
+
+      raycaster = new THREE.Raycaster();
+      pointer = new THREE.Vector2();
+      renderer.domElement.addEventListener("mousemove", onHover);
+      renderer.domElement.addEventListener("click", onClick);
+      window.addEventListener("resize", () => {
+        camera.aspect = wrap.clientWidth / wrap.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+      });
+
+      document.getElementById("btn-full").addEventListener("click", () => setMode(MODE.FULL));
+      document.getElementById("btn-raise").addEventListener("click", () => setMode(MODE.RAISE));
+      document.getElementById("btn-cut").addEventListener("click", () => {
+        if (!selected && buildingRoots[0]) selected = buildingRoots[0];
+        setMode(MODE.CUT);
+        if (selected) showPanel(selected);
+      });
+      document.getElementById("btn-reset").addEventListener("click", () => resetAll());
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") resetAll();
+        if (e.key === "r" || e.key === "R") resetAll();
+        if (e.key === "1") setMode(MODE.FULL);
+        if (e.key === "2") setMode(MODE.RAISE);
+        if (e.key === "3") {
+          if (!selected && buildingRoots[0]) selected = buildingRoots[0];
+          setMode(MODE.CUT);
+          if (selected) showPanel(selected);
+        }
+      });
+    }
+
+    function pick(evt) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      pointer.x = ((evt.clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((evt.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+      const hits = raycaster.intersectObjects(buildingMeshes, true);
+      return hits.length ? hits[0].object : null;
+    }
+
+    function getBuildingRoot(obj) {
+      let o = obj;
+      for (let i = 0; i < 12 && o; i++) {
+        if (o.name && o.name.startsWith("BHU-3D-") && !o.name.includes("_")) return o;
+        if (o.name && /^BHU-3D-\d+$/.test(o.name)) return o;
+        o = o.parent;
+      }
+      // fallback: climb until name starts with BHU-3D- and has no SHELL/FLOOR
+      o = obj;
+      for (let i = 0; i < 12 && o; i++) {
+        if (o.name && o.name.startsWith("BHU-3D-") && !o.name.includes("_SHELL") &&
+            !o.name.includes("_FLOOR") && !o.name.includes("_ROOM") &&
+            !o.name.includes("_PARAPET") && !o.name.includes("_W")) {
+          return o;
+        }
+        o = o.parent;
+      }
+      return null;
+    }
+
+    function onHover(evt) {
+      const hit = pick(evt);
+      const tip = document.getElementById("tooltip");
+      if (!hit) {
+        tip.style.display = "none";
+        document.body.style.cursor = "default";
+        return;
+      }
+      const root = getBuildingRoot(hit);
+      if (!root) {
+        tip.style.display = "none";
+        document.body.style.cursor = "default";
+        return;
+      }
+      const floors = root.userData.floors ?? "?";
+      tip.style.display = "block";
+      tip.style.left = (evt.clientX + 14) + "px";
+      tip.style.top = (evt.clientY + 14) + "px";
+      tip.innerHTML = `<b>${root.name}</b> · ${floors} floors`;
+      document.body.style.cursor = "pointer";
+    }
+
+    function onClick(evt) {
+      const hit = pick(evt);
+      if (!hit) {
+        if (mode === MODE.RAISE) {
+          selected = null;
+          buildingRoots.forEach(o => setTarget(o, 0.04));
+          document.getElementById("panel").style.display = "none";
+        }
+        return;
+      }
+      const root = getBuildingRoot(hit);
+      if (!root) return;
+      selected = root;
+      showPanel(root);
+
+      if (mode === MODE.RAISE) {
+        buildingRoots.forEach(o => setTarget(o, o === selected ? 1.0 : 0.04));
+      } else if (mode === MODE.CUT) {
+        applyCutaway(selected);
+      }
+
+      const box = new THREE.Box3().setFromObject(root);
+      const c = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+      controls.target.lerp(c, 0.45);
+      // pull camera closer so height differences are obvious
+      const dist = Math.max(size.x, size.z, size.y) * 1.8 + 25;
+      const dir = camera.position.clone().sub(controls.target).normalize();
+      const goal = c.clone().add(dir.multiplyScalar(dist));
+      goal.y = Math.max(goal.y, c.y + size.y * 0.6 + 15);
+      camera.position.lerp(goal, 0.35);
+    }
+
+    function readCustomProps(root) {
+      // Blender custom props may land on userData
+      const floors = root.userData.floors ?? root.userData.Floors;
+      const height = root.userData.height_m ?? root.userData.height;
+      if (floors != null) root.userData.floors = Number(floors);
+      if (height != null) root.userData.height_m = Number(height);
+      // infer floors from child floor slabs if missing
+      if (root.userData.floors == null) {
+        let maxF = 0;
+        root.traverse(o => {
+          const m = /_FLOOR_(\d+)$/.exec(o.name || "");
+          if (m) maxF = Math.max(maxF, Number(m[1]));
+        });
+        if (maxF > 0) root.userData.floors = maxF;
+      }
+    }
+
+    async function loadGLB() {
+      const loader = new GLTFLoader();
+      const gltf = await loader.loadAsync("./chennai_tnagar.glb");
+      const root = gltf.scene;
+      root.traverse(o => {
+        if (o.isMesh) {
+          o.castShadow = true;
+          o.receiveShadow = true;
+          if (o.material) {
+            const mats = Array.isArray(o.material) ? o.material : [o.material];
+            for (const m of mats) {
+              if (!m) continue;
+              if (m.map) m.map.colorSpace = THREE.SRGBColorSpace;
+              m.needsUpdate = true;
+            }
+          }
+        }
+      });
+      scene.add(root);
+
+      buildingRoots = [];
+      buildingMeshes = [];
+      root.traverse(o => {
+        if (o.name && /^BHU-3D-\d+$/.test(o.name)) {
+          readCustomProps(o);
+          buildingRoots.push(o);
+          o.traverse(x => { if (x.isMesh) buildingMeshes.push(x); });
+          setTarget(o, 1.0);
+        }
+      });
+
+      const box = new THREE.Box3().setFromObject(root);
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+      controls.target.copy(center);
+      // lower, closer camera so buildings read as multi-storey not flat slabs
+      camera.position.set(
+        center.x + size.x * 0.35,
+        Math.max(40, size.y * 2.2 + 30),
+        center.z + size.z * 0.55
+      );
+      controls.update();
+
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("badge").innerHTML =
+        `<b>${buildingRoots.length}</b> buildings · heights from simulated_floors`;
+      setMode(MODE.FULL);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      for (const o of buildingRoots) {
+        const t = targetScale.get(o.uuid);
+        if (typeof t === "number") {
+          o.scale.y = THREE.MathUtils.lerp(o.scale.y, t, 0.14);
+        }
+      }
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    setup();
+    loadGLB().then(() => animate()).catch(err => {
+      document.getElementById("loading").textContent =
+        "Failed to load GLB — start API and open /viewer3d/bhu.html";
+      console.error(err);
+    });
+  </script>
+</body>
+</html>
