@@ -1,0 +1,9 @@
+# Indian City Block — SIH 26011
+# Authoritative expanded dataset: indian_city_block.json (from Blender export)
+society:
+  id: SOC-ICB-001
+  name: Indian City Block
+  source_blend: E:/Nexops-mcp-v2/nexops-mcp-V2/3dprint/indian_city_block_3d.blend
+  source_json: indian_city_block.json
+  total_buildings: 30
+  total_units: 605

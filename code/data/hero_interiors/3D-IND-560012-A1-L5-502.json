@@ -1,0 +1,100 @@
+{
+  "ulpin": "3D-IND-560012-A1-L5-502",
+  "building_id": "BLDG-001",
+  "building_name": "Tower Alpha",
+  "floor_label": "5",
+  "unit": "502",
+  "property_type": "2BHK",
+  "area_sq_m": 130.6,
+  "owner": "Kavya Pillai",
+  "legal_status": "registered",
+  "is_demo_property": true,
+  "is_hero_interior": true,
+  "interior_enrichment": {
+    "status": "demonstration_geometry",
+    "method": "adapted_floor_plan_extrusion",
+    "inspired_by": ["Swiss Dwellings apartment typology", "3D-FRONT furniture placement patterns"],
+    "disclaimer": "Demonstration interior geometry is modeled/enriched for inspection UX. Cadastral identity, ULPIN, ownership, and vertical parcel relationships remain authoritative in the platform semantic layer — not claimed as surveyed cadastral interior data."
+  },
+  "unit_local_size_m": [13.6, 9.6, 2.8],
+  "layout": "Living,Dining,Kitchen,Bedroom1,Bedroom2,Bath1,Bath2,Balcony,Hall",
+  "rooms": [
+    {
+      "id": "502-BAL",
+      "type": "balcony",
+      "name": "Balcony",
+      "area_sq_m": 8.4,
+      "footprint_local_m": [[0.0, 0.0], [7.0, 0.0], [7.0, 1.2], [0.0, 1.2]]
+    },
+    {
+      "id": "502-LIV",
+      "type": "living",
+      "name": "Living Room",
+      "area_sq_m": 33.6,
+      "footprint_local_m": [[0.0, 1.2], [7.0, 1.2], [7.0, 6.0], [0.0, 6.0]]
+    },
+    {
+      "id": "502-KIT",
+      "type": "kitchen",
+      "name": "Kitchen",
+      "area_sq_m": 13.7,
+      "footprint_local_m": [[0.0, 6.0], [3.8, 6.0], [3.8, 9.6], [0.0, 9.6]]
+    },
+    {
+      "id": "502-DIN",
+      "type": "dining",
+      "name": "Dining",
+      "area_sq_m": 11.5,
+      "footprint_local_m": [[3.8, 6.0], [7.0, 6.0], [7.0, 9.6], [3.8, 9.6]]
+    },
+    {
+      "id": "502-HAL",
+      "type": "hall",
+      "name": "Hall",
+      "area_sq_m": 11.8,
+      "footprint_local_m": [[7.0, 1.2], [8.4, 1.2], [8.4, 9.6], [7.0, 9.6]]
+    },
+    {
+      "id": "502-BED1",
+      "type": "bedroom1",
+      "name": "Bedroom 01",
+      "area_sq_m": 22.4,
+      "footprint_local_m": [[8.4, 1.2], [13.6, 1.2], [13.6, 5.5], [8.4, 5.5]]
+    },
+    {
+      "id": "502-BAT1",
+      "type": "bath",
+      "name": "Bath 01",
+      "area_sq_m": 4.9,
+      "footprint_local_m": [[8.4, 5.5], [11.0, 5.5], [11.0, 7.4], [8.4, 7.4]]
+    },
+    {
+      "id": "502-BAT2",
+      "type": "bath",
+      "name": "Bath 02",
+      "area_sq_m": 4.9,
+      "footprint_local_m": [[11.0, 5.5], [13.6, 5.5], [13.6, 7.4], [11.0, 7.4]]
+    },
+    {
+      "id": "502-BED2",
+      "type": "bedroom2",
+      "name": "Bedroom 02",
+      "area_sq_m": 11.4,
+      "footprint_local_m": [[8.4, 7.4], [13.6, 7.4], [13.6, 9.6], [8.4, 9.6]]
+    }
+  ],
+  "furniture": [
+    {"id": "f-sofa", "room_id": "502-LIV", "kind": "sofa", "size_m": [2.4, 0.75, 0.9], "pos_local_m": [2.2, 0.0, 2.4], "rot_y": 0},
+    {"id": "f-tv", "room_id": "502-LIV", "kind": "tv_console", "size_m": [1.6, 0.55, 0.4], "pos_local_m": [3.5, 0.0, 5.4], "rot_y": 0},
+    {"id": "f-coffee", "room_id": "502-LIV", "kind": "table", "size_m": [1.0, 0.4, 0.55], "pos_local_m": [3.4, 0.0, 3.5], "rot_y": 0},
+    {"id": "f-dining", "room_id": "502-DIN", "kind": "dining_table", "size_m": [1.5, 0.75, 0.9], "pos_local_m": [5.4, 0.0, 7.7], "rot_y": 0},
+    {"id": "f-counter", "room_id": "502-KIT", "kind": "counter", "size_m": [2.8, 0.9, 0.6], "pos_local_m": [1.6, 0.0, 8.9], "rot_y": 0},
+    {"id": "f-fridge", "room_id": "502-KIT", "kind": "appliance", "size_m": [0.7, 1.8, 0.7], "pos_local_m": [0.55, 0.0, 6.7], "rot_y": 0},
+    {"id": "f-bed1", "room_id": "502-BED1", "kind": "bed", "size_m": [1.8, 0.55, 2.1], "pos_local_m": [11.0, 0.0, 3.2], "rot_y": 0},
+    {"id": "f-ward1", "room_id": "502-BED1", "kind": "wardrobe", "size_m": [2.0, 2.0, 0.55], "pos_local_m": [9.5, 0.0, 4.9], "rot_y": 0},
+    {"id": "f-bed2", "room_id": "502-BED2", "kind": "bed", "size_m": [1.5, 0.5, 2.0], "pos_local_m": [11.0, 0.0, 8.5], "rot_y": 0},
+    {"id": "f-tub1", "room_id": "502-BAT1", "kind": "bath_fixture", "size_m": [1.5, 0.55, 0.7], "pos_local_m": [9.5, 0.0, 6.4], "rot_y": 0},
+    {"id": "f-tub2", "room_id": "502-BAT2", "kind": "bath_fixture", "size_m": [0.7, 0.55, 0.7], "pos_local_m": [12.3, 0.0, 6.4], "rot_y": 0},
+    {"id": "f-plant", "room_id": "502-BAL", "kind": "planter", "size_m": [0.5, 0.7, 0.5], "pos_local_m": [1.0, 0.0, 0.55], "rot_y": 0}
+  ]
+}

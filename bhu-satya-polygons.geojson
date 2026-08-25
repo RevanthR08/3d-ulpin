@@ -1,0 +1,626 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "coordinate_system": {
+      "type": "local_xy",
+      "units": "unknown (likely meters)",
+      "axis_assumption": "x=east, y=north",
+      "origin": "not provided"
+    },
+    "notes": "Coordinates look like local XY, not WGS84 lon/lat. If you can provide WGS84 EPSG:4326 instead, do it."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SITE-BOUNDARY",
+        "kind": "site_boundary",
+        "source": "auto_generated_from_building_bounds"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [48.68, -15.79],
+            [695.51, -15.79],
+            [695.51, 528.31],
+            [48.68, 528.31],
+            [48.68, -15.79]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BHU-3D-011",
+        "kind": "building",
+        "confidence": 99,
+        "simulated_floors": 4,
+        "source": "Manually corrected",
+        "active_layer": "manual corrections only"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              188.73,
+              254.49
+            ],
+            [
+              192.21,
+              280.22
+            ],
+            [
+              151.18,
+              287.17
+            ],
+            [
+              156.05,
+              347.67
+            ],
+            [
+              199.16,
+              340.72
+            ],
+            [
+              260.36,
+              334.46
+            ],
+            [
+              290.26,
+              333.76
+            ],
+            [
+              284,
+              278.13
+            ],
+            [
+              250.62,
+              279.52
+            ],
+            [
+              249.23,
+              244.75
+            ],
+            [
+              190.82,
+              254.49
+            ],
+            [
+              188.73,
+              254.49
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BHU-3D-002",
+        "kind": "building",
+        "confidence": 99,
+        "simulated_floors": 4,
+        "source": "Manually corrected",
+        "active_layer": "manual corrections only"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              200.55,
+              383.83
+            ],
+            [
+              212.37,
+              508.31
+            ],
+            [
+              304.17,
+              498.57
+            ],
+            [
+              293.04,
+              378.96
+            ],
+            [
+              200.55,
+              383.83
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BHU-3D-003",
+        "kind": "building",
+        "confidence": 99,
+        "simulated_floors": 6,
+        "source": "Manually corrected",
+        "active_layer": "manual corrections only"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              322.25,
+              358.8
+            ],
+            [
+              334.76,
+              481.19
+            ],
+            [
+              497.49,
+              465.19
+            ],
+            [
+              489.14,
+              349.06
+            ],
+            [
+              322.25,
+              358.8
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BHU-3D-004",
+        "kind": "building",
+        "confidence": 99,
+        "simulated_floors": 4,
+        "source": "Manually corrected",
+        "active_layer": "manual corrections only"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              496.79,
+              220.41
+            ],
+            [
+              508.61,
+              311.51
+            ],
+            [
+              601.8,
+              305.25
+            ],
+            [
+              592.06,
+              182.17
+            ],
+            [
+              514.87,
+              191.21
+            ],
+            [
+              515.57,
+              218.33
+            ],
+            [
+              496.79,
+              220.41
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BHU-3D-005",
+        "kind": "building",
+        "confidence": 99,
+        "simulated_floors": 3,
+        "source": "Manually corrected",
+        "active_layer": "manual corrections only"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              172.74,
+              137.66
+            ],
+            [
+              181.78,
+              191.9
+            ],
+            [
+              241.58,
+              180.08
+            ],
+            [
+              268.7,
+              171.73
+            ],
+            [
+              263.83,
+              118.19
+            ],
+            [
+              229.06,
+              121.67
+            ],
+            [
+              172.74,
+              137.66
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BHU-3D-006",
+        "kind": "building",
+        "confidence": 99,
+        "simulated_floors": 6,
+        "source": "Manually corrected",
+        "active_layer": "manual corrections only"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              333.37,
+              148.09
+            ],
+            [
+              338.94,
+              194.68
+            ],
+            [
+              351.45,
+              202.33
+            ],
+            [
+              353.54,
+              223.89
+            ],
+            [
+              349.37,
+              225.28
+            ],
+            [
+              350.06,
+              255.88
+            ],
+            [
+              355.63,
+              310.81
+            ],
+            [
+              464.11,
+              305.95
+            ],
+            [
+              457.85,
+              216.24
+            ],
+            [
+              449.51,
+              194.68
+            ],
+            [
+              436.29,
+              193.29
+            ],
+            [
+              437.68,
+              184.25
+            ],
+            [
+              454.37,
+              183.56
+            ],
+            [
+              446.72,
+              149.48
+            ],
+            [
+              446.72,
+              143.92
+            ],
+            [
+              447.42,
+              139.05
+            ],
+            [
+              333.37,
+              148.09
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BHU-3D-007",
+        "kind": "building",
+        "confidence": 99,
+        "simulated_floors": 3,
+        "source": "Manually corrected",
+        "active_layer": "manual corrections only"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              613.62,
+              94.55
+            ],
+            [
+              628.92,
+              212.07
+            ],
+            [
+              672.03,
+              209.29
+            ],
+            [
+              668.56,
+              192.6
+            ],
+            [
+              675.51,
+              194.68
+            ],
+            [
+              665.77,
+              88.29
+            ],
+            [
+              613.62,
+              94.55
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BHU-3D-008",
+        "kind": "building",
+        "confidence": 99,
+        "simulated_floors": 3,
+        "source": "Manually corrected",
+        "active_layer": "manual corrections only"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              485.67,
+              119.58
+            ],
+            [
+              496.79,
+              185.64
+            ],
+            [
+              594.15,
+              175.91
+            ],
+            [
+              587.19,
+              109.15
+            ],
+            [
+              485.67,
+              119.58
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BHU-3D-009",
+        "kind": "building",
+        "confidence": 99,
+        "simulated_floors": 3,
+        "source": "Manually corrected",
+        "active_layer": "manual corrections only"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              523.91,
+              335.85
+            ],
+            [
+              535.74,
+              457.54
+            ],
+            [
+              571.9,
+              454.07
+            ],
+            [
+              558.68,
+              333.07
+            ],
+            [
+              523.91,
+              335.85
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BHU-3D-010",
+        "kind": "building",
+        "confidence": 99,
+        "simulated_floors": 3,
+        "source": "Manually corrected",
+        "active_layer": "manual corrections only"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              68.68,
+              122.81
+            ],
+            [
+              77.53,
+              205.12
+            ],
+            [
+              83.73,
+              217.51
+            ],
+            [
+              77.53,
+              221.94
+            ],
+            [
+              83.73,
+              271.5
+            ],
+            [
+              129.75,
+              266.19
+            ],
+            [
+              129.75,
+              218.4
+            ],
+            [
+              121.78,
+              213.09
+            ],
+            [
+              120.01,
+              201.58
+            ],
+            [
+              117.36,
+              121.04
+            ],
+            [
+              68.68,
+              122.81
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BHU-3D-013",
+        "kind": "building",
+        "confidence": 99,
+        "simulated_floors": 3,
+        "source": "Manually corrected",
+        "active_layer": "manual corrections only"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              250.12,
+              5.1
+            ],
+            [
+              254.54,
+              52.01
+            ],
+            [
+              265.16,
+              55.55
+            ],
+            [
+              267.82,
+              80.33
+            ],
+            [
+              284.63,
+              81.21
+            ],
+            [
+              329.77,
+              73.25
+            ],
+            [
+              323.58,
+              5.1
+            ],
+            [
+              250.12,
+              5.1
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "BHU-3D-012",
+        "kind": "building",
+        "confidence": 99,
+        "simulated_floors": 3,
+        "source": "Manually corrected",
+        "active_layer": "manual corrections only"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              486.42,
+              4.21
+            ],
+            [
+              494.39,
+              61.74
+            ],
+            [
+              565.19,
+              47.58
+            ],
+            [
+              563.42,
+              5.98
+            ],
+            [
+              486.42,
+              4.21
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

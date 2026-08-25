@@ -1,0 +1,786 @@
+{
+  "meta": {
+    "id": "SOC-BHU-DEMO-001",
+    "name": "BHU Demo",
+    "display_name": "BHU Demo — Polygon Buildings",
+    "dataset_version": "0.1.0",
+    "data_type": "local_xy_demo",
+    "purpose": "BHU polygon extrusion + raise-one interaction demo",
+    "origin": {
+      "latitude": 0.0,
+      "longitude": 0.0,
+      "elevation_amsl_m": 0.0
+    },
+    "coordinate_reference_system": {
+      "horizontal": "LOCAL_XY",
+      "vertical": "LOCAL_Z",
+      "epsg": null
+    },
+    "local_extent_m": {
+      "width": 646.83,
+      "depth": 544.0999999999999
+    },
+    "notes": {
+      "coordinate_system": {
+        "type": "local_xy",
+        "units": "unknown (likely meters)",
+        "axis_assumption": "x=east, y=north",
+        "origin": "not provided"
+      },
+      "notes": "Coordinates look like local XY, not WGS84 lon/lat. If you can provide WGS84 EPSG:4326 instead, do it."
+    },
+    "assets": {
+      "glb": "bhu_demo.glb"
+    }
+  },
+  "declared_totals": {
+    "total_buildings": 12,
+    "total_floors": 45,
+    "total_units": 0,
+    "total_rooms": 0
+  },
+  "buildings": [
+    {
+      "id": "BHU-3D-011",
+      "ulpin": "BHU-3D-011",
+      "name": "BHU-3D-011",
+      "type": "building",
+      "status": "demo",
+      "local_center_m": [
+        219.32909090909095,
+        294.12545454545455,
+        0.0
+      ],
+      "footprint": {
+        "shape": "polygon",
+        "length_m": 139.07999999999998,
+        "width_m": 102.92000000000002
+      },
+      "footprint_polygon_local_m": [
+        [
+          188.73,
+          254.49
+        ],
+        [
+          192.21,
+          280.22
+        ],
+        [
+          151.18,
+          287.17
+        ],
+        [
+          156.05,
+          347.67
+        ],
+        [
+          199.16,
+          340.72
+        ],
+        [
+          260.36,
+          334.46
+        ],
+        [
+          290.26,
+          333.76
+        ],
+        [
+          284,
+          278.13
+        ],
+        [
+          250.62,
+          279.52
+        ],
+        [
+          249.23,
+          244.75
+        ],
+        [
+          190.82,
+          254.49
+        ],
+        [
+          188.73,
+          254.49
+        ]
+      ],
+      "height": {
+        "total_m": 12.0
+      },
+      "vertical_parcel": {
+        "base_elevation_m": 0.0,
+        "top_elevation_m": 12.0
+      },
+      "floor_count": 4,
+      "unit_count": 0,
+      "room_count": 0,
+      "floors": []
+    },
+    {
+      "id": "BHU-3D-002",
+      "ulpin": "BHU-3D-002",
+      "name": "BHU-3D-002",
+      "type": "building",
+      "status": "demo",
+      "local_center_m": [
+        252.53250000000003,
+        442.4175,
+        0.0
+      ],
+      "footprint": {
+        "shape": "polygon",
+        "length_m": 103.62,
+        "width_m": 129.35000000000002
+      },
+      "footprint_polygon_local_m": [
+        [
+          200.55,
+          383.83
+        ],
+        [
+          212.37,
+          508.31
+        ],
+        [
+          304.17,
+          498.57
+        ],
+        [
+          293.04,
+          378.96
+        ],
+        [
+          200.55,
+          383.83
+        ]
+      ],
+      "height": {
+        "total_m": 12.0
+      },
+      "vertical_parcel": {
+        "base_elevation_m": 0.0,
+        "top_elevation_m": 12.0
+      },
+      "floor_count": 4,
+      "unit_count": 0,
+      "room_count": 0,
+      "floors": []
+    },
+    {
+      "id": "BHU-3D-003",
+      "ulpin": "BHU-3D-003",
+      "name": "BHU-3D-003",
+      "type": "building",
+      "status": "demo",
+      "local_center_m": [
+        410.90999999999997,
+        413.56,
+        0.0
+      ],
+      "footprint": {
+        "shape": "polygon",
+        "length_m": 175.24,
+        "width_m": 132.13
+      },
+      "footprint_polygon_local_m": [
+        [
+          322.25,
+          358.8
+        ],
+        [
+          334.76,
+          481.19
+        ],
+        [
+          497.49,
+          465.19
+        ],
+        [
+          489.14,
+          349.06
+        ],
+        [
+          322.25,
+          358.8
+        ]
+      ],
+      "height": {
+        "total_m": 18.0
+      },
+      "vertical_parcel": {
+        "base_elevation_m": 0.0,
+        "top_elevation_m": 18.0
+      },
+      "floor_count": 6,
+      "unit_count": 0,
+      "room_count": 0,
+      "floors": []
+    },
+    {
+      "id": "BHU-3D-004",
+      "ulpin": "BHU-3D-004",
+      "name": "BHU-3D-004",
+      "type": "building",
+      "status": "demo",
+      "local_center_m": [
+        538.2833333333334,
+        238.14666666666665,
+        0.0
+      ],
+      "footprint": {
+        "shape": "polygon",
+        "length_m": 105.00999999999993,
+        "width_m": 129.34
+      },
+      "footprint_polygon_local_m": [
+        [
+          496.79,
+          220.41
+        ],
+        [
+          508.61,
+          311.51
+        ],
+        [
+          601.8,
+          305.25
+        ],
+        [
+          592.06,
+          182.17
+        ],
+        [
+          514.87,
+          191.21
+        ],
+        [
+          515.57,
+          218.33
+        ],
+        [
+          496.79,
+          220.41
+        ]
+      ],
+      "height": {
+        "total_m": 12.0
+      },
+      "vertical_parcel": {
+        "base_elevation_m": 0.0,
+        "top_elevation_m": 12.0
+      },
+      "floor_count": 4,
+      "unit_count": 0,
+      "room_count": 0,
+      "floors": []
+    },
+    {
+      "id": "BHU-3D-005",
+      "ulpin": "BHU-3D-005",
+      "name": "BHU-3D-005",
+      "type": "building",
+      "status": "demo",
+      "local_center_m": [
+        226.28166666666664,
+        153.53833333333333,
+        0.0
+      ],
+      "footprint": {
+        "shape": "polygon",
+        "length_m": 95.95999999999998,
+        "width_m": 73.71000000000001
+      },
+      "footprint_polygon_local_m": [
+        [
+          172.74,
+          137.66
+        ],
+        [
+          181.78,
+          191.9
+        ],
+        [
+          241.58,
+          180.08
+        ],
+        [
+          268.7,
+          171.73
+        ],
+        [
+          263.83,
+          118.19
+        ],
+        [
+          229.06,
+          121.67
+        ],
+        [
+          172.74,
+          137.66
+        ]
+      ],
+      "height": {
+        "total_m": 9.0
+      },
+      "vertical_parcel": {
+        "base_elevation_m": 0.0,
+        "top_elevation_m": 9.0
+      },
+      "floor_count": 3,
+      "unit_count": 0,
+      "room_count": 0,
+      "floors": []
+    },
+    {
+      "id": "BHU-3D-006",
+      "ulpin": "BHU-3D-006",
+      "name": "BHU-3D-006",
+      "type": "building",
+      "status": "demo",
+      "local_center_m": [
+        404.56437500000004,
+        204.46125,
+        0.0
+      ],
+      "footprint": {
+        "shape": "polygon",
+        "length_m": 130.74,
+        "width_m": 171.76
+      },
+      "footprint_polygon_local_m": [
+        [
+          333.37,
+          148.09
+        ],
+        [
+          338.94,
+          194.68
+        ],
+        [
+          351.45,
+          202.33
+        ],
+        [
+          353.54,
+          223.89
+        ],
+        [
+          349.37,
+          225.28
+        ],
+        [
+          350.06,
+          255.88
+        ],
+        [
+          355.63,
+          310.81
+        ],
+        [
+          464.11,
+          305.95
+        ],
+        [
+          457.85,
+          216.24
+        ],
+        [
+          449.51,
+          194.68
+        ],
+        [
+          436.29,
+          193.29
+        ],
+        [
+          437.68,
+          184.25
+        ],
+        [
+          454.37,
+          183.56
+        ],
+        [
+          446.72,
+          149.48
+        ],
+        [
+          446.72,
+          143.92
+        ],
+        [
+          447.42,
+          139.05
+        ],
+        [
+          333.37,
+          148.09
+        ]
+      ],
+      "height": {
+        "total_m": 18.0
+      },
+      "vertical_parcel": {
+        "base_elevation_m": 0.0,
+        "top_elevation_m": 18.0
+      },
+      "floor_count": 6,
+      "unit_count": 0,
+      "room_count": 0,
+      "floors": []
+    },
+    {
+      "id": "BHU-3D-007",
+      "ulpin": "BHU-3D-007",
+      "name": "BHU-3D-007",
+      "type": "building",
+      "status": "demo",
+      "local_center_m": [
+        654.0683333333334,
+        165.24666666666667,
+        0.0
+      ],
+      "footprint": {
+        "shape": "polygon",
+        "length_m": 61.889999999999986,
+        "width_m": 123.77999999999999
+      },
+      "footprint_polygon_local_m": [
+        [
+          613.62,
+          94.55
+        ],
+        [
+          628.92,
+          212.07
+        ],
+        [
+          672.03,
+          209.29
+        ],
+        [
+          668.56,
+          192.6
+        ],
+        [
+          675.51,
+          194.68
+        ],
+        [
+          665.77,
+          88.29
+        ],
+        [
+          613.62,
+          94.55
+        ]
+      ],
+      "height": {
+        "total_m": 9.0
+      },
+      "vertical_parcel": {
+        "base_elevation_m": 0.0,
+        "top_elevation_m": 9.0
+      },
+      "floor_count": 3,
+      "unit_count": 0,
+      "room_count": 0,
+      "floors": []
+    },
+    {
+      "id": "BHU-3D-008",
+      "ulpin": "BHU-3D-008",
+      "name": "BHU-3D-008",
+      "type": "building",
+      "status": "demo",
+      "local_center_m": [
+        540.95,
+        147.57,
+        0.0
+      ],
+      "footprint": {
+        "shape": "polygon",
+        "length_m": 108.47999999999996,
+        "width_m": 76.48999999999998
+      },
+      "footprint_polygon_local_m": [
+        [
+          485.67,
+          119.58
+        ],
+        [
+          496.79,
+          185.64
+        ],
+        [
+          594.15,
+          175.91
+        ],
+        [
+          587.19,
+          109.15
+        ],
+        [
+          485.67,
+          119.58
+        ]
+      ],
+      "height": {
+        "total_m": 9.0
+      },
+      "vertical_parcel": {
+        "base_elevation_m": 0.0,
+        "top_elevation_m": 9.0
+      },
+      "floor_count": 3,
+      "unit_count": 0,
+      "room_count": 0,
+      "floors": []
+    },
+    {
+      "id": "BHU-3D-009",
+      "ulpin": "BHU-3D-009",
+      "name": "BHU-3D-009",
+      "type": "building",
+      "status": "demo",
+      "local_center_m": [
+        547.5575,
+        395.1325,
+        0.0
+      ],
+      "footprint": {
+        "shape": "polygon",
+        "length_m": 47.99000000000001,
+        "width_m": 124.47000000000003
+      },
+      "footprint_polygon_local_m": [
+        [
+          523.91,
+          335.85
+        ],
+        [
+          535.74,
+          457.54
+        ],
+        [
+          571.9,
+          454.07
+        ],
+        [
+          558.68,
+          333.07
+        ],
+        [
+          523.91,
+          335.85
+        ]
+      ],
+      "height": {
+        "total_m": 9.0
+      },
+      "vertical_parcel": {
+        "base_elevation_m": 0.0,
+        "top_elevation_m": 9.0
+      },
+      "floor_count": 3,
+      "unit_count": 0,
+      "room_count": 0,
+      "floors": []
+    },
+    {
+      "id": "BHU-3D-010",
+      "ulpin": "BHU-3D-010",
+      "name": "BHU-3D-010",
+      "type": "building",
+      "status": "demo",
+      "local_center_m": [
+        100.985,
+        205.91800000000003,
+        0.0
+      ],
+      "footprint": {
+        "shape": "polygon",
+        "length_m": 61.06999999999999,
+        "width_m": 150.45999999999998
+      },
+      "footprint_polygon_local_m": [
+        [
+          68.68,
+          122.81
+        ],
+        [
+          77.53,
+          205.12
+        ],
+        [
+          83.73,
+          217.51
+        ],
+        [
+          77.53,
+          221.94
+        ],
+        [
+          83.73,
+          271.5
+        ],
+        [
+          129.75,
+          266.19
+        ],
+        [
+          129.75,
+          218.4
+        ],
+        [
+          121.78,
+          213.09
+        ],
+        [
+          120.01,
+          201.58
+        ],
+        [
+          117.36,
+          121.04
+        ],
+        [
+          68.68,
+          122.81
+        ]
+      ],
+      "height": {
+        "total_m": 9.0
+      },
+      "vertical_parcel": {
+        "base_elevation_m": 0.0,
+        "top_elevation_m": 9.0
+      },
+      "floor_count": 3,
+      "unit_count": 0,
+      "room_count": 0,
+      "floors": []
+    },
+    {
+      "id": "BHU-3D-013",
+      "ulpin": "BHU-3D-013",
+      "name": "BHU-3D-013",
+      "type": "building",
+      "status": "demo",
+      "local_center_m": [
+        282.2314285714286,
+        50.364285714285714,
+        0.0
+      ],
+      "footprint": {
+        "shape": "polygon",
+        "length_m": 79.64999999999998,
+        "width_m": 76.11
+      },
+      "footprint_polygon_local_m": [
+        [
+          250.12,
+          5.1
+        ],
+        [
+          254.54,
+          52.01
+        ],
+        [
+          265.16,
+          55.55
+        ],
+        [
+          267.82,
+          80.33
+        ],
+        [
+          284.63,
+          81.21
+        ],
+        [
+          329.77,
+          73.25
+        ],
+        [
+          323.58,
+          5.1
+        ],
+        [
+          250.12,
+          5.1
+        ]
+      ],
+      "height": {
+        "total_m": 9.0
+      },
+      "vertical_parcel": {
+        "base_elevation_m": 0.0,
+        "top_elevation_m": 9.0
+      },
+      "floor_count": 3,
+      "unit_count": 0,
+      "room_count": 0,
+      "floors": []
+    },
+    {
+      "id": "BHU-3D-012",
+      "ulpin": "BHU-3D-012",
+      "name": "BHU-3D-012",
+      "type": "building",
+      "status": "demo",
+      "local_center_m": [
+        527.355,
+        29.8775,
+        0.0
+      ],
+      "footprint": {
+        "shape": "polygon",
+        "length_m": 78.77000000000004,
+        "width_m": 57.53
+      },
+      "footprint_polygon_local_m": [
+        [
+          486.42,
+          4.21
+        ],
+        [
+          494.39,
+          61.74
+        ],
+        [
+          565.19,
+          47.58
+        ],
+        [
+          563.42,
+          5.98
+        ],
+        [
+          486.42,
+          4.21
+        ]
+      ],
+      "height": {
+        "total_m": 9.0
+      },
+      "vertical_parcel": {
+        "base_elevation_m": 0.0,
+        "top_elevation_m": 9.0
+      },
+      "floor_count": 3,
+      "unit_count": 0,
+      "room_count": 0,
+      "floors": []
+    }
+  ],
+  "underground_infrastructure": [],
+  "roads": [],
+  "statistics": {
+    "registered_units": 0
+  },
+  "ai_processing": {}
+}
