@@ -1,0 +1,292 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "id": "SITE-BLR-KORM-A",
+    "name": "Koramangala Demo Block A",
+    "city": "Bengaluru",
+    "coordinate_system": {
+      "type": "wgs84",
+      "epsg": 4326,
+      "axis": "lon,lat",
+      "units": "degrees"
+    },
+    "notes": "Hand-authored VERTICA demo site. Footprints are illustrative parcels for SIH PS 26011 — not surveyed cadastral truth. Heights from simulated_floors × 3.2 m.",
+    "floor_height_m": 3.2,
+    "label_scheme": "VERTICA-BLR-A-{NNN}"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SITE-BOUNDARY",
+        "kind": "site_boundary",
+        "name": "Koramangala Demo Block A",
+        "label": "Site boundary"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.62280, 12.93420],
+            [77.62540, 12.93420],
+            [77.62540, 12.93660],
+            [77.62280, 12.93660],
+            [77.62280, 12.93420]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "VERTICA-BLR-A-001",
+        "kind": "building",
+        "name": "Ashoka Residency",
+        "label": "Tower · Residential",
+        "landuse": "residential",
+        "simulated_floors": 12,
+        "height_m": 38.4,
+        "source": "hand_labeled"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.62300, 12.93580],
+            [77.62355, 12.93580],
+            [77.62355, 12.93635],
+            [77.62300, 12.93635],
+            [77.62300, 12.93580]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "VERTICA-BLR-A-002",
+        "kind": "building",
+        "name": "Maple Court",
+        "label": "Midrise · Residential",
+        "landuse": "residential",
+        "simulated_floors": 8,
+        "height_m": 25.6,
+        "source": "hand_labeled"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.62370, 12.93585],
+            [77.62435, 12.93585],
+            [77.62435, 12.93625],
+            [77.62370, 12.93625],
+            [77.62370, 12.93585]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "VERTICA-BLR-A-003",
+        "kind": "building",
+        "name": "Corner Retail",
+        "label": "Commercial · Low-rise",
+        "landuse": "commercial",
+        "simulated_floors": 3,
+        "height_m": 9.6,
+        "source": "hand_labeled"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.62450, 12.93590],
+            [77.62510, 12.93590],
+            [77.62510, 12.93620],
+            [77.62450, 12.93620],
+            [77.62450, 12.93590]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "VERTICA-BLR-A-004",
+        "kind": "building",
+        "name": "L-Wing Apartments",
+        "label": "L-plan · Residential",
+        "landuse": "residential",
+        "simulated_floors": 6,
+        "height_m": 19.2,
+        "source": "hand_labeled"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.62305, 12.93490],
+            [77.62385, 12.93490],
+            [77.62385, 12.93515],
+            [77.62335, 12.93515],
+            [77.62335, 12.93555],
+            [77.62305, 12.93555],
+            [77.62305, 12.93490]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "VERTICA-BLR-A-005",
+        "kind": "building",
+        "name": "Civic Annex",
+        "label": "Community facility",
+        "landuse": "community",
+        "simulated_floors": 4,
+        "height_m": 12.8,
+        "source": "hand_labeled"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.62400, 12.93495],
+            [77.62470, 12.93495],
+            [77.62470, 12.93550],
+            [77.62400, 12.93550],
+            [77.62400, 12.93495]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "VERTICA-BLR-A-006",
+        "kind": "building",
+        "name": "Utility Plant",
+        "label": "Utility · Substation",
+        "landuse": "utility",
+        "simulated_floors": 2,
+        "height_m": 6.4,
+        "source": "hand_labeled"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.62490, 12.93440],
+            [77.62525, 12.93440],
+            [77.62525, 12.93470],
+            [77.62490, 12.93470],
+            [77.62490, 12.93440]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "VERTICA-BLR-A-007",
+        "kind": "building",
+        "name": "Parkview Towers",
+        "label": "Twin mass · Residential",
+        "landuse": "residential",
+        "simulated_floors": 14,
+        "height_m": 44.8,
+        "source": "hand_labeled"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.62320, 12.93435],
+            [77.62360, 12.93435],
+            [77.62360, 12.93470],
+            [77.62320, 12.93470],
+            [77.62320, 12.93435]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "VERTICA-BLR-A-008",
+        "kind": "building",
+        "name": "South Row Walkups",
+        "label": "Row · Low-rise residential",
+        "landuse": "residential",
+        "simulated_floors": 3,
+        "height_m": 9.6,
+        "source": "hand_labeled"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.62375, 12.93435],
+            [77.62455, 12.93435],
+            [77.62455, 12.93465],
+            [77.62375, 12.93465],
+            [77.62375, 12.93435]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "VERTICA-BLR-A-009",
+        "kind": "building",
+        "name": "East Plaza Offices",
+        "label": "Commercial · Midrise",
+        "landuse": "commercial",
+        "simulated_floors": 7,
+        "height_m": 22.4,
+        "source": "hand_labeled"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.62485, 12.93490],
+            [77.62525, 12.93490],
+            [77.62525, 12.93555],
+            [77.62485, 12.93555],
+            [77.62485, 12.93490]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "VERTICA-BLR-A-010",
+        "kind": "building",
+        "name": "Courtyard Block",
+        "label": "Courtyard · Residential",
+        "landuse": "residential",
+        "simulated_floors": 5,
+        "height_m": 16.0,
+        "source": "hand_labeled"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.62395, 12.93520],
+            [77.62455, 12.93520],
+            [77.62455, 12.93570],
+            [77.62395, 12.93570],
+            [77.62395, 12.93520]
+          ]
+        ]
+      }
+    }
+  ]
+}
