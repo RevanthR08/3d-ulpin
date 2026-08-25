@@ -521,6 +521,87 @@ def generate_blender_export(buildings: list) -> dict:
 
 # ----------------------------------------------------------------- build
 
+def generate_city_block_site_plan(society: dict) -> dict:
+    """Site plan for Indian City Block using Blender-exported local metres."""
+    meta = society.get("meta") or {}
+    extent = meta.get("local_extent_m") or {"width": 280, "depth": 220}
+    w_m, d_m = extent.get("width", 280), extent.get("depth", 220)
+    pad = 20
+    sx = (CANVAS["width"] - 2 * pad) / w_m
+    sy = (CANVAS["height"] - 2 * pad) / d_m
+    scale = min(sx, sy)
+
+    def to_canvas(x_m, y_m):
+        return [round(pad + x_m * scale, 1), round(pad + y_m * scale, 1)]
+
+    green_boundary = [
+        to_canvas(0, 0),
+        to_canvas(w_m, 0),
+        to_canvas(w_m, d_m),
+        to_canvas(0, d_m),
+    ]
+
+    building_shapes = []
+    for b in society["buildings"]:
+        lc = b.get("local_center_m") or [140, 110, 0]
+        cx, cy = lc[0], lc[1]
+        fp = b.get("footprint") or {}
+        bw = fp.get("length_m", 20) * scale
+        bh = fp.get("width_m", 16) * scale
+        half_w, half_h = bw / 2, bh / 2
+        cx_c, cy_c = to_canvas(cx, cy)
+        polygon = [
+            [cx_c - half_w, cy_c - half_h],
+            [cx_c + half_w, cy_c - half_h],
+            [cx_c + half_w, cy_c + half_h],
+            [cx_c - half_w, cy_c + half_h],
+        ]
+        building_shapes.append({
+            "id": b["id"],
+            "ulpin": b["ulpin"],
+            "name": b["name"],
+            "type": b["type"],
+            "block": b["block"],
+            "status": b.get("status", "registered"),
+            "polygon": polygon,
+            "centroid": [cx_c, cy_c],
+            "local_center_m": [cx, cy],
+            "angle": 0,
+            "floor_count": b["floor_count"],
+            "unit_count": b["unit_count"],
+            "room_count": b.get("room_count", 0),
+        })
+
+    roads = [
+        {"id": "ROAD-MAIN-H", "name": "Main Avenue", "width": 12 * scale,
+         "path": f"M {to_canvas(10,40)[0]},{to_canvas(10,40)[1]} L {to_canvas(270,40)[0]},{to_canvas(270,40)[1]}"},
+        {"id": "ROAD-MAIN-V", "name": "North Spine", "width": 12 * scale,
+         "path": f"M {to_canvas(40,10)[0]},{to_canvas(40,10)[1]} L {to_canvas(40,210)[0]},{to_canvas(40,210)[1]}"},
+        {"id": "ROAD-INT-H1", "name": "Park Cross", "width": 8 * scale,
+         "path": f"M {to_canvas(70,110)[0]},{to_canvas(70,110)[1]} L {to_canvas(230,110)[0]},{to_canvas(230,110)[1]}"},
+    ]
+
+    trees = []
+    rng = random.Random(26011)
+    for _ in range(40):
+        x = rng.uniform(20, w_m - 20)
+        y = rng.uniform(20, d_m - 20)
+        trees.append(to_canvas(x, y))
+
+    return {
+        "canvas": CANVAS,
+        "scale_m_per_unit": 1 / scale,
+        "local_extent_m": {"width": w_m, "depth": d_m},
+        "green_boundary": green_boundary,
+        "roads": roads,
+        "parking_lots": [],
+        "walkways": [],
+        "buildings": building_shapes,
+        "trees": trees,
+        "city_context": {"buildings": []},
+    }
+
+
 def generate_site_plan(buildings: list) -> dict:
     building_shapes = []
     for b in buildings:

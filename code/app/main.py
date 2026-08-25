@@ -1,7 +1,9 @@
+import json
 import os
 
 from fastapi import FastAPI, HTTPException, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -24,12 +26,17 @@ class GeoreferenceRequest(BaseModel):
     polygon: list[list[float]]
     ref_points: list[RefPoint]
 
-DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "greenfield_heights.yaml")
+DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+DATA_PATH = os.path.join(DATA_DIR, "greenfield_heights.yaml")
+CITY_BLOCK_JSON = os.path.join(DATA_DIR, "indian_city_block.json")
+DEMO_SOCIETY_JSON = os.path.join(DATA_DIR, "demo_society.json")
+UNIT_INDEX_JSON = os.path.join(DATA_DIR, "unit_index.json")
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 STATIC3D_DIR = os.path.join(os.path.dirname(__file__), "static3d")
 STATICMAP_DIR = os.path.join(os.path.dirname(__file__), "staticmap")
 STATICEXTRACT_DIR = os.path.join(os.path.dirname(__file__), "staticextract")
 STATICSITE_DIR = os.path.join(os.path.dirname(__file__), "staticsite")
+STATICPORTAL_DIR = os.path.join(os.path.dirname(__file__), "staticportal")
 
 app = FastAPI(
     title="3D ULPIN Vertical Property Mapping System — Data API",
@@ -48,10 +55,28 @@ app.add_middleware(
 _state: dict = {}
 
 
-@app.on_event("startup")
-def startup():
+def _load_society():
+    # Optional demo mode (does not require real-world geo alignment)
+    # Enable by setting env var USE_BHU_DEMO=1
+    if os.getenv("USE_BHU_DEMO") == "1" and os.path.isfile(DEMO_SOCIETY_JSON):
+        with open(DEMO_SOCIETY_JSON, encoding="utf-8") as f:
+            society = json.load(f)
+        print(f"[data] loaded BHU demo society from {DEMO_SOCIETY_JSON}")
+        return society
+    if os.path.isfile(CITY_BLOCK_JSON):
+        with open(CITY_BLOCK_JSON, encoding="utf-8") as f:
+            society = json.load(f)
+        print(f"[data] loaded Indian City Block from {CITY_BLOCK_JSON}")
+        return society
     raw = loader.load_yaml(DATA_PATH)
     society = loader.build_society(raw)
+    print(f"[data] loaded Greenfield Heights from {DATA_PATH}")
+    return society
+
+
+@app.on_event("startup")
+def startup():
+    society = _load_society()
     violations = validate_society(society)
 
     if violations:
@@ -64,9 +89,23 @@ def startup():
     origin = society["meta"]["origin"]
     _state["society"] = society
     _state["ulpin_index"] = loader.build_ulpin_index(society)
+    if os.path.isfile(UNIT_INDEX_JSON):
+        with open(UNIT_INDEX_JSON, encoding="utf-8") as f:
+            _state["unit_index"] = json.load(f)
+    else:
+        _state["unit_index"] = {}
     _state["violations"] = violations
     _state["project"] = geo.make_projector(origin["latitude"], origin["longitude"])
-    _state["site_plan"] = site_plan_mod.generate_site_plan(society["buildings"])
+    data_type = (society.get("meta") or {}).get("data_type")
+    if data_type == "local_xy_demo":
+        # Viewer only needs local extent to size the ground plane/camera.
+        _state["site_plan"] = {"local_extent_m": society["meta"].get("local_extent_m", {"width": 280, "depth": 220})}
+    else:
+        # Existing behavior for normal datasets
+        if os.path.isfile(CITY_BLOCK_JSON):
+            _state["site_plan"] = site_plan_mod.generate_city_block_site_plan(society)
+        else:
+            _state["site_plan"] = site_plan_mod.generate_site_plan(society["buildings"])
     _state["geo_site_plan"] = site_plan_mod.generate_geo_site_plan(society["buildings"])
     _state["blender_export"] = site_plan_mod.generate_blender_export(society["buildings"])
 
@@ -75,7 +114,34 @@ app.mount("/viewer", StaticFiles(directory=STATIC_DIR, html=True), name="viewer"
 app.mount("/viewer3d", StaticFiles(directory=STATIC3D_DIR, html=True), name="viewer3d")
 app.mount("/viewer-map", StaticFiles(directory=STATICMAP_DIR, html=True), name="viewer_map")
 app.mount("/extract", StaticFiles(directory=STATICEXTRACT_DIR, html=True), name="extract")
-app.mount("/portal", StaticFiles(directory=STATICSITE_DIR, html=True), name="portal")
+
+# Prefer built React SPA (VERTICA) when present; else legacy HTML portal.
+_PORTAL_INDEX = os.path.join(STATICPORTAL_DIR, "index.html")
+if os.path.isfile(_PORTAL_INDEX):
+    _portal_assets = os.path.join(STATICPORTAL_DIR, "assets")
+    if os.path.isdir(_portal_assets):
+        app.mount(
+            "/portal/assets",
+            StaticFiles(directory=_portal_assets),
+            name="portal_assets",
+        )
+
+    @app.get("/portal")
+    @app.get("/portal/")
+    def portal_root():
+        return FileResponse(_PORTAL_INDEX)
+
+    @app.get("/portal/{full_path:path}")
+    def portal_spa(full_path: str):
+        # Serve real files (favicon, etc.); otherwise SPA index for client routes
+        candidate = os.path.normpath(os.path.join(STATICPORTAL_DIR, full_path))
+        if not candidate.startswith(os.path.normpath(STATICPORTAL_DIR)):
+            raise HTTPException(status_code=400, detail="invalid path")
+        if full_path and os.path.isfile(candidate):
+            return FileResponse(candidate)
+        return FileResponse(_PORTAL_INDEX)
+else:
+    app.mount("/portal", StaticFiles(directory=STATICSITE_DIR, html=True), name="portal")
 
 
 @app.get("/")
@@ -86,6 +152,8 @@ def root():
             "/society",
             "/building/{building_id}",
             "/ulpin/{ulpin}",
+            "/unit/{ulpin}",
+            "/units",
             "/underground",
             "/footprints",
             "/site-plan",
@@ -161,6 +229,89 @@ def get_ulpin(ulpin: str):
     if not entry:
         raise HTTPException(status_code=404, detail=f"ULPIN '{ulpin}' not found")
     return entry
+
+
+@app.get("/unit/{ulpin}")
+def get_unit(ulpin: str):
+    """Unit detail for click-to-zoom: owner, size, layout, elevations."""
+    entry = _state["ulpin_index"].get(ulpin)
+    if not entry or entry.get("level") != "unit":
+        raise HTTPException(status_code=404, detail=f"Unit ULPIN '{ulpin}' not found")
+    data = entry.get("data") or {}
+    building_id = entry.get("building_id")
+    building = next((b for b in _state["society"]["buildings"] if b["id"] == building_id), None)
+    floor = None
+    if building:
+        for f in building["floors"]:
+            if f["floor_label"] == entry.get("floor_label"):
+                floor = f
+                break
+    return {
+        "ulpin": ulpin,
+        "building_id": building_id,
+        "building_name": building["name"] if building else entry.get("building_name"),
+        "building_type": building["type"] if building else entry.get("building_type"),
+        "floor_label": entry.get("floor_label"),
+        "unit": entry.get("unit"),
+        "owner": data.get("owner"),
+        "legal_status": data.get("legal_status", "registered"),
+        "property_type": data.get("type"),
+        "area_sq_m": data.get("area_sq_m"),
+        "layout": data.get("layout") or ", ".join(r.get("name", r.get("id", "")) for r in data.get("rooms", [])),
+        "rooms": data.get("rooms", []),
+        "room_count": data.get("room_count", 0),
+        "furniture": data.get("furniture", []),
+        "is_demo_property": data.get("is_demo_property", False),
+        "is_hero_interior": data.get("is_hero_interior", False),
+        "interior_enrichment": data.get("interior_enrichment"),
+        "center_m": data.get("center_m"),
+        "size_m": data.get("size_m"),
+        "elevations": entry.get("elevations") or (
+            {"base_m": floor["elevation_base_m"], "top_m": floor["elevation_top_m"]} if floor else None
+        ),
+    }
+
+
+@app.get("/units")
+def list_units(limit: int = Query(50, ge=1, le=500), q: str = Query("", max_length=120)):
+    """Search units by ULPIN fragment, unit id, owner name, or building id."""
+    society = _state["society"]
+    q_raw = q.strip()
+    q_lower = q_raw.lower()
+    exact = []
+    partial = []
+    for b in society["buildings"]:
+        for f in b["floors"]:
+            for u in f["units"]:
+                if q_lower:
+                    ulpin_l = u["ulpin"].lower()
+                    if ulpin_l == q_lower or ulpin_l.endswith("-" + q_lower):
+                        exact.append(_unit_search_row(b, f, u))
+                        continue
+                    if (
+                        q_lower not in ulpin_l
+                        and q_lower not in str(u["unit"]).lower()
+                        and not (u.get("owner") and q_lower in u["owner"].lower())
+                        and q_lower not in b["id"].lower()
+                    ):
+                        continue
+                partial.append(_unit_search_row(b, f, u))
+    results = exact + partial
+    return {"count": min(len(results), limit), "units": results[:limit]}
+
+
+def _unit_search_row(building, floor, unit):
+    return {
+        "ulpin": unit["ulpin"],
+        "building_id": building["id"],
+        "building_name": building["name"],
+        "floor_label": floor["floor_label"],
+        "unit": unit["unit"],
+        "owner": unit.get("owner"),
+        "area_sq_m": unit.get("area_sq_m"),
+        "type": unit.get("type"),
+        "center_m": unit.get("center_m"),
+    }
 
 
 @app.get("/underground")
