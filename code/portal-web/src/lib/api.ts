@@ -68,10 +68,92 @@ export type GeoSitePlan = {
   }>
 }
 
+/** Intel City freeze registry (served as static JSON under /viewer3d). */
+export type IntelCityFloor = {
+  floor_label: string
+  floor_index?: number
+  ulpin: string
+  owner?: string
+  owner_id?: string
+  registered_on?: string
+  registration_office?: string
+  deed_no?: string
+  legal_status?: string
+  area_sq_m?: number
+  built_up_sq_m?: number
+  carpet_sq_m?: number
+  use?: string
+  tax_assessment?: string
+  encumbrance?: string
+  utilities?: string[]
+  notes?: string
+  previous_owners?: Array<{ name: string; from: string; to: string }>
+}
+
+export type IntelCityBuilding = {
+  id: string
+  name: string
+  kind: string
+  ulpin: string
+  mesh_names?: string[]
+  floors: IntelCityFloor[]
+}
+
+export type IntelCityRegistry = {
+  meta: {
+    pincode?: string
+    building_count?: number
+    floor_count?: number
+    source?: string
+  }
+  mesh_to_building?: Record<string, string>
+  buildings: IntelCityBuilding[]
+}
+
 async function getJson<T>(path: string): Promise<T> {
   const r = await fetch(path)
   if (!r.ok) throw new Error(`${path} → ${r.status}`)
   return r.json() as Promise<T>
+}
+
+const INTEL_CITY_JSON = '/viewer3d/intel_city/intel_city_buildings.json?v=8'
+
+/** Resolve building or floor ULPIN from Intel City registry → UnitDetail shape. */
+export function resolveIntelCityUnit(reg: IntelCityRegistry, ulpin: string): UnitDetail | null {
+  const needle = ulpin.trim()
+  if (!needle) return null
+  for (const b of reg.buildings || []) {
+    if (b.ulpin === needle) {
+      const f = b.floors?.[0]
+      return {
+        ulpin: b.ulpin,
+        unit: b.kind === 'stadium' ? 'landmark' : 'building',
+        owner: f?.owner || (b.kind === 'stadium' ? 'Public assembly' : '—'),
+        building_id: b.id,
+        building_name: b.name,
+        floor_label: f?.floor_label ?? (b.kind === 'stadium' ? '—' : '1'),
+        area_sq_m: f?.area_sq_m,
+        legal_status: f?.legal_status || (b.kind === 'stadium' ? 'surface parcel' : 'registered'),
+        rooms: [],
+      }
+    }
+    for (const f of b.floors || []) {
+      if (f.ulpin === needle) {
+        return {
+          ulpin: f.ulpin,
+          unit: f.floor_label,
+          owner: f.owner,
+          building_id: b.id,
+          building_name: b.name,
+          floor_label: f.floor_label,
+          area_sq_m: f.carpet_sq_m ?? f.area_sq_m,
+          legal_status: f.legal_status || 'registered',
+          rooms: [],
+        }
+      }
+    }
+  }
+  return null
 }
 
 export const api = {
@@ -81,4 +163,5 @@ export const api = {
   building: (id: string) => getJson<Record<string, unknown>>(`/building/${encodeURIComponent(id)}`),
   underground: () => getJson<UndergroundResponse>('/underground'),
   units: () => getJson<{ units?: UnitDetail[] }>('/units').catch(() => ({ units: [] as UnitDetail[] })),
+  intelCity: () => getJson<IntelCityRegistry>(INTEL_CITY_JSON),
 }

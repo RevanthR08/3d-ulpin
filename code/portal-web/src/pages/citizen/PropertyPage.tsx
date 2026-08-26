@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { api, type UnitDetail } from '../../lib/api'
+import { api, resolveIntelCityUnit, type UnitDetail } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
+import { citizenTwinHref } from '../../lib/viewers'
 
 export function PropertyPage() {
   const { selectedUlpin, selectUlpin } = useAuth()
@@ -15,12 +16,20 @@ export function PropertyPage() {
     setLoading(true)
     setError(null)
     try {
+      const reg = await api.intelCity()
+      const fromCity = resolveIntelCityUnit(reg, ulpin.trim())
+      if (fromCity) {
+        setUnit(fromCity)
+        selectUlpin(ulpin.trim())
+        return
+      }
+      // Fallback: legacy society unit API
       const data = await api.unit(ulpin.trim())
       setUnit(data)
       selectUlpin(ulpin.trim())
-    } catch (e) {
+    } catch {
       setUnit(null)
-      setError('Unit not found in registry. Try a building or unit ULPIN from the map.')
+      setError('Unit not found. Try an Intel City ULPIN e.g. 3D-IND-600001-I1-L5 from the registry.')
     } finally {
       setLoading(false)
     }
@@ -44,7 +53,7 @@ export function PropertyPage() {
       <div>
         <h1 className="font-display text-[32px] font-semibold text-ink">Property identification</h1>
         <p className="mt-2 text-[14px] text-mute">
-          Resolve a 3D ULPIN to ownership, floor position, and room layout metadata.
+          Resolve a 3D ULPIN against the Intel City twin — ownership, floor, and cadastral metadata.
         </p>
       </div>
 
@@ -52,7 +61,7 @@ export function PropertyPage() {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Paste ULPIN…"
+          placeholder="Paste ULPIN… e.g. 3D-IND-600001-I1-L5"
           className="font-mono flex-1 rounded-xl border border-line bg-white px-4 py-3 text-[13px] outline-none focus:border-signal"
         />
         <button
@@ -78,7 +87,7 @@ export function PropertyPage() {
               <div className="text-[15px] font-semibold">{unit.owner || '—'}</div>
             </div>
             <div>
-              <div className="text-[11px] text-mute">Unit</div>
+              <div className="text-[11px] text-mute">Unit / floor</div>
               <div className="text-[15px] font-semibold">{unit.unit ?? '—'}</div>
             </div>
             <div>
@@ -119,8 +128,13 @@ export function PropertyPage() {
             <Link to="/citizen/ownership" className="text-[13px] font-semibold text-signal">
               View ownership certificate →
             </Link>
-            <a href="/viewer3d/" target="_blank" rel="noreferrer" className="text-[13px] font-semibold text-mute">
-              Open in 3D →
+            <a
+              href={citizenTwinHref(unit.ulpin)}
+              target="_blank"
+              rel="noreferrer"
+              className="text-[13px] font-semibold text-mute"
+            >
+              Open in Intel City →
             </a>
           </div>
         </div>

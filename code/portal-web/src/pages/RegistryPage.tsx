@@ -1,40 +1,48 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { api, type SocietySummary } from '../lib/api'
+import { api, type IntelCityBuilding } from '../lib/api'
 import { useAuth } from '../lib/auth'
+import { adminTwinHref, citizenTwinHref } from '../lib/viewers'
 
 export function RegistryPage() {
-  const { selectUlpin } = useAuth()
-  const [society, setSociety] = useState<SocietySummary | null>(null)
+  const { auth, selectUlpin } = useAuth()
+  const [buildings, setBuildings] = useState<IntelCityBuilding[]>([])
   const [q, setQ] = useState('')
 
   useEffect(() => {
-    api.society().then(setSociety).catch(() => setSociety(null))
+    api.intelCity()
+      .then((reg) => setBuildings(reg.buildings || []))
+      .catch(() => setBuildings([]))
   }, [])
 
   const rows = useMemo(() => {
-    const list = society?.buildings || []
     const needle = q.trim().toLowerCase()
-    if (!needle) return list
-    return list.filter(
+    if (!needle) return buildings
+    return buildings.filter(
       (b) =>
         b.name.toLowerCase().includes(needle) ||
         b.ulpin.toLowerCase().includes(needle) ||
-        b.id.toLowerCase().includes(needle),
+        b.id.toLowerCase().includes(needle) ||
+        b.kind.toLowerCase().includes(needle),
     )
-  }, [society, q])
+  }, [buildings, q])
+
+  const twinFor = (ulpin: string) =>
+    auth?.role === 'admin' ? adminTwinHref({ ulpin }) : citizenTwinHref(ulpin)
 
   return (
     <div className="page-enter mx-auto max-w-5xl space-y-6 px-7 py-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-[32px] font-semibold text-ink">ULPIN registry</h1>
-          <p className="mt-1 text-[14px] text-mute">Search building-level identities across the society.</p>
+          <p className="mt-1 text-[14px] text-mute">
+            Intel City building identities (replaces legacy Tower Alpha / Gamma society list).
+          </p>
         </div>
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search name or ULPIN"
+          placeholder="Search name, kind, or ULPIN"
           className="w-full max-w-xs rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] outline-none focus:border-signal"
         />
       </div>
@@ -44,7 +52,8 @@ export function RegistryPage() {
           <thead className="border-b border-line bg-paper text-[11px] uppercase tracking-[0.12em] text-mute">
             <tr>
               <th className="px-5 py-3 font-medium">Building</th>
-              <th className="px-5 py-3 font-medium">Type</th>
+              <th className="px-5 py-3 font-medium">Kind</th>
+              <th className="px-5 py-3 font-medium">Floors</th>
               <th className="px-5 py-3 font-medium">ULPIN</th>
               <th className="px-5 py-3 font-medium" />
             </tr>
@@ -53,16 +62,25 @@ export function RegistryPage() {
             {rows.map((b) => (
               <tr key={b.id} className="hover:bg-paper/80">
                 <td className="px-5 py-3.5 font-semibold text-ink">{b.name}</td>
-                <td className="px-5 py-3.5 text-mute">{(b.type || '—').replace(/_/g, ' ')}</td>
+                <td className="px-5 py-3.5 text-mute">{b.kind}</td>
+                <td className="px-5 py-3.5 text-mute">{b.floors?.length ?? 0}</td>
                 <td className="font-mono px-5 py-3.5 text-[11px] text-signal">{b.ulpin}</td>
                 <td className="px-5 py-3.5 text-right">
                   <button
                     type="button"
-                    onClick={() => selectUlpin(b.ulpin)}
+                    onClick={() => selectUlpin(b.floors?.[0]?.ulpin || b.ulpin)}
                     className="text-[12px] font-semibold text-ink hover:text-signal"
                   >
                     Select
                   </button>
+                  <a
+                    href={twinFor(b.ulpin)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="ml-3 text-[12px] font-semibold text-mute hover:text-signal"
+                  >
+                    3D
+                  </a>
                   <Link to="/app/map" className="ml-3 text-[12px] font-semibold text-mute hover:text-signal">
                     Map
                   </Link>
@@ -71,7 +89,7 @@ export function RegistryPage() {
             ))}
             {!rows.length && (
               <tr>
-                <td colSpan={4} className="px-5 py-10 text-center text-mute">
+                <td colSpan={5} className="px-5 py-10 text-center text-mute">
                   No buildings match
                 </td>
               </tr>

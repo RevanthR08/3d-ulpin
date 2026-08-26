@@ -4,6 +4,7 @@ import type { Map } from 'maplibre-gl'
 import { Link } from 'react-router-dom'
 import { api, type GeoSitePlan } from '../lib/api'
 import { useAuth } from '../lib/auth'
+import { citizenTwinHref } from '../lib/viewers'
 
 const TYPE_COLOR: Record<string, string> = {
   residential_tower: '#0C8F7C',
@@ -165,7 +166,7 @@ export function MapPage() {
           <div className="mt-0.5 text-[12px] text-mute">{stats}</div>
           {localOnly && (
             <div className="mt-2 text-[11px] leading-relaxed text-amber">
-              Local-XY demo dataset — basemap may not align. Use 3D twin for BHU polygons.
+              Local-XY demo dataset — basemap may not align. Use Intel City twin for volumetric parcels.
             </div>
           )}
         </div>
@@ -199,12 +200,12 @@ export function MapPage() {
               Ownership record
             </Link>
             <a
-              href="/viewer3d/"
+              href={citizenTwinHref(selected.ulpin)}
               target="_blank"
               rel="noreferrer"
               className="rounded-xl border border-signal/25 bg-signal-soft py-2.5 text-center text-[13px] font-semibold text-signal-deep"
             >
-              Open 3D twin
+              Open Intel City twin
             </a>
           </div>
         </div>

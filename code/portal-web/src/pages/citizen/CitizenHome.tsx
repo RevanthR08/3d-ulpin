@@ -1,23 +1,29 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { api, type SocietySummary } from '../../lib/api'
+import { api, type IntelCityRegistry } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { getSelectedUlpin } from '../../lib/storage'
+import { citizenTwinHref } from '../../lib/viewers'
 
 export function CitizenHome() {
   const { auth, selectedUlpin, selectUlpin } = useAuth()
-  const [society, setSociety] = useState<SocietySummary | null>(null)
+  const [city, setCity] = useState<IntelCityRegistry | null>(null)
 
   useEffect(() => {
-    api.society().then((s) => {
-      setSociety(s)
-      if (!getSelectedUlpin() && s.buildings?.[0]?.ulpin) {
-        selectUlpin(s.buildings[0].ulpin)
+    api.intelCity().then((reg) => {
+      setCity(reg)
+      if (!getSelectedUlpin()) {
+        const firstFloor = reg.buildings?.find((b) => b.floors?.length)?.floors?.[0]
+        const seed = firstFloor?.ulpin || reg.buildings?.[0]?.ulpin
+        if (seed) selectUlpin(seed)
       }
     }).catch(() => {})
   }, [selectUlpin])
 
-  const featured = selectedUlpin || society?.buildings?.[0]?.ulpin
+  const featured = selectedUlpin || city?.buildings?.[0]?.floors?.[0]?.ulpin || city?.buildings?.[0]?.ulpin
+  const featuredBldg = city?.buildings?.find(
+    (b) => b.ulpin === featured || b.floors?.some((f) => f.ulpin === featured),
+  )
 
   return (
     <div className="page-enter relative overflow-hidden">
@@ -35,14 +41,19 @@ export function CitizenHome() {
         </h1>
         <p className="mt-3 max-w-md text-[14px] leading-relaxed text-white/55">
           Welcome{auth?.username ? `, ${auth.username}` : ''}. Inspect cadastral identity,
-          ownership status, and subsurface context for your registered volume.
+          ownership status, and the Intel City 3D twin for your registered volume.
         </p>
 
         <div className="mt-10 rounded-2xl border border-white/10 bg-white p-6 shadow-xl">
-          <div className="text-[11px] uppercase tracking-[0.14em] text-mute">Featured ULPIN</div>
+          <div className="text-[11px] uppercase tracking-[0.14em] text-mute">Featured ULPIN · Intel City</div>
           <div className="font-mono mt-2 text-[18px] font-medium text-signal break-all">
             {featured || '—'}
           </div>
+          {featuredBldg && (
+            <div className="mt-2 text-[13px] text-mute">
+              {featuredBldg.name} · {featuredBldg.kind}
+            </div>
+          )}
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               to="/citizen/property"
@@ -63,21 +74,21 @@ export function CitizenHome() {
               Parcel map
             </Link>
             <a
-              href="/viewer3d/"
+              href={citizenTwinHref(featured)}
               target="_blank"
               rel="noreferrer"
               className="rounded-xl border border-signal/30 bg-signal-soft px-4 py-2.5 text-[13px] font-semibold text-signal-deep"
             >
-              Open 3D twin
+              Open Intel City twin
             </a>
           </div>
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           {[
-            ['Buildings in society', society?.computed_totals?.total_buildings ?? society?.declared_totals?.total_buildings ?? '—'],
-            ['Vertical units', society?.computed_totals?.total_units ?? society?.declared_totals?.total_units ?? '—'],
-            ['Floors mapped', society?.computed_totals?.total_floors ?? society?.declared_totals?.total_floors ?? '—'],
+            ['Buildings in city', city?.meta?.building_count ?? city?.buildings?.length ?? '—'],
+            ['Vertical floors', city?.meta?.floor_count ?? '—'],
+            ['Pin code', city?.meta?.pincode ?? '600001'],
           ].map(([k, v]) => (
             <div key={k} className="rounded-2xl border border-line bg-white px-5 py-4">
               <div className="font-display text-[26px] font-semibold">{v}</div>

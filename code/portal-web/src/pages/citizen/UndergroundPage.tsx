@@ -42,7 +42,7 @@ export function UndergroundPage() {
       <div>
         <h1 className="font-display text-[32px] font-semibold text-ink">Underground assets</h1>
         <p className="mt-2 text-[14px] text-mute">
-          Subsurface utility network under the society — depth-coded for conflict-aware planning.
+          Subsurface utility network under Intel City — depth-coded for conflict-aware planning.
         </p>
       </div>
 
@@ -87,8 +87,8 @@ export function UndergroundPage() {
         )}
       </ul>
 
-      <a href="/viewer3d/" target="_blank" rel="noreferrer" className="text-[13px] font-semibold text-signal">
-        Inspect underground layer in 3D twin →
+      <a href="/viewer3d/intel_city.html" target="_blank" rel="noreferrer" className="text-[13px] font-semibold text-signal">
+        Open Intel City twin →
       </a>
     </div>
   )

@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
+import { adminTwinHref, citizenTwinHref, VIEWERS } from '../lib/viewers'
 
 type NavItem = { to: string; label: string; end?: boolean }
 
@@ -24,12 +25,16 @@ const CITIZEN_NAV: NavItem[] = [
 ]
 
 export function Shell() {
-  const { auth, logout } = useAuth()
+  const { auth, logout, selectedUlpin } = useAuth()
   const navigate = useNavigate()
   if (!auth) return null
 
   const items = auth.role === 'admin' ? ADMIN_NAV : CITIZEN_NAV
   const roleLabel = auth.role === 'admin' ? 'Operator' : 'Citizen'
+  const twinHref =
+    auth.role === 'admin'
+      ? adminTwinHref({ ulpin: selectedUlpin })
+      : citizenTwinHref(selectedUlpin)
 
   return (
     <div className="flex h-screen overflow-hidden bg-paper">
@@ -56,13 +61,33 @@ export function Shell() {
             </NavLink>
           ))}
           <a
-            href="/viewer3d/"
+            href={twinHref}
             target="_blank"
             rel="noreferrer"
             className="mt-3 block rounded-lg px-3 py-2.5 text-[13px] text-white/40 hover:bg-white/5 hover:text-white"
           >
-            Open 3D Twin ↗
+            {auth.role === 'admin' ? 'Intel City twin ↗' : 'My 3D property ↗'}
           </a>
+          {auth.role === 'admin' && (
+            <>
+              <a
+                href={VIEWERS.chennai}
+                target="_blank"
+                rel="noreferrer"
+                className="block rounded-lg px-3 py-2 text-[12px] text-white/30 hover:bg-white/5 hover:text-white/70"
+              >
+                QA · Chennai GLB ↗
+              </a>
+              <a
+                href={VIEWERS.societyBlock}
+                target="_blank"
+                rel="noreferrer"
+                className="block rounded-lg px-3 py-2 text-[12px] text-white/30 hover:bg-white/5 hover:text-white/70"
+              >
+                QA · Society block ↗
+              </a>
+            </>
+          )}
         </nav>
         <div className="border-t border-white/10 px-4 py-4">
           <div className="text-[12px] font-medium text-white/80">{auth.username}</div>
