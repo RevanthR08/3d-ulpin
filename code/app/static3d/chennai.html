@@ -48,7 +48,7 @@
     <div id="hud">
       <h1>Chennai T. Nagar — Full 3D / Raise / Cutaway</h1>
       <div class="sub">
-        PBR grass + walls + roofs · per-building floors from GeoJSON · mock rooms inside.
+        Height-class materials: glass towers · concrete/industrial mid-rise · brick low-rise · organic ground · asphalt.
         <br/>Keys: <kbd>1</kbd> Full · <kbd>2</kbd> Raise · <kbd>3</kbd> Cutaway · <kbd>R</kbd> reset
       </div>
       <div id="controls">
@@ -236,19 +236,25 @@
       return hits.length ? hits[0].object : null;
     }
 
+    function isBuildingRootName(name) {
+      if (!name) return false;
+      if (/^VERTICA-CHN-A-\d+$/.test(name)) return true;
+      if (/^BHU-3D-\d+$/.test(name)) return true;
+      return false;
+    }
+
     function getBuildingRoot(obj) {
       let o = obj;
       for (let i = 0; i < 12 && o; i++) {
-        if (o.name && o.name.startsWith("BHU-3D-") && !o.name.includes("_")) return o;
-        if (o.name && /^BHU-3D-\d+$/.test(o.name)) return o;
+        if (isBuildingRootName(o.name)) return o;
         o = o.parent;
       }
-      // fallback: climb until name starts with BHU-3D- and has no SHELL/FLOOR
       o = obj;
       for (let i = 0; i < 12 && o; i++) {
-        if (o.name && o.name.startsWith("BHU-3D-") && !o.name.includes("_SHELL") &&
-            !o.name.includes("_FLOOR") && !o.name.includes("_ROOM") &&
-            !o.name.includes("_PARAPET") && !o.name.includes("_W")) {
+        const n = o.name || "";
+        if ((n.startsWith("VERTICA-CHN-A-") || n.startsWith("BHU-3D-")) &&
+            !n.includes("_SHELL") && !n.includes("_FLOOR") &&
+            !n.includes("_ROOM") && !n.includes("_PARAPET") && !n.includes("_W")) {
           return o;
         }
         o = o.parent;
@@ -330,7 +336,7 @@
 
     async function loadGLB() {
       const loader = new GLTFLoader();
-      const gltf = await loader.loadAsync("./chennai_tnagar.glb");
+      const gltf = await loader.loadAsync("./chennai_tnagar.glb?v=3");
       const root = gltf.scene;
       root.traverse(o => {
         if (o.isMesh) {
@@ -340,7 +346,13 @@
             const mats = Array.isArray(o.material) ? o.material : [o.material];
             for (const m of mats) {
               if (!m) continue;
-              if (m.map) m.map.colorSpace = THREE.SRGBColorSpace;
+              if (m.map) {
+                m.map.colorSpace = THREE.SRGBColorSpace;
+                m.map.wrapS = THREE.RepeatWrapping;
+                m.map.wrapT = THREE.RepeatWrapping;
+                m.map.anisotropy = 8;
+                m.map.needsUpdate = true;
+              }
               m.needsUpdate = true;
             }
           }
@@ -351,7 +363,7 @@
       buildingRoots = [];
       buildingMeshes = [];
       root.traverse(o => {
-        if (o.name && /^BHU-3D-\d+$/.test(o.name)) {
+        if (isBuildingRootName(o.name)) {
           readCustomProps(o);
           buildingRoots.push(o);
           o.traverse(x => { if (x.isMesh) buildingMeshes.push(x); });
@@ -392,7 +404,7 @@
     setup();
     loadGLB().then(() => animate()).catch(err => {
       document.getElementById("loading").textContent =
-        "Failed to load GLB — start API and open /viewer3d/bhu.html";
+        "Failed to load GLB — start the API and open /viewer3d/chennai.html";
       console.error(err);
     });
   </script>
