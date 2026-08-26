@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { api, type IntelCityRegistry } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { getSelectedUlpin } from '../../lib/storage'
-import { citizenTwinHref } from '../../lib/viewers'
 
 export function CitizenHome() {
   const { auth, selectedUlpin, selectUlpin } = useAuth()
@@ -59,13 +58,13 @@ export function CitizenHome() {
               to="/citizen/property"
               className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white"
             >
-              Property identity
+              My Property
             </Link>
             <Link
-              to="/citizen/ownership"
+              to="/citizen/record"
               className="rounded-xl border border-line px-4 py-2.5 text-[13px] font-semibold"
             >
-              Ownership record
+              Property Record
             </Link>
             <Link
               to="/app/map"
@@ -73,14 +72,12 @@ export function CitizenHome() {
             >
               Parcel map
             </Link>
-            <a
-              href={citizenTwinHref(featured)}
-              target="_blank"
-              rel="noreferrer"
+            <Link
+              to="/app/polygons"
               className="rounded-xl border border-signal/30 bg-signal-soft px-4 py-2.5 text-[13px] font-semibold text-signal-deep"
             >
-              Open Intel City twin
-            </a>
+              3D Property Viewer
+            </Link>
           </div>
         </div>
 

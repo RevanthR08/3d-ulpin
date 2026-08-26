@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { api, type SocietySummary } from '../../lib/api'
 
 export function ValidationPage() {
@@ -49,6 +50,21 @@ export function ValidationPage() {
           ))}
         </ul>
       )}
+
+      <div className="flex flex-wrap gap-3">
+        <Link
+          to="/app/ulpin-generation"
+          className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white"
+        >
+          Generate ULPIN / PIN
+        </Link>
+        <Link
+          to="/app/reports"
+          className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-semibold text-ink"
+        >
+          Review citizen reports
+        </Link>
+      </div>
     </div>
   )
 }

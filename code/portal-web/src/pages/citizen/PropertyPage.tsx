@@ -2,7 +2,6 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { api, resolveIntelCityUnit, type UnitDetail } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
-import { citizenTwinHref } from '../../lib/viewers'
 
 export function PropertyPage() {
   const { selectedUlpin, selectUlpin } = useAuth()
@@ -51,9 +50,9 @@ export function PropertyPage() {
   return (
     <div className="page-enter mx-auto max-w-3xl space-y-8 px-7 py-8">
       <div>
-        <h1 className="font-display text-[32px] font-semibold text-ink">Property identification</h1>
+        <h1 className="font-display text-[32px] font-semibold text-ink">My Property</h1>
         <p className="mt-2 text-[14px] text-mute">
-          Resolve a 3D ULPIN against the Intel City twin — ownership, floor, and cadastral metadata.
+          Resolve a 3D ULPIN against the city twin — location, boundaries, floor, and cadastral metadata.
         </p>
       </div>
 
@@ -128,14 +127,12 @@ export function PropertyPage() {
             <Link to="/citizen/ownership" className="text-[13px] font-semibold text-signal">
               View ownership certificate →
             </Link>
-            <a
-              href={citizenTwinHref(unit.ulpin)}
-              target="_blank"
-              rel="noreferrer"
-              className="text-[13px] font-semibold text-mute"
-            >
-              Open in Intel City →
-            </a>
+            <Link to="/citizen/record" className="text-[13px] font-semibold text-mute">
+              Property record →
+            </Link>
+            <Link to="/app/polygons" className="text-[13px] font-semibold text-mute">
+              3D property viewer →
+            </Link>
           </div>
         </div>
       )}

@@ -17,9 +17,9 @@ export function OwnershipPage() {
   return (
     <div className="page-enter mx-auto max-w-3xl space-y-8 px-7 py-8">
       <div>
-        <h1 className="font-display text-[32px] font-semibold text-ink">Ownership record</h1>
+        <h1 className="font-display text-[32px] font-semibold text-ink">Ownership</h1>
         <p className="mt-2 text-[14px] text-mute">
-          Demonstration certificate bound to the selected volumetric parcel.
+          Ownership, rights, and vertical-space relationships bound to the selected volumetric parcel.
         </p>
       </div>
 
@@ -68,6 +68,13 @@ export function OwnershipPage() {
             This demonstration record maps cadastral identity to a vertical parcel. It is not a
             substitute for statutory title documents.
           </p>
+          <div className="rounded-xl border border-signal/20 bg-signal-soft/50 px-4 py-3">
+            <div className="text-[13px] font-semibold text-ink">Air-rights context</div>
+            <div className="mt-1 text-[12px] leading-relaxed text-mute">
+              If an elevated road, metro, or utility crosses above this property, that overhead
+              usage is represented as a vertical rights relationship, not as a normal 2D boundary.
+            </div>
+          </div>
         </div>
       </div>
 

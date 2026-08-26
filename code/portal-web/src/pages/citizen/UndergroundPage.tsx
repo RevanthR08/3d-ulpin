@@ -88,7 +88,7 @@ export function UndergroundPage() {
       </ul>
 
       <a href="/viewer3d/intel_city.html" target="_blank" rel="noreferrer" className="text-[13px] font-semibold text-signal">
-        Open Intel City twin →
+        Open 3D property viewer →
       </a>
     </div>
   )

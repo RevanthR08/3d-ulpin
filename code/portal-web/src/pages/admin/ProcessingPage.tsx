@@ -1,15 +1,37 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, type ChangeEvent } from 'react'
+import { Link } from 'react-router-dom'
+import verifiedMarkedPolygons from '../../assets/verified_marked_polygons.png'
 import { PipelineStrip } from '../../components/PipelineStrip'
 
 export function ProcessingPage() {
-  const [tick, setTick] = useState(2)
+  const [tick, setTick] = useState(0)
+  const [polygonFile, setPolygonFile] = useState('verified_city_block_polygons.geojson')
+  const [reviewOpen, setReviewOpen] = useState(false)
+  const polygonInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     const id = window.setInterval(() => {
-      setTick((t) => (t >= 4 ? 2 : t + 1))
-    }, 2800)
+      setTick((t) => {
+        if (t >= 5) {
+          window.clearInterval(id)
+          return 5
+        }
+        return t + 1
+      })
+    }, 1800)
     return () => clearInterval(id)
   }, [])
+
+  const complete = tick >= 5
+
+  function onPolygonUpload(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) {
+      setPolygonFile(file.name)
+      setReviewOpen(true)
+    }
+    e.target.value = ''
+  }
 
   return (
     <div className="page-enter mx-auto max-w-5xl space-y-8 px-7 py-8">
@@ -22,6 +44,21 @@ export function ProcessingPage() {
       </div>
 
       <PipelineStrip active={tick} />
+
+      <div
+        className={`rounded-2xl border px-5 py-4 ${
+          complete ? 'border-ok/25 bg-ok/5' : 'border-line bg-white'
+        }`}
+      >
+        <div className={`text-[14px] font-semibold ${complete ? 'text-ok' : 'text-ink'}`}>
+          {complete ? 'AI processing complete' : 'Processing survey package...'}
+        </div>
+        <div className="mt-1 text-[12px] leading-relaxed text-mute">
+          {complete
+            ? 'Extracted geometry is ready for 3D parcelization and footprint review.'
+            : 'The staged survey package is moving through extraction, segmentation, parcel delineation, validation, and ULPIN preparation.'}
+        </div>
+      </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         {[
@@ -36,6 +73,93 @@ export function ProcessingPage() {
           </div>
         ))}
       </div>
+
+      {complete && (
+        <div className="space-y-5">
+          <div className="rounded-2xl border border-line bg-white p-5">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <div className="text-[11px] uppercase tracking-[0.14em] text-mute">Verified 2D polygon handoff</div>
+                <div className="mt-1 text-[18px] font-semibold text-ink">AI-parsed building footprints</div>
+                <div className="font-mono mt-1 text-[11px] text-signal">{polygonFile}</div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <input
+                  ref={polygonInputRef}
+                  type="file"
+                  accept=".geojson,.json"
+                  className="hidden"
+                  onChange={onPolygonUpload}
+                />
+                <button
+                  type="button"
+                  onClick={() => polygonInputRef.current?.click()}
+                  className="rounded-xl border border-line bg-paper px-4 py-2.5 text-[13px] font-semibold text-ink"
+                >
+                  Upload verified GeoJSON
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setReviewOpen((v) => !v)}
+                  className="rounded-xl bg-signal px-4 py-2.5 text-[13px] font-semibold text-white"
+                >
+                  {reviewOpen ? 'Hide polygons' : 'Review polygons'}
+                </button>
+              </div>
+            </div>
+
+            {reviewOpen && (
+              <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_280px]">
+                <div className="relative h-[420px] overflow-hidden rounded-2xl border border-line bg-ink">
+                  <img
+                    src={verifiedMarkedPolygons}
+                    alt="Verified manually marked 2D building polygons"
+                    className="h-full w-full object-contain"
+                  />
+                  <div className="absolute left-4 top-4 rounded-full bg-ink/80 px-3 py-1 text-[11px] font-semibold text-white">
+                    Verified 2D footprints
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-line bg-paper p-4">
+                  <div className="text-[13px] font-semibold text-ink">Parsing result</div>
+                  <div className="mt-3 space-y-3 text-[12px] text-mute">
+                    <div className="rounded-xl bg-white px-3 py-2">
+                      <span className="font-semibold text-ink">100</span> floor plans indexed
+                    </div>
+                    <div className="rounded-xl bg-white px-3 py-2">
+                      <span className="font-semibold text-ink">82</span> verified footprint polygons
+                    </div>
+                    <div className="rounded-xl bg-white px-3 py-2">
+                      <span className="font-semibold text-ink">6</span> source groups linked
+                    </div>
+                    <div className="rounded-xl border border-ok/20 bg-ok/5 px-3 py-2 text-ok">
+                      Ready for 3D parcel creation
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <Link
+              to="/app/parcelization"
+              className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white"
+            >
+              Create 3D parcels
+            </Link>
+            <a
+              href="/extract/"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-semibold text-ink"
+            >
+              Review extracted footprints
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

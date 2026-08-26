@@ -1,0 +1,166 @@
+:root {
+  --ink: #0b1210;
+  --paper: #f7f6f2;
+  --paper-dim: #ebe8e0;
+  --line: #d9d4c8;
+  --signal: #0c8f7c;
+  --yellow: #f5ca48;
+  --mute: #6b736e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  height: 100vh;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  overflow-y: auto;
+  border-right: 1px solid var(--line);
+  background: #fff;
+  padding: 28px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--signal);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-size: 32px;
+  line-height: 1;
+}
+
+.sub {
+  margin: 12px 0 0;
+  color: var(--mute);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.upload,
+button {
+  cursor: pointer;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 12px 14px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.upload {
+  display: block;
+  text-align: center;
+  background: var(--ink);
+  color: #fff;
+}
+
+.upload input {
+  display: none;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+button:hover,
+.upload:hover {
+  border-color: var(--signal);
+}
+
+.meta {
+  display: grid;
+  gap: 10px;
+}
+
+.meta div {
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 12px;
+}
+
+.meta b {
+  display: block;
+  font-family: ui-monospace, monospace;
+  font-size: 16px;
+}
+
+.meta span {
+  display: block;
+  margin-top: 3px;
+  color: var(--mute);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.help {
+  margin-top: auto;
+  border-radius: 18px;
+  background: var(--paper-dim);
+  padding: 14px;
+  color: var(--mute);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.help p {
+  margin: 4px 0;
+}
+
+.workspace {
+  position: relative;
+  overflow: auto;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    #1d2521;
+  background-size: 28px 28px;
+}
+
+canvas {
+  display: block;
+  margin: 32px auto;
+  max-width: calc(100vw - 420px);
+  max-height: calc(100vh - 64px);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  cursor: crosshair;
+}
+
+.empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 14px;
+  pointer-events: none;
+}

@@ -3,12 +3,19 @@ import { RequireAuth } from './components/RequireAuth'
 import { Shell } from './components/Shell'
 import { AuthProvider, useAuth } from './lib/auth'
 import { CommandPage } from './pages/admin/CommandPage'
+import { FloorUnitManagementPage } from './pages/admin/FloorUnitManagementPage'
 import { IngestPage } from './pages/admin/IngestPage'
+import { ParcelizationPage } from './pages/admin/ParcelizationPage'
 import { ProcessingPage } from './pages/admin/ProcessingPage'
+import { ReportsIssuesPage } from './pages/admin/ReportsIssuesPage'
+import { UlpinGenerationPage } from './pages/admin/UlpinGenerationPage'
+import { UndergroundPropertiesPage } from './pages/admin/UndergroundPropertiesPage'
 import { ValidationPage } from './pages/admin/ValidationPage'
 import { CitizenHome } from './pages/citizen/CitizenHome'
 import { OwnershipPage } from './pages/citizen/OwnershipPage'
+import { PropertyRecordPage } from './pages/citizen/PropertyRecordPage'
 import { PropertyPage } from './pages/citizen/PropertyPage'
+import { ReportIssuePage } from './pages/citizen/ReportIssuePage'
 import { UndergroundPage } from './pages/citizen/UndergroundPage'
 import { LoginPage } from './pages/LoginPage'
 import { MapPage } from './pages/MapPage'
@@ -34,7 +41,12 @@ export default function App() {
               <Route path="/app" element={<CommandPage />} />
               <Route path="/app/ingest" element={<IngestPage />} />
               <Route path="/app/processing" element={<ProcessingPage />} />
+              <Route path="/app/parcelization" element={<ParcelizationPage />} />
+              <Route path="/app/floors" element={<FloorUnitManagementPage />} />
+              <Route path="/app/underground-properties" element={<UndergroundPropertiesPage />} />
               <Route path="/app/validation" element={<ValidationPage />} />
+              <Route path="/app/ulpin-generation" element={<UlpinGenerationPage />} />
+              <Route path="/app/reports" element={<ReportsIssuesPage />} />
             </Route>
             <Route path="/app/registry" element={<RegistryPage />} />
             <Route path="/app/polygons" element={<PolygonViewerPage />} />
@@ -44,7 +56,9 @@ export default function App() {
               <Route path="/citizen" element={<CitizenHome />} />
               <Route path="/citizen/property" element={<PropertyPage />} />
               <Route path="/citizen/ownership" element={<OwnershipPage />} />
+              <Route path="/citizen/record" element={<PropertyRecordPage />} />
               <Route path="/citizen/underground" element={<UndergroundPage />} />
+              <Route path="/citizen/report" element={<ReportIssuePage />} />
             </Route>
           </Route>
         </Route>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VERTICA Manual Polygon Marker</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="panel">
+        <div>
+          <p class="eyebrow">VERTICA utility</p>
+          <h1>Manual Polygon Marker</h1>
+          <p class="sub">
+            Upload a satellite/drone image, click building corners, close the polygon, then
+            download a marked PNG and GeoJSON.
+          </p>
+        </div>
+
+        <label class="upload">
+          <input id="imageInput" type="file" accept="image/*" />
+          <span>Upload image</span>
+        </label>
+
+        <div class="actions">
+          <button id="closeBtn" type="button">Close polygon</button>
+          <button id="undoBtn" type="button">Undo point</button>
+          <button id="clearBtn" type="button">Clear</button>
+        </div>
+
+        <div class="actions">
+          <button id="pngBtn" type="button">Download marked PNG</button>
+          <button id="geojsonBtn" type="button">Download GeoJSON</button>
+        </div>
+
+        <div class="meta">
+          <div><b id="polygonCount">0</b><span>closed polygons</span></div>
+          <div><b id="pointCount">0</b><span>active points</span></div>
+          <div><b id="imageSize">—</b><span>image size</span></div>
+          <div><b id="status">Waiting</b><span>status</span></div>
+        </div>
+
+        <div class="help">
+          <p><b>Controls</b></p>
+          <p>Left click: add point</p>
+          <p>Backspace: undo point</p>
+          <p>Enter: close polygon</p>
+          <p>Esc: clear polygon</p>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <canvas id="canvas"></canvas>
+        <div id="emptyState" class="empty">
+          Upload the image first, then start clicking building corners.
+        </div>
+      </section>
+    </main>
+
+    <script src="./marker.js?v=2"></script>
+  </body>
+</html>

@@ -1,27 +1,33 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
-import { adminTwinHref, citizenTwinHref, VIEWERS } from '../lib/viewers'
 
 type NavItem = { to: string; label: string; end?: boolean }
 
 const ADMIN_NAV: NavItem[] = [
   { to: '/app', label: 'Command', end: true },
-  { to: '/app/ingest', label: 'Ingestion' },
+  { to: '/app/ingest', label: 'Data Ingestion' },
   { to: '/app/processing', label: 'AI Pipeline' },
+  { to: '/app/parcelization', label: '3D Parcelization' },
+  { to: '/app/floors', label: 'Floor & Unit Management' },
+  { to: '/app/underground-properties', label: 'Underground Properties' },
   { to: '/app/validation', label: 'Validation' },
+  { to: '/app/ulpin-generation', label: 'ULPIN Generation' },
   { to: '/app/registry', label: 'Registry' },
-  { to: '/app/polygons', label: 'Polygon viewer' },
+  { to: '/app/polygons', label: '3D Parcel Viewer' },
   { to: '/app/map', label: 'Parcel Map' },
+  { to: '/app/reports', label: 'Reports / Issues' },
 ]
 
 const CITIZEN_NAV: NavItem[] = [
   { to: '/citizen', label: 'Home', end: true },
   { to: '/citizen/property', label: 'My Property' },
   { to: '/citizen/ownership', label: 'Ownership' },
-  { to: '/citizen/underground', label: 'Underground' },
-  { to: '/app/polygons', label: 'Polygon viewer' },
+  { to: '/citizen/record', label: 'Property Record' },
+  { to: '/app/polygons', label: '3D Property Viewer' },
   { to: '/app/map', label: 'Parcel Map' },
+  { to: '/citizen/underground', label: 'Underground' },
   { to: '/app/registry', label: 'Registry' },
+  { to: '/citizen/report', label: 'Report an Issue' },
 ]
 
 export function Shell() {
@@ -31,10 +37,7 @@ export function Shell() {
 
   const items = auth.role === 'admin' ? ADMIN_NAV : CITIZEN_NAV
   const roleLabel = auth.role === 'admin' ? 'Operator' : 'Citizen'
-  const twinHref =
-    auth.role === 'admin'
-      ? adminTwinHref({ ulpin: selectedUlpin })
-      : citizenTwinHref(selectedUlpin)
+  const contextLabel = selectedUlpin ? `Selected ${selectedUlpin}` : `${roleLabel} session`
 
   return (
     <div className="flex h-screen overflow-hidden bg-paper">
@@ -43,7 +46,7 @@ export function Shell() {
           <div className="font-display text-[22px] font-semibold tracking-tight text-white">VERTICA</div>
           <div className="mt-1 text-[11px] tracking-wide text-white/45">Volumetric cadastral intelligence</div>
         </div>
-        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
+        <nav className="min-h-0 flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
           {items.map((item) => (
             <NavLink
               key={item.to}
@@ -60,34 +63,6 @@ export function Shell() {
               {item.label}
             </NavLink>
           ))}
-          <a
-            href={twinHref}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-3 block rounded-lg px-3 py-2.5 text-[13px] text-white/40 hover:bg-white/5 hover:text-white"
-          >
-            {auth.role === 'admin' ? 'Intel City twin ↗' : 'My 3D property ↗'}
-          </a>
-          {auth.role === 'admin' && (
-            <>
-              <a
-                href={VIEWERS.chennai}
-                target="_blank"
-                rel="noreferrer"
-                className="block rounded-lg px-3 py-2 text-[12px] text-white/30 hover:bg-white/5 hover:text-white/70"
-              >
-                QA · Chennai GLB ↗
-              </a>
-              <a
-                href={VIEWERS.societyBlock}
-                target="_blank"
-                rel="noreferrer"
-                className="block rounded-lg px-3 py-2 text-[12px] text-white/30 hover:bg-white/5 hover:text-white/70"
-              >
-                QA · Society block ↗
-              </a>
-            </>
-          )}
         </nav>
         <div className="border-t border-white/10 px-4 py-4">
           <div className="text-[12px] font-medium text-white/80">{auth.username}</div>
@@ -108,10 +83,10 @@ export function Shell() {
         <header className="flex h-14 flex-none items-center justify-between border-b border-line bg-paper/90 px-7 backdrop-blur">
           <div className="text-[12px] text-mute">Ministry of Rural Development · DoLR</div>
           <div className="rounded-full border border-line bg-white px-3 py-1 text-[11px] font-medium tracking-wide text-ink">
-            {roleLabel} session
+            {contextLabel}
           </div>
         </header>
-        <main className="relative min-h-0 flex-1 overflow-hidden">
+        <main className="relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
           <Outlet />
         </main>
       </div>

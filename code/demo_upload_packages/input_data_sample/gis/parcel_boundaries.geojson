@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"id":"PARCEL-INPUT-SAMPLE","status":"demo"},"geometry":{"type":"Polygon","coordinates":[[[80.27025,13.08225],[80.27125,13.08225],[80.27125,13.08310],[80.27025,13.08310],[80.27025,13.08225]]]}}]}

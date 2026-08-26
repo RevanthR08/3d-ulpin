@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"id":"BLDG-SAMPLE-01","floors":8},"geometry":{"type":"Polygon","coordinates":[[[80.27055,13.08250],[80.27075,13.08250],[80.27075,13.08270],[80.27055,13.08270],[80.27055,13.08250]]]}}]}

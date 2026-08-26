@@ -4,7 +4,6 @@ import type { Map } from 'maplibre-gl'
 import { Link } from 'react-router-dom'
 import { api, type GeoSitePlan } from '../lib/api'
 import { useAuth } from '../lib/auth'
-import { citizenTwinHref } from '../lib/viewers'
 
 const TYPE_COLOR: Record<string, string> = {
   residential_tower: '#0C8F7C',
@@ -191,22 +190,20 @@ export function MapPage() {
               to="/citizen/property"
               className="rounded-xl bg-ink py-2.5 text-center text-[13px] font-semibold text-white"
             >
-              Property identity
+              My Property
             </Link>
             <Link
-              to="/citizen/ownership"
+              to="/citizen/record"
               className="rounded-xl border border-line py-2.5 text-center text-[13px] font-semibold"
             >
-              Ownership record
+              Property Record
             </Link>
-            <a
-              href={citizenTwinHref(selected.ulpin)}
-              target="_blank"
-              rel="noreferrer"
+            <Link
+              to="/app/polygons"
               className="rounded-xl border border-signal/25 bg-signal-soft py-2.5 text-center text-[13px] font-semibold text-signal-deep"
             >
-              Open Intel City twin
-            </a>
+              3D Property Viewer
+            </Link>
           </div>
         </div>
       )}

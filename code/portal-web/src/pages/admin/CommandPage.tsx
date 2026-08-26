@@ -57,7 +57,7 @@ export function CommandPage() {
           rel="noreferrer"
           className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white hover:bg-ink-soft"
         >
-          Open Intel City twin
+          Open 3D parcel viewer
         </a>
         <Link
           to="/app/map"
