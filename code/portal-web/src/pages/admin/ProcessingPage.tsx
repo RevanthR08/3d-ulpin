@@ -105,6 +105,12 @@ export function ProcessingPage() {
                 >
                   {reviewOpen ? 'Hide polygons' : 'Review polygons'}
                 </button>
+                <Link
+                  to="/app/polygon-labels"
+                  className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-semibold text-ink"
+                >
+                  Open 2D labels
+                </Link>
               </div>
             </div>
 

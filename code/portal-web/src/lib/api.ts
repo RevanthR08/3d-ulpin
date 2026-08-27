@@ -116,7 +116,7 @@ async function getJson<T>(path: string): Promise<T> {
   return r.json() as Promise<T>
 }
 
-const INTEL_CITY_JSON = '/viewer3d/intel_city/intel_city_buildings.json?v=8'
+const INTEL_CITY_JSON = '/viewer3d/intel_city/intel_city_buildings.json?v=9'
 
 /** Resolve building or floor ULPIN from Intel City registry → UnitDetail shape. */
 export function resolveIntelCityUnit(reg: IntelCityRegistry, ulpin: string): UnitDetail | null {

@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { api } from '../../lib/api'
+import { useAuth } from '../../lib/auth'
+import { citizenTwinHref } from '../../lib/viewers'
 
 type UgAsset = {
   id?: string
@@ -11,6 +14,7 @@ type UgAsset = {
 }
 
 export function UndergroundPage() {
+  const { selectedUlpin } = useAuth()
   const [count, setCount] = useState(0)
   const [rows, setRows] = useState<UgAsset[]>([])
   const [err, setErr] = useState<string | null>(null)
@@ -87,9 +91,21 @@ export function UndergroundPage() {
         )}
       </ul>
 
-      <a href="/viewer3d/intel_city.html" target="_blank" rel="noreferrer" className="text-[13px] font-semibold text-signal">
-        Open 3D property viewer →
-      </a>
+      <div className="flex flex-wrap gap-4">
+        <Link to="/app/twin" className="text-[13px] font-semibold text-signal">
+          Open 3D Atlas →
+        </Link>
+        {selectedUlpin && (
+          <a
+            href={citizenTwinHref(selectedUlpin, { ug: true })}
+            target="_blank"
+            rel="noreferrer"
+            className="text-[13px] font-semibold text-mute"
+          >
+            My house · underground on ↗
+          </a>
+        )}
+      </div>
     </div>
   )
 }

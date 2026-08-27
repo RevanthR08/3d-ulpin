@@ -23,8 +23,8 @@ export function CommandPage() {
       <div>
         <h1 className="font-display text-[34px] font-semibold tracking-tight text-ink">Command</h1>
         <p className="mt-2 max-w-xl text-[14px] leading-relaxed text-mute">
-          Operator pulse for {name} (pin {city?.meta?.pincode || '600001'}). Pipeline stages mirror
-          DoLR vertical parcel workflows — extraction through 3D ULPIN issuance.
+          Operator pulse for {name} (pin {city?.meta?.pincode || '600001'}). City Atlas is 2D GBA;
+          3D Atlas is the full Intel City twin.
         </p>
       </div>
 
@@ -51,20 +51,26 @@ export function CommandPage() {
       <PipelineStrip active={2} />
 
       <div className="flex flex-wrap gap-3">
+        <Link
+          to="/app/twin"
+          className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white hover:bg-ink-soft"
+        >
+          Open 3D Atlas
+        </Link>
+        <Link
+          to="/app/polygons"
+          className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-semibold text-ink hover:border-signal"
+        >
+          City Atlas (2D)
+        </Link>
         <a
           href={adminTwinHref()}
           target="_blank"
           rel="noreferrer"
-          className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white hover:bg-ink-soft"
-        >
-          Open 3D parcel viewer
-        </a>
-        <Link
-          to="/app/map"
           className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-semibold text-ink hover:border-signal"
         >
-          Open parcel map
-        </Link>
+          Full-screen 3D ↗
+        </a>
         <Link
           to="/app/validation"
           className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-semibold text-ink hover:border-signal"

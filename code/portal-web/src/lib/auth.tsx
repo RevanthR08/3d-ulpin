@@ -8,6 +8,7 @@ import {
 } from 'react'
 import {
   clearAuth,
+  clearSelectedUlpin,
   getAuth,
   getSelectedUlpin,
   setAuth,
@@ -15,6 +16,7 @@ import {
   type AuthState,
   type Role,
 } from './storage'
+import { resolveCitizenUlpin } from './demoAccounts'
 
 type Ctx = {
   auth: AuthState | null
@@ -34,11 +36,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const next = { username, role }
     setAuth(next)
     setAuthState(next)
+    if (role === 'citizen') {
+      const ulpin = resolveCitizenUlpin(username)
+      setSelectedUlpin(ulpin)
+      setUlpinState(ulpin)
+    } else {
+      // Operator: never preload a house focus — full city Atlas
+      clearSelectedUlpin()
+      setUlpinState(null)
+    }
   }, [])
 
   const logout = useCallback(() => {
     clearAuth()
+    clearSelectedUlpin()
     setAuthState(null)
+    setUlpinState(null)
   }, [])
 
   const selectUlpin = useCallback((ulpin: string) => {

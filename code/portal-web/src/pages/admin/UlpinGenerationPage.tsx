@@ -71,10 +71,10 @@ export function UlpinGenerationPage() {
           Register final records
         </Link>
         <Link
-          to="/app/polygons"
+          to="/app/twin"
           className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-semibold text-ink"
         >
-          View 3D parcels
+          Open 3D Atlas
         </Link>
       </div>
     </div>

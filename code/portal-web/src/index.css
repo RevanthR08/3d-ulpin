@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "maplibre-gl/dist/maplibre-gl.css";
 
 @theme {
   --color-ink: #0b1210;
@@ -81,10 +80,4 @@ body {
     opacity: 1;
     transform: translateX(0);
   }
-}
-
-.maplibregl-ctrl-group {
-  border-radius: 10px !important;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(11, 18, 16, 0.12) !important;
 }

@@ -2,26 +2,23 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api, type IntelCityRegistry } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
-import { getSelectedUlpin } from '../../lib/storage'
+import { lookupCitizenAccount, siblingProperties } from '../../lib/demoAccounts'
 
 export function CitizenHome() {
   const { auth, selectedUlpin, selectUlpin } = useAuth()
   const [city, setCity] = useState<IntelCityRegistry | null>(null)
 
   useEffect(() => {
-    api.intelCity().then((reg) => {
-      setCity(reg)
-      if (!getSelectedUlpin()) {
-        const firstFloor = reg.buildings?.find((b) => b.floors?.length)?.floors?.[0]
-        const seed = firstFloor?.ulpin || reg.buildings?.[0]?.ulpin
-        if (seed) selectUlpin(seed)
-      }
-    }).catch(() => {})
-  }, [selectUlpin])
+    api.intelCity().then(setCity).catch(() => {})
+  }, [])
 
-  const featured = selectedUlpin || city?.buildings?.[0]?.floors?.[0]?.ulpin || city?.buildings?.[0]?.ulpin
+  const account = selectedUlpin ? lookupCitizenAccount(selectedUlpin) : null
+  const siblings = selectedUlpin ? siblingProperties(selectedUlpin) : []
   const featuredBldg = city?.buildings?.find(
-    (b) => b.ulpin === featured || b.floors?.some((f) => f.ulpin === featured),
+    (b) =>
+      b.ulpin === selectedUlpin ||
+      b.floors?.some((f) => f.ulpin === selectedUlpin) ||
+      (account && b.name === account.building),
   )
 
   return (
@@ -39,18 +36,43 @@ export function CitizenHome() {
           Your vertical property
         </h1>
         <p className="mt-3 max-w-md text-[14px] leading-relaxed text-white/55">
-          Welcome{auth?.username ? `, ${auth.username}` : ''}. Inspect cadastral identity,
-          ownership status, and the Intel City 3D twin for your registered volume.
+          Welcome{auth?.username ? `, ${auth.username}` : ''}. Your login ULPIN opens a locked
+          house in 3D Atlas — other buildings stay hidden.
         </p>
 
         <div className="mt-10 rounded-2xl border border-white/10 bg-white p-6 shadow-xl">
-          <div className="text-[11px] uppercase tracking-[0.14em] text-mute">Featured ULPIN · Intel City</div>
+          <div className="text-[11px] uppercase tracking-[0.14em] text-mute">Your ULPIN · house focus</div>
           <div className="font-mono mt-2 text-[18px] font-medium text-signal break-all">
-            {featured || '—'}
+            {selectedUlpin || '—'}
           </div>
-          {featuredBldg && (
+          {(account || featuredBldg) && (
             <div className="mt-2 text-[13px] text-mute">
-              {featuredBldg.name} · {featuredBldg.kind}
+              {account?.building || featuredBldg?.name} · {account?.kind || featuredBldg?.kind}
+              {account ? ` · F${account.floor} · ${account.owner}` : ''}
+            </div>
+          )}
+          {siblings.length > 0 && (
+            <div className="mt-4 rounded-xl border border-line bg-paper px-4 py-3">
+              <div className="text-[11px] uppercase tracking-[0.14em] text-mute">
+                Also owned by {account?.owner}
+              </div>
+              <ul className="mt-2 space-y-2">
+                {siblings.map((s) => (
+                  <li key={s.ulpin} className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <div className="text-[13px] font-semibold text-ink">{s.building}</div>
+                      <div className="font-mono text-[11px] text-signal">{s.ulpin}</div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => selectUlpin(s.ulpin)}
+                      className="rounded-lg border border-line bg-white px-3 py-1.5 text-[12px] font-semibold text-ink hover:border-signal"
+                    >
+                      Switch house
+                    </button>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
           <div className="mt-6 flex flex-wrap gap-3">
@@ -67,16 +89,10 @@ export function CitizenHome() {
               Property Record
             </Link>
             <Link
-              to="/app/map"
-              className="rounded-xl border border-line px-4 py-2.5 text-[13px] font-semibold"
-            >
-              Parcel map
-            </Link>
-            <Link
-              to="/app/polygons"
+              to="/app/twin"
               className="rounded-xl border border-signal/30 bg-signal-soft px-4 py-2.5 text-[13px] font-semibold text-signal-deep"
             >
-              3D Property Viewer
+              Open 3D Atlas
             </Link>
           </div>
         </div>

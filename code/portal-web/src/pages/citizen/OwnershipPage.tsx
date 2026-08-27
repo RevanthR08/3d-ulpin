@@ -79,8 +79,8 @@ export function OwnershipPage() {
       </div>
 
       {!selectedUlpin && (
-        <Link to="/app/map" className="text-[13px] font-semibold text-signal">
-          Select a parcel on the map →
+        <Link to="/app/twin" className="text-[13px] font-semibold text-signal">
+          Open 3D Atlas →
         </Link>
       )}
     </div>

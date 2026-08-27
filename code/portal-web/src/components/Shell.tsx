@@ -7,14 +7,15 @@ const ADMIN_NAV: NavItem[] = [
   { to: '/app', label: 'Command', end: true },
   { to: '/app/ingest', label: 'Data Ingestion' },
   { to: '/app/processing', label: 'AI Pipeline' },
+  { to: '/app/polygon-labels', label: '2D Polygon Labels' },
   { to: '/app/parcelization', label: '3D Parcelization' },
   { to: '/app/floors', label: 'Floor & Unit Management' },
   { to: '/app/underground-properties', label: 'Underground Properties' },
   { to: '/app/validation', label: 'Validation' },
   { to: '/app/ulpin-generation', label: 'ULPIN Generation' },
   { to: '/app/registry', label: 'Registry' },
-  { to: '/app/polygons', label: '3D Parcel Viewer' },
-  { to: '/app/map', label: 'Parcel Map' },
+  { to: '/app/polygons', label: 'City Atlas' },
+  { to: '/app/twin', label: '3D Atlas' },
   { to: '/app/reports', label: 'Reports / Issues' },
 ]
 
@@ -23,8 +24,7 @@ const CITIZEN_NAV: NavItem[] = [
   { to: '/citizen/property', label: 'My Property' },
   { to: '/citizen/ownership', label: 'Ownership' },
   { to: '/citizen/record', label: 'Property Record' },
-  { to: '/app/polygons', label: '3D Property Viewer' },
-  { to: '/app/map', label: 'Parcel Map' },
+  { to: '/app/twin', label: '3D Atlas' },
   { to: '/citizen/underground', label: 'Underground' },
   { to: '/app/registry', label: 'Registry' },
   { to: '/citizen/report', label: 'Report an Issue' },
@@ -37,7 +37,12 @@ export function Shell() {
 
   const items = auth.role === 'admin' ? ADMIN_NAV : CITIZEN_NAV
   const roleLabel = auth.role === 'admin' ? 'Operator' : 'Citizen'
-  const contextLabel = selectedUlpin ? `Selected ${selectedUlpin}` : `${roleLabel} session`
+  const contextLabel =
+    auth.role === 'admin'
+      ? 'Operator · full city'
+      : selectedUlpin
+        ? `House ${selectedUlpin}`
+        : 'Citizen session'
 
   return (
     <div className="flex h-screen overflow-hidden bg-paper">

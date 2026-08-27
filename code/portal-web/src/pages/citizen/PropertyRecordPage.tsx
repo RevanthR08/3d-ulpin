@@ -58,7 +58,7 @@ export function PropertyRecordPage() {
           </div>
         ) : (
           <div className="py-12 text-center text-[13px] text-mute">
-            Select a ULPIN from the registry or parcel map to load a record.
+            Select a ULPIN from the registry or 3D Atlas to load a record.
           </div>
         )}
       </div>
@@ -67,8 +67,8 @@ export function PropertyRecordPage() {
         <Link to="/app/registry" className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-semibold">
           Open registry
         </Link>
-        <Link to="/app/polygons" className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white">
-          View in 3D
+        <Link to="/app/twin" className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white">
+          Open 3D Atlas
         </Link>
       </div>
     </div>

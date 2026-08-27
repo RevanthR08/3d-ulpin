@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { api, resolveIntelCityUnit, type UnitDetail } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
+import { lookupCitizenAccount, siblingProperties } from '../../lib/demoAccounts'
 
 export function PropertyPage() {
   const { selectedUlpin, selectUlpin } = useAuth()
@@ -9,6 +10,8 @@ export function PropertyPage() {
   const [unit, setUnit] = useState<UnitDetail | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const account = selectedUlpin ? lookupCitizenAccount(selectedUlpin) : null
+  const siblings = selectedUlpin ? siblingProperties(selectedUlpin) : []
 
   async function load(ulpin: string) {
     if (!ulpin.trim()) return
@@ -40,7 +43,7 @@ export function PropertyPage() {
       load(selectedUlpin)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [selectedUlpin])
 
   function onSubmit(e: FormEvent) {
     e.preventDefault()
@@ -123,6 +126,30 @@ export function PropertyPage() {
               </div>
             </div>
           )}
+          {siblings.length > 0 && (
+            <div className="rounded-xl border border-line bg-paper px-4 py-3">
+              <div className="text-[11px] uppercase tracking-[0.14em] text-mute">
+                Also owned by {unit.owner || account?.owner}
+              </div>
+              <ul className="mt-2 space-y-2">
+                {siblings.map((s) => (
+                  <li key={s.ulpin} className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <div className="text-[13px] font-semibold text-ink">{s.building}</div>
+                      <div className="font-mono text-[11px] text-signal">{s.ulpin}</div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => selectUlpin(s.ulpin)}
+                      className="rounded-lg border border-line bg-white px-3 py-1.5 text-[12px] font-semibold text-ink hover:border-signal"
+                    >
+                      Switch house
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="flex gap-3 pt-2">
             <Link to="/citizen/ownership" className="text-[13px] font-semibold text-signal">
               View ownership certificate →
@@ -130,8 +157,8 @@ export function PropertyPage() {
             <Link to="/citizen/record" className="text-[13px] font-semibold text-mute">
               Property record →
             </Link>
-            <Link to="/app/polygons" className="text-[13px] font-semibold text-mute">
-              3D property viewer →
+            <Link to="/app/twin" className="text-[13px] font-semibold text-mute">
+              Open 3D Atlas →
             </Link>
           </div>
         </div>

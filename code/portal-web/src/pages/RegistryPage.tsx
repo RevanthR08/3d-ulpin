@@ -2,10 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api, type IntelCityBuilding } from '../lib/api'
 import { useAuth } from '../lib/auth'
-import { adminTwinHref, citizenTwinHref } from '../lib/viewers'
 
 export function RegistryPage() {
-  const { auth, selectUlpin } = useAuth()
+  const { selectUlpin } = useAuth()
   const [buildings, setBuildings] = useState<IntelCityBuilding[]>([])
   const [q, setQ] = useState('')
 
@@ -26,9 +25,6 @@ export function RegistryPage() {
         b.kind.toLowerCase().includes(needle),
     )
   }, [buildings, q])
-
-  const twinFor = (ulpin: string) =>
-    auth?.role === 'admin' ? adminTwinHref({ ulpin }) : citizenTwinHref(ulpin)
 
   return (
     <div className="page-enter mx-auto max-w-5xl space-y-6 px-7 py-8">
@@ -73,16 +69,12 @@ export function RegistryPage() {
                   >
                     Select
                   </button>
-                  <a
-                    href={twinFor(b.ulpin)}
-                    target="_blank"
-                    rel="noreferrer"
+                  <Link
+                    to="/app/twin"
+                    onClick={() => selectUlpin(b.floors?.[0]?.ulpin || b.ulpin)}
                     className="ml-3 text-[12px] font-semibold text-mute hover:text-signal"
                   >
                     3D
-                  </a>
-                  <Link to="/app/map" className="ml-3 text-[12px] font-semibold text-mute hover:text-signal">
-                    Map
                   </Link>
                 </td>
               </tr>

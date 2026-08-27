@@ -60,6 +60,9 @@ export function ParcelizationPage() {
         <Link to="/app/floors" className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white">
           Manage floors & units
         </Link>
+        <Link to="/app/twin" className="rounded-xl border border-signal/30 bg-signal-soft px-4 py-2.5 text-[13px] font-semibold text-signal-deep">
+          Inspect in 3D Atlas
+        </Link>
         <Link to="/app/validation" className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-semibold">
           Validate geometry
         </Link>

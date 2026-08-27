@@ -82,8 +82,14 @@ export function UndergroundPropertiesPage() {
 
       <div className="flex flex-wrap gap-3">
         <Link
-          to="/app/validation"
+          to="/app/twin"
           className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white"
+        >
+          Inspect underground in 3D Atlas
+        </Link>
+        <Link
+          to="/app/validation"
+          className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-semibold text-ink"
         >
           Validate spatial model
         </Link>
