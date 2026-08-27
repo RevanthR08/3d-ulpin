@@ -237,7 +237,7 @@ export function RegistryPage() {
   const [params, setParams] = useSearchParams()
   const tab = (params.get('tab') as Tab) || 'buildings'
   const [buildings, setBuildings] = useState<IntelCityBuilding[]>([])
-  const [q, setQ] = useState('')
+  const [q, setQ] = useState(() => params.get('q') || '')
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [housePick, setHousePick] = useState<HousePick | null>(null)
 
