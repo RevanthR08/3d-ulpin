@@ -61,6 +61,13 @@ export function lookupCitizenAccount(ulpin: string): DemoCitizenAccount | undefi
   return DEMO_CITIZEN_ACCOUNTS.find((a) => a.ulpin === ulpin)
 }
 
+/** Every parcel held by the same owner (including the login ULPIN). */
+export function ownedProperties(ulpin: string): DemoCitizenAccount[] {
+  const me = lookupCitizenAccount(ulpin)
+  if (!me) return ulpin ? [{ username: ulpin, ulpin, building: 'Registered parcel', kind: 'unit', floor: '—', unit: '—', owner: '—' }] : []
+  return DEMO_CITIZEN_ACCOUNTS.filter((a) => a.owner === me.owner)
+}
+
 /** Other properties held by the same owner (dual ownership). */
 export function siblingProperties(ulpin: string): DemoCitizenAccount[] {
   const me = lookupCitizenAccount(ulpin)

@@ -1,10 +1,10 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
+import { ownedProperties } from '../lib/demoAccounts'
 
 type NavItem = { to: string; label: string; end?: boolean }
 
 const ADMIN_NAV: NavItem[] = [
-  { to: '/app', label: 'Command', end: true },
   { to: '/app/ingest', label: 'Data Ingestion' },
   { to: '/app/processing', label: 'AI Pipeline' },
   { to: '/app/polygon-labels', label: '2D Polygon Labels' },
@@ -33,11 +33,12 @@ export function Shell() {
 
   const items = auth.role === 'admin' ? ADMIN_NAV : CITIZEN_NAV
   const roleLabel = auth.role === 'admin' ? 'Operator' : 'Citizen'
+  const holdings = auth.role === 'citizen' && selectedUlpin ? ownedProperties(selectedUlpin) : []
   const contextLabel =
     auth.role === 'admin'
       ? 'Operator · full city'
-      : selectedUlpin
-        ? `House ${selectedUlpin}`
+      : holdings.length > 0
+        ? `${holdings.length} ${holdings.length === 1 ? 'property' : 'properties'}`
         : 'Citizen session'
 
   return (
@@ -87,7 +88,7 @@ export function Shell() {
             {contextLabel}
           </div>
         </header>
-        <main className="relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+        <main id="vertica-main" className="relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
           <Outlet />
         </main>
       </div>

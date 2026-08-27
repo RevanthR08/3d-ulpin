@@ -1,18 +1,31 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { CitizenPropertyList } from '../../components/CitizenPropertyList'
 import { api, resolveIntelCityUnit, type UnitDetail } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
+import { ownedProperties } from '../../lib/demoAccounts'
 
 export function PropertyRecordPage() {
   const { selectedUlpin } = useAuth()
-  const [record, setRecord] = useState<UnitDetail | null>(null)
+  const holdings = selectedUlpin ? ownedProperties(selectedUlpin) : []
+  const [details, setDetails] = useState<Record<string, UnitDetail | null>>({})
 
   useEffect(() => {
-    if (!selectedUlpin) return
+    if (holdings.length === 0) return
+    let cancelled = false
     api
       .intelCity()
-      .then((reg) => setRecord(resolveIntelCityUnit(reg, selectedUlpin)))
-      .catch(() => setRecord(null))
+      .then((reg) => {
+        if (cancelled) return
+        const next: Record<string, UnitDetail | null> = {}
+        for (const h of holdings) next[h.ulpin] = resolveIntelCityUnit(reg, h.ulpin)
+        setDetails(next)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedUlpin])
 
   return (
@@ -20,48 +33,17 @@ export function PropertyRecordPage() {
       <div>
         <h1 className="font-display text-[32px] font-semibold text-ink">Property Record</h1>
         <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-mute">
-          Official cadastral record view for the selected parcel/body/floor identity.
+          Official cadastral records for every parcel/body/floor identity on this account.
         </p>
       </div>
 
-      <div className="rounded-2xl border border-line bg-white p-6">
-        {selectedUlpin ? (
-          <div className="space-y-6">
-            <div>
-              <div className="text-[11px] uppercase tracking-[0.14em] text-mute">PIN / ULPIN</div>
-              <div className="font-mono mt-2 break-all text-[16px] text-signal">{selectedUlpin}</div>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              {[
-                ['Property body', record?.building_name || record?.building_id || 'Mapped body'],
-                ['Floor / vertical level', record?.floor_label != null ? `Floor ${record.floor_label}` : 'Building parcel'],
-                ['Owner / right holder', record?.owner || 'Demo holder'],
-                ['Legal status', record?.legal_status || 'registered'],
-                ['Measured area', record?.area_sq_m != null ? `${record.area_sq_m} m²` : 'Available in registry'],
-                ['Record type', '3D cadastral identity'],
-              ].map(([k, v]) => (
-                <div key={k} className="rounded-xl bg-paper px-4 py-3">
-                  <div className="text-[11px] text-mute">{k}</div>
-                  <div className="mt-1 text-[14px] font-semibold text-ink">{v}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className="rounded-xl border border-signal/20 bg-signal-soft/50 px-4 py-3">
-              <div className="text-[13px] font-semibold text-ink">Rights relationship</div>
-              <div className="mt-1 text-[12px] leading-relaxed text-mute">
-                Surface ownership, floor ownership, underground influence, and air-rights constraints
-                are treated as linked 3D rights, not separate flat parcel boundaries.
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="py-12 text-center text-[13px] text-mute">
-            Select a ULPIN from the registry or 3D Atlas to load a record.
-          </div>
-        )}
-      </div>
+      {holdings.length > 0 ? (
+        <CitizenPropertyList holdings={holdings} details={details} variant="record" />
+      ) : (
+        <div className="rounded-2xl border border-line bg-white py-12 text-center text-[13px] text-mute">
+          No properties on this citizen session.
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-3">
         <Link to="/app/registry" className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-semibold">

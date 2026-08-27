@@ -1,25 +1,21 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { CitizenPropertyList } from '../../components/CitizenPropertyList'
 import { api, type IntelCityRegistry } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
-import { lookupCitizenAccount, siblingProperties } from '../../lib/demoAccounts'
+import { lookupCitizenAccount, ownedProperties } from '../../lib/demoAccounts'
 
 export function CitizenHome() {
-  const { auth, selectedUlpin, selectUlpin } = useAuth()
+  const { auth, selectedUlpin } = useAuth()
   const [city, setCity] = useState<IntelCityRegistry | null>(null)
 
   useEffect(() => {
     api.intelCity().then(setCity).catch(() => {})
   }, [])
 
-  const account = selectedUlpin ? lookupCitizenAccount(selectedUlpin) : null
-  const siblings = selectedUlpin ? siblingProperties(selectedUlpin) : []
-  const featuredBldg = city?.buildings?.find(
-    (b) =>
-      b.ulpin === selectedUlpin ||
-      b.floors?.some((f) => f.ulpin === selectedUlpin) ||
-      (account && b.name === account.building),
-  )
+  const holdings = selectedUlpin ? ownedProperties(selectedUlpin) : []
+  const account = selectedUlpin ? lookupCitizenAccount(selectedUlpin) : holdings[0]
+  const owner = account?.owner
 
   return (
     <div className="page-enter relative overflow-hidden">
@@ -33,74 +29,43 @@ export function CitizenHome() {
       <div className="relative mx-auto max-w-5xl px-7 pb-12 pt-10">
         <p className="text-[12px] uppercase tracking-[0.18em] text-white/45">Citizen workspace</p>
         <h1 className="font-display mt-3 max-w-lg text-[40px] font-semibold leading-[1.1] tracking-tight text-white">
-          Your vertical property
+          Your vertical properties
         </h1>
         <p className="mt-3 max-w-md text-[14px] leading-relaxed text-white/55">
-          Welcome{auth?.username ? `, ${auth.username}` : ''}. Your login ULPIN opens a locked
-          house in 3D Atlas — other buildings stay hidden.
+          Welcome{auth?.username ? `, ${auth.username}` : ''}
+          {owner ? ` · ${owner}` : ''}. Every parcel on this account is listed below.
         </p>
 
-        <div className="mt-10 rounded-2xl border border-white/10 bg-white p-6 shadow-xl">
-          <div className="text-[11px] uppercase tracking-[0.14em] text-mute">Your ULPIN · house focus</div>
-          <div className="font-mono mt-2 text-[18px] font-medium text-signal break-all">
-            {selectedUlpin || '—'}
-          </div>
-          {(account || featuredBldg) && (
-            <div className="mt-2 text-[13px] text-mute">
-              {account?.building || featuredBldg?.name} · {account?.kind || featuredBldg?.kind}
-              {account ? ` · F${account.floor}-${account.unit} · ${account.owner}` : ''}
-            </div>
-          )}
-          {siblings.length > 0 && (
-            <div className="mt-4 rounded-xl border border-line bg-paper px-4 py-3">
-              <div className="text-[11px] uppercase tracking-[0.14em] text-mute">
-                Also owned by {account?.owner}
+        <div className="mt-10 space-y-4">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <div className="text-[11px] uppercase tracking-[0.14em] text-white/45">Holdings</div>
+              <div className="font-display mt-1 text-[28px] font-semibold text-white">
+                {holdings.length} {holdings.length === 1 ? 'property' : 'properties'}
               </div>
-              <ul className="mt-2 space-y-2">
-                {siblings.map((s) => (
-                  <li key={s.ulpin} className="flex flex-wrap items-center justify-between gap-2">
-                    <div>
-                      <div className="text-[13px] font-semibold text-ink">{s.building}</div>
-                      <div className="font-mono text-[11px] text-signal">{s.ulpin}</div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => selectUlpin(s.ulpin)}
-                      className="rounded-lg border border-line bg-white px-3 py-1.5 text-[12px] font-semibold text-ink hover:border-signal"
-                    >
-                      Switch house
-                    </button>
-                  </li>
-                ))}
-              </ul>
             </div>
-          )}
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              to="/citizen/property"
-              className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white"
-            >
-              My Property
-            </Link>
-            <Link
-              to="/citizen/record"
-              className="rounded-xl border border-line px-4 py-2.5 text-[13px] font-semibold"
-            >
-              Property Record
-            </Link>
-            <Link
-              to="/app/twin"
-              className="rounded-xl border border-signal/30 bg-signal-soft px-4 py-2.5 text-[13px] font-semibold text-signal-deep"
-            >
-              Open 3D Atlas
-            </Link>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                to="/citizen/property"
+                className="rounded-xl bg-white px-4 py-2.5 text-[13px] font-semibold text-ink"
+              >
+                My Property
+              </Link>
+              <Link
+                to="/app/twin"
+                className="rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-[13px] font-semibold text-white"
+              >
+                Open 3D Atlas
+              </Link>
+            </div>
           </div>
+          <CitizenPropertyList holdings={holdings} variant="summary" />
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           {[
+            ['Your parcels', holdings.length],
             ['Buildings in city', city?.meta?.building_count ?? city?.buildings?.length ?? '—'],
-            ['Vertical floors', city?.meta?.floor_count ?? '—'],
             ['Pin code', city?.meta?.pincode ?? '600001'],
           ].map(([k, v]) => (
             <div key={k} className="rounded-2xl border border-line bg-white px-5 py-4">
