@@ -7,7 +7,7 @@ export function RequireAuth({ roles }: { roles?: Role[] }) {
   const loc = useLocation()
   if (!auth) return <Navigate to="/login" replace state={{ from: loc.pathname }} />
   if (roles && !roles.includes(auth.role)) {
-    return <Navigate to={auth.role === 'admin' ? '/app' : '/citizen'} replace />
+    return <Navigate to={auth.role === 'admin' ? '/app/ingest' : '/citizen'} replace />
   }
   return <Outlet />
 }

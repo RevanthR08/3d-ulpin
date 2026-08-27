@@ -4,6 +4,7 @@ import { useAuth } from '../lib/auth'
 import {
   DEFAULT_CITIZEN_ULPIN,
   DEMO_CITIZEN_ACCOUNTS,
+  ownedProperties,
   resolveCitizenUlpin,
 } from '../lib/demoAccounts'
 import type { Role } from '../lib/storage'
@@ -16,7 +17,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('')
 
   if (auth) {
-    return <Navigate to={auth.role === 'admin' ? '/app' : '/citizen'} replace />
+    return <Navigate to={auth.role === 'admin' ? '/app/ingest' : '/citizen'} replace />
   }
 
   function onSubmit(e: FormEvent) {
@@ -25,11 +26,12 @@ export function LoginPage() {
       username.trim() ||
       (role === 'admin' ? 'operator' : DEFAULT_CITIZEN_ULPIN)
     login(name, role)
-    navigate(role === 'admin' ? '/app' : '/citizen')
+    navigate(role === 'admin' ? '/app/ingest' : '/citizen')
   }
 
   const previewUlpin =
     role === 'citizen' ? resolveCitizenUlpin(username || DEFAULT_CITIZEN_ULPIN) : null
+  const previewHoldings = previewUlpin ? ownedProperties(previewUlpin) : []
 
   return (
     <div className="grain relative flex min-h-full items-center justify-center overflow-hidden bg-ink px-6 py-10">
@@ -102,7 +104,16 @@ export function LoginPage() {
 
           {role === 'citizen' && previewUlpin && (
             <div className="mb-5 rounded-xl border border-signal/25 bg-signal/10 px-3.5 py-3 text-[12px] text-white/70">
-              House focus · <span className="font-mono text-signal">{previewUlpin}</span>
+              {previewHoldings.length}{' '}
+              {previewHoldings.length === 1 ? 'property' : 'properties'}
+              {previewHoldings[0]?.owner ? ` · ${previewHoldings[0].owner}` : ''}
+              <ul className="mt-2 space-y-1">
+                {previewHoldings.map((h) => (
+                  <li key={h.ulpin} className="font-mono text-[11px] text-signal">
+                    {h.building} · {h.ulpin}
+                  </li>
+                ))}
+              </ul>
               {username.trim() &&
               resolveCitizenUlpin(username) === DEFAULT_CITIZEN_ULPIN &&
               username.trim() !== DEFAULT_CITIZEN_ULPIN ? (

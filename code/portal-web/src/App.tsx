@@ -2,7 +2,6 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { RequireAuth } from './components/RequireAuth'
 import { Shell } from './components/Shell'
 import { AuthProvider, useAuth } from './lib/auth'
-import { CommandPage } from './pages/admin/CommandPage'
 import { IngestPage } from './pages/admin/IngestPage'
 import { PolygonLabelsPage } from './pages/admin/PolygonLabelsPage'
 import { ProcessingPage } from './pages/admin/ProcessingPage'
@@ -19,10 +18,12 @@ import { PolygonViewerPage } from './pages/PolygonViewerPage'
 import { RegistryPage } from './pages/RegistryPage'
 import { TwinViewerPage } from './pages/TwinViewerPage'
 
+const ADMIN_HOME = '/app/ingest'
+
 function HomeRedirect() {
   const { auth } = useAuth()
   if (!auth) return <Navigate to="/login" replace />
-  return <Navigate to={auth.role === 'admin' ? '/app' : '/citizen'} replace />
+  return <Navigate to={auth.role === 'admin' ? ADMIN_HOME : '/citizen'} replace />
 }
 
 export default function App() {
@@ -35,7 +36,7 @@ export default function App() {
         <Route element={<RequireAuth />}>
           <Route element={<Shell />}>
             <Route element={<RequireAuth roles={['admin']} />}>
-              <Route path="/app" element={<CommandPage />} />
+              <Route path="/app" element={<Navigate to={ADMIN_HOME} replace />} />
               <Route path="/app/ingest" element={<IngestPage />} />
               <Route path="/app/processing" element={<ProcessingPage />} />
               <Route path="/app/polygon-labels" element={<PolygonLabelsPage />} />
