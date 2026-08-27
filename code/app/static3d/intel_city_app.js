@@ -1134,7 +1134,10 @@ function resolveBuildingIdFromUlpin(ulpin) {
   for (const [bid, rt] of buildingRuntime) {
     const b = rt.building;
     if (b.ulpin === ulpin) return bid;
-    if ((b.floors || []).some((f) => f.ulpin === ulpin)) return bid;
+    if ((b.floors || []).some((f) => {
+      if (f.ulpin === ulpin) return true;
+      return (f.units || []).some((u) => u.ulpin === ulpin);
+    })) return bid;
   }
   return null;
 }
@@ -1584,6 +1587,21 @@ function showPanel(data) {
   const roomChips = rooms.map((r) =>
     `<button type="button" class="chip" data-room="${esc(r.id)}">${esc(r.label || r.type)}</button>`
   ).join("");
+  const units = f.units || [];
+  const housesHtml = units.length
+    ? `<h3>Houses on this floor</h3>
+    <div class="chips" style="flex-direction:column;align-items:stretch;gap:6px">
+      ${units.map((u) =>
+        `<div style="border:1px solid var(--panel-border);border-radius:10px;padding:8px 10px;background:var(--panel)">
+          <b>House ${esc(u.unit_label || "?")}</b>
+          <div class="ulpin" style="font-size:10px;margin-top:4px">${esc(u.ulpin)}</div>
+          <div style="margin-top:4px;font-size:13px">${esc(u.owner || "—")}</div>
+          <div style="font-size:11px;opacity:.7">${esc(u.legal_status || "registered")}${u.area_sq_m != null ? ` · ${esc(u.area_sq_m)} m²` : ""}</div>
+        </div>`
+      ).join("")}
+    </div>`
+    : `<div class="owner">${esc(f.owner)}</div>
+    <div class="owner-id">${esc(f.owner_id || "")}</div>`;
 
   panelEl.innerHTML = `
     <a class="close" id="panel-close">Close</a>
@@ -1591,13 +1609,12 @@ function showPanel(data) {
     <div class="breadcrumb"><b>City</b> → ${esc(b.name)} → Floor ${esc(f.floor_label)}</div>
     <div class="ulpin" id="ulpin-copy" title="Click to copy">${esc(f.ulpin)}</div>
     ${banner}
-    <div class="owner">${esc(f.owner)}</div>
-    <div class="owner-id">${esc(f.owner_id || "")}</div>
+    ${housesHtml}
     <div class="grid">
       <div class="stat"><div class="v">${esc(f.carpet_sq_m)} m²</div><div class="k">Carpet</div></div>
       <div class="stat"><div class="v">${esc(f.built_up_sq_m)} m²</div><div class="k">Built-up</div></div>
       <div class="stat"><div class="v">${esc(f.area_sq_m)} m²</div><div class="k">Parcel area</div></div>
-      <div class="stat"><div class="v">${esc((b.floors || []).length)}</div><div class="k">Floors in building</div></div>
+      <div class="stat"><div class="v">${esc(units.length || 1)}</div><div class="k">Houses</div></div>
     </div>
     <h3>Registration</h3>
     <div class="row"><span>Status</span><br/><span class="badge ${statusClass(f.legal_status)}">${esc(f.legal_status)}</span></div>
@@ -1804,7 +1821,9 @@ function focusUlpinFromQuery() {
       });
       return;
     }
-    const floor = (b.floors || []).find((f) => f.ulpin === ulpin);
+    const floor =
+      (b.floors || []).find((f) => f.ulpin === ulpin) ||
+      (b.floors || []).find((f) => (f.units || []).some((u) => u.ulpin === ulpin));
     if (floor) {
       selectFloorOnBuilding(b.id, floor.floor_label);
       return;
