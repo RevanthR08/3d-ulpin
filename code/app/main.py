@@ -323,6 +323,22 @@ def get_underground():
     }
 
 
+@app.get("/intel-city/underground")
+def get_intel_city_underground():
+    path = os.path.join(STATIC3D_DIR, "intel_city", "intel_city_underground.json")
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Intel City underground registry missing")
+    return FileResponse(path, media_type="application/json")
+
+
+@app.get("/intel-city/interiors")
+def get_intel_city_interiors():
+    path = os.path.join(STATIC3D_DIR, "intel_city", "intel_city_interiors.json")
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Intel City interiors registry missing")
+    return FileResponse(path, media_type="application/json")
+
+
 @app.get("/footprints")
 def get_footprints():
     """2D site plan: real building footprint polygons (from source corners

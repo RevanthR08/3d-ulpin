@@ -1,0 +1,5370 @@
+{
+  "meta": {
+    "pincode": "600001",
+    "coord_space": "blender_world_xyz_zup",
+    "source": "blender_interior_v1",
+    "glb": "intel_city_interiors.glb",
+    "wall_h": 14.0,
+    "disclaimer": "Demonstration interior geometry fitted to building footprints \u2014 not surveyed cadastral interiors.",
+    "building_count": 22,
+    "room_count": 176,
+    "room_types": [
+      "balcony",
+      "living_room",
+      "kitchen",
+      "dining",
+      "hall",
+      "master_bedroom",
+      "bedroom",
+      "bathroom"
+    ]
+  },
+  "buildings": [
+    {
+      "id": "INTEL-BLDG-001",
+      "building_id": "INTEL-BLDG-001",
+      "building_name": "Glass Spire",
+      "kind": "skyscraper",
+      "ulpin": "3D-IND-600001-I1",
+      "group_name": "INT-INTEL-BLDG-001",
+      "plate_blender": {
+        "min": [
+          167.09,
+          96.42,
+          0.0
+        ],
+        "max": [
+          277.09,
+          206.42,
+          14.0
+        ],
+        "center": [
+          222.09,
+          151.42,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-001-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-001-BAL",
+          "building_id": "INTEL-BLDG-001",
+          "building_name": "Glass Spire",
+          "ulpin": "3D-IND-600001-001-BAL",
+          "area_sq_m": 7.55,
+          "aabb_blender": {
+            "min": [
+              167.09,
+              96.42,
+              0.0
+            ],
+            "max": [
+              224.29,
+              109.62,
+              14.0
+            ],
+            "center": [
+              195.69,
+              103.02,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-001-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-001-LIV",
+          "building_id": "INTEL-BLDG-001",
+          "building_name": "Glass Spire",
+          "ulpin": "3D-IND-600001-001-LIV",
+          "area_sq_m": 28.943,
+          "aabb_blender": {
+            "min": [
+              167.09,
+              109.62,
+              0.0
+            ],
+            "max": [
+              224.29,
+              160.22,
+              14.0
+            ],
+            "center": [
+              195.69,
+              134.92,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-001-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-001-KIT",
+          "building_id": "INTEL-BLDG-001",
+          "building_name": "Glass Spire",
+          "ulpin": "3D-IND-600001-001-KIT",
+          "area_sq_m": 14.23,
+          "aabb_blender": {
+            "min": [
+              167.09,
+              160.22,
+              0.0
+            ],
+            "max": [
+              197.89,
+              206.42,
+              14.0
+            ],
+            "center": [
+              182.49,
+              183.32,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-001-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-001-DIN",
+          "building_id": "INTEL-BLDG-001",
+          "building_name": "Glass Spire",
+          "ulpin": "3D-IND-600001-001-DIN",
+          "area_sq_m": 12.197,
+          "aabb_blender": {
+            "min": [
+              197.89,
+              160.22,
+              0.0
+            ],
+            "max": [
+              224.29,
+              206.42,
+              14.0
+            ],
+            "center": [
+              211.09,
+              183.32,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-001-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-001-HAL",
+          "building_id": "INTEL-BLDG-001",
+          "building_name": "Glass Spire",
+          "ulpin": "3D-IND-600001-001-HAL",
+          "area_sq_m": 12.778,
+          "aabb_blender": {
+            "min": [
+              224.29,
+              109.62,
+              0.0
+            ],
+            "max": [
+              237.49,
+              206.42,
+              14.0
+            ],
+            "center": [
+              230.89,
+              158.02,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-001-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-001-MBR",
+          "building_id": "INTEL-BLDG-001",
+          "building_name": "Glass Spire",
+          "ulpin": "3D-IND-600001-001-MBR",
+          "area_sq_m": 18.731,
+          "aabb_blender": {
+            "min": [
+              237.49,
+              109.62,
+              0.0
+            ],
+            "max": [
+              277.09,
+              156.92,
+              14.0
+            ],
+            "center": [
+              257.29,
+              133.27,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-001-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-001-BR2",
+          "building_id": "INTEL-BLDG-001",
+          "building_name": "Glass Spire",
+          "ulpin": "3D-IND-600001-001-BR2",
+          "area_sq_m": 11.761,
+          "aabb_blender": {
+            "min": [
+              237.49,
+              156.92,
+              0.0
+            ],
+            "max": [
+              277.09,
+              186.62,
+              14.0
+            ],
+            "center": [
+              257.29,
+              171.77,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-001-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-001-BATH1",
+          "building_id": "INTEL-BLDG-001",
+          "building_name": "Glass Spire",
+          "ulpin": "3D-IND-600001-001-BATH1",
+          "area_sq_m": 7.841,
+          "aabb_blender": {
+            "min": [
+              237.49,
+              186.62,
+              0.0
+            ],
+            "max": [
+              277.09,
+              206.42,
+              14.0
+            ],
+            "center": [
+              257.29,
+              196.52,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-002",
+      "building_id": "INTEL-BLDG-002",
+      "building_name": "Horizon Tower",
+      "kind": "skyscraper",
+      "ulpin": "3D-IND-600001-I2",
+      "group_name": "INT-INTEL-BLDG-002",
+      "plate_blender": {
+        "min": [
+          -533.992,
+          -1102.556,
+          0.0
+        ],
+        "max": [
+          -431.145,
+          -992.556,
+          14.0
+        ],
+        "center": [
+          -482.568,
+          -1047.556,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-002-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-002-BAL",
+          "building_id": "INTEL-BLDG-002",
+          "building_name": "Horizon Tower",
+          "ulpin": "3D-IND-600001-002-BAL",
+          "area_sq_m": 7.059,
+          "aabb_blender": {
+            "min": [
+              -533.992,
+              -1102.556,
+              0.0
+            ],
+            "max": [
+              -480.512,
+              -1089.356,
+              14.0
+            ],
+            "center": [
+              -507.252,
+              -1095.956,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-002-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-002-LIV",
+          "building_id": "INTEL-BLDG-002",
+          "building_name": "Horizon Tower",
+          "ulpin": "3D-IND-600001-002-LIV",
+          "area_sq_m": 27.061,
+          "aabb_blender": {
+            "min": [
+              -533.992,
+              -1089.356,
+              0.0
+            ],
+            "max": [
+              -480.512,
+              -1038.756,
+              14.0
+            ],
+            "center": [
+              -507.252,
+              -1064.056,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-002-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-002-KIT",
+          "building_id": "INTEL-BLDG-002",
+          "building_name": "Horizon Tower",
+          "ulpin": "3D-IND-600001-002-KIT",
+          "area_sq_m": 13.304,
+          "aabb_blender": {
+            "min": [
+              -533.992,
+              -1038.756,
+              0.0
+            ],
+            "max": [
+              -505.195,
+              -992.556,
+              14.0
+            ],
+            "center": [
+              -519.594,
+              -1015.656,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-002-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-002-DIN",
+          "building_id": "INTEL-BLDG-002",
+          "building_name": "Horizon Tower",
+          "ulpin": "3D-IND-600001-002-DIN",
+          "area_sq_m": 11.404,
+          "aabb_blender": {
+            "min": [
+              -505.195,
+              -1038.756,
+              0.0
+            ],
+            "max": [
+              -480.512,
+              -992.556,
+              14.0
+            ],
+            "center": [
+              -492.853,
+              -1015.656,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-002-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-002-HAL",
+          "building_id": "INTEL-BLDG-002",
+          "building_name": "Horizon Tower",
+          "ulpin": "3D-IND-600001-002-HAL",
+          "area_sq_m": 11.947,
+          "aabb_blender": {
+            "min": [
+              -480.512,
+              -1089.356,
+              0.0
+            ],
+            "max": [
+              -468.17,
+              -992.556,
+              14.0
+            ],
+            "center": [
+              -474.341,
+              -1040.956,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-002-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-002-MBR",
+          "building_id": "INTEL-BLDG-002",
+          "building_name": "Horizon Tower",
+          "ulpin": "3D-IND-600001-002-MBR",
+          "area_sq_m": 17.513,
+          "aabb_blender": {
+            "min": [
+              -468.17,
+              -1089.356,
+              0.0
+            ],
+            "max": [
+              -431.145,
+              -1042.056,
+              14.0
+            ],
+            "center": [
+              -449.657,
+              -1065.706,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-002-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-002-BR2",
+          "building_id": "INTEL-BLDG-002",
+          "building_name": "Horizon Tower",
+          "ulpin": "3D-IND-600001-002-BR2",
+          "area_sq_m": 10.996,
+          "aabb_blender": {
+            "min": [
+              -468.17,
+              -1042.056,
+              0.0
+            ],
+            "max": [
+              -431.145,
+              -1012.356,
+              14.0
+            ],
+            "center": [
+              -449.657,
+              -1027.206,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-002-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-002-BATH1",
+          "building_id": "INTEL-BLDG-002",
+          "building_name": "Horizon Tower",
+          "ulpin": "3D-IND-600001-002-BATH1",
+          "area_sq_m": 7.331,
+          "aabb_blender": {
+            "min": [
+              -468.17,
+              -1012.356,
+              0.0
+            ],
+            "max": [
+              -431.145,
+              -992.556,
+              14.0
+            ],
+            "center": [
+              -449.657,
+              -1002.456,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-003",
+      "building_id": "INTEL-BLDG-003",
+      "building_name": "Meridian Peak",
+      "kind": "skyscraper",
+      "ulpin": "3D-IND-600001-I3",
+      "group_name": "INT-INTEL-BLDG-003",
+      "plate_blender": {
+        "min": [
+          -261.437,
+          1238.78,
+          0.0
+        ],
+        "max": [
+          -151.437,
+          1348.78,
+          14.0
+        ],
+        "center": [
+          -206.437,
+          1293.78,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-003-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-003-BAL",
+          "building_id": "INTEL-BLDG-003",
+          "building_name": "Meridian Peak",
+          "ulpin": "3D-IND-600001-003-BAL",
+          "area_sq_m": 7.55,
+          "aabb_blender": {
+            "min": [
+              -261.437,
+              1238.78,
+              0.0
+            ],
+            "max": [
+              -204.237,
+              1251.98,
+              14.0
+            ],
+            "center": [
+              -232.837,
+              1245.38,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-003-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-003-LIV",
+          "building_id": "INTEL-BLDG-003",
+          "building_name": "Meridian Peak",
+          "ulpin": "3D-IND-600001-003-LIV",
+          "area_sq_m": 28.943,
+          "aabb_blender": {
+            "min": [
+              -261.437,
+              1251.98,
+              0.0
+            ],
+            "max": [
+              -204.237,
+              1302.58,
+              14.0
+            ],
+            "center": [
+              -232.837,
+              1277.28,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-003-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-003-KIT",
+          "building_id": "INTEL-BLDG-003",
+          "building_name": "Meridian Peak",
+          "ulpin": "3D-IND-600001-003-KIT",
+          "area_sq_m": 14.23,
+          "aabb_blender": {
+            "min": [
+              -261.437,
+              1302.58,
+              0.0
+            ],
+            "max": [
+              -230.637,
+              1348.78,
+              14.0
+            ],
+            "center": [
+              -246.037,
+              1325.68,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-003-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-003-DIN",
+          "building_id": "INTEL-BLDG-003",
+          "building_name": "Meridian Peak",
+          "ulpin": "3D-IND-600001-003-DIN",
+          "area_sq_m": 12.197,
+          "aabb_blender": {
+            "min": [
+              -230.637,
+              1302.58,
+              0.0
+            ],
+            "max": [
+              -204.237,
+              1348.78,
+              14.0
+            ],
+            "center": [
+              -217.437,
+              1325.68,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-003-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-003-HAL",
+          "building_id": "INTEL-BLDG-003",
+          "building_name": "Meridian Peak",
+          "ulpin": "3D-IND-600001-003-HAL",
+          "area_sq_m": 12.778,
+          "aabb_blender": {
+            "min": [
+              -204.237,
+              1251.98,
+              0.0
+            ],
+            "max": [
+              -191.037,
+              1348.78,
+              14.0
+            ],
+            "center": [
+              -197.637,
+              1300.38,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-003-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-003-MBR",
+          "building_id": "INTEL-BLDG-003",
+          "building_name": "Meridian Peak",
+          "ulpin": "3D-IND-600001-003-MBR",
+          "area_sq_m": 18.731,
+          "aabb_blender": {
+            "min": [
+              -191.037,
+              1251.98,
+              0.0
+            ],
+            "max": [
+              -151.437,
+              1299.28,
+              14.0
+            ],
+            "center": [
+              -171.237,
+              1275.63,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-003-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-003-BR2",
+          "building_id": "INTEL-BLDG-003",
+          "building_name": "Meridian Peak",
+          "ulpin": "3D-IND-600001-003-BR2",
+          "area_sq_m": 11.761,
+          "aabb_blender": {
+            "min": [
+              -191.037,
+              1299.28,
+              0.0
+            ],
+            "max": [
+              -151.437,
+              1328.98,
+              14.0
+            ],
+            "center": [
+              -171.237,
+              1314.13,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-003-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-003-BATH1",
+          "building_id": "INTEL-BLDG-003",
+          "building_name": "Meridian Peak",
+          "ulpin": "3D-IND-600001-003-BATH1",
+          "area_sq_m": 7.841,
+          "aabb_blender": {
+            "min": [
+              -191.037,
+              1328.98,
+              0.0
+            ],
+            "max": [
+              -151.437,
+              1348.78,
+              14.0
+            ],
+            "center": [
+              -171.237,
+              1338.88,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-004",
+      "building_id": "INTEL-BLDG-004",
+      "building_name": "Azure Column",
+      "kind": "skyscraper",
+      "ulpin": "3D-IND-600001-I4",
+      "group_name": "INT-INTEL-BLDG-004",
+      "plate_blender": {
+        "min": [
+          -369.45,
+          1919.663,
+          0.0
+        ],
+        "max": [
+          -259.45,
+          2012.632,
+          14.0
+        ],
+        "center": [
+          -314.45,
+          1966.148,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-004-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-004-BAL",
+          "building_id": "INTEL-BLDG-004",
+          "building_name": "Azure Column",
+          "ulpin": "3D-IND-600001-004-BAL",
+          "area_sq_m": 6.381,
+          "aabb_blender": {
+            "min": [
+              -369.45,
+              1919.663,
+              0.0
+            ],
+            "max": [
+              -312.25,
+              1930.819,
+              14.0
+            ],
+            "center": [
+              -340.85,
+              1925.241,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-004-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-004-LIV",
+          "building_id": "INTEL-BLDG-004",
+          "building_name": "Azure Column",
+          "ulpin": "3D-IND-600001-004-LIV",
+          "area_sq_m": 24.462,
+          "aabb_blender": {
+            "min": [
+              -369.45,
+              1930.819,
+              0.0
+            ],
+            "max": [
+              -312.25,
+              1973.585,
+              14.0
+            ],
+            "center": [
+              -340.85,
+              1952.202,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-004-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-004-KIT",
+          "building_id": "INTEL-BLDG-004",
+          "building_name": "Azure Column",
+          "ulpin": "3D-IND-600001-004-KIT",
+          "area_sq_m": 12.026,
+          "aabb_blender": {
+            "min": [
+              -369.45,
+              1973.585,
+              0.0
+            ],
+            "max": [
+              -338.65,
+              2012.632,
+              14.0
+            ],
+            "center": [
+              -354.05,
+              1993.108,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-004-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-004-DIN",
+          "building_id": "INTEL-BLDG-004",
+          "building_name": "Azure Column",
+          "ulpin": "3D-IND-600001-004-DIN",
+          "area_sq_m": 10.308,
+          "aabb_blender": {
+            "min": [
+              -338.65,
+              1973.585,
+              0.0
+            ],
+            "max": [
+              -312.25,
+              2012.632,
+              14.0
+            ],
+            "center": [
+              -325.45,
+              1993.108,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-004-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-004-HAL",
+          "building_id": "INTEL-BLDG-004",
+          "building_name": "Azure Column",
+          "ulpin": "3D-IND-600001-004-HAL",
+          "area_sq_m": 10.799,
+          "aabb_blender": {
+            "min": [
+              -312.25,
+              1930.819,
+              0.0
+            ],
+            "max": [
+              -299.05,
+              2012.632,
+              14.0
+            ],
+            "center": [
+              -305.65,
+              1971.726,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-004-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-004-MBR",
+          "building_id": "INTEL-BLDG-004",
+          "building_name": "Azure Column",
+          "ulpin": "3D-IND-600001-004-MBR",
+          "area_sq_m": 15.831,
+          "aabb_blender": {
+            "min": [
+              -299.05,
+              1930.819,
+              0.0
+            ],
+            "max": [
+              -259.45,
+              1970.796,
+              14.0
+            ],
+            "center": [
+              -279.25,
+              1950.808,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-004-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-004-BR2",
+          "building_id": "INTEL-BLDG-004",
+          "building_name": "Azure Column",
+          "ulpin": "3D-IND-600001-004-BR2",
+          "area_sq_m": 9.94,
+          "aabb_blender": {
+            "min": [
+              -299.05,
+              1970.796,
+              0.0
+            ],
+            "max": [
+              -259.45,
+              1995.898,
+              14.0
+            ],
+            "center": [
+              -279.25,
+              1983.347,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-004-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-004-BATH1",
+          "building_id": "INTEL-BLDG-004",
+          "building_name": "Azure Column",
+          "ulpin": "3D-IND-600001-004-BATH1",
+          "area_sq_m": 6.627,
+          "aabb_blender": {
+            "min": [
+              -299.05,
+              1995.898,
+              0.0
+            ],
+            "max": [
+              -259.45,
+              2012.632,
+              14.0
+            ],
+            "center": [
+              -279.25,
+              2004.265,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-005",
+      "building_id": "INTEL-BLDG-005",
+      "building_name": "Skyline Hub",
+      "kind": "skyscraper",
+      "ulpin": "3D-IND-600001-I5",
+      "group_name": "INT-INTEL-BLDG-005",
+      "plate_blender": {
+        "min": [
+          -1883.287,
+          -1768.797,
+          0.0
+        ],
+        "max": [
+          -1773.287,
+          -1658.797,
+          14.0
+        ],
+        "center": [
+          -1828.287,
+          -1713.797,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-005-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-005-BAL",
+          "building_id": "INTEL-BLDG-005",
+          "building_name": "Skyline Hub",
+          "ulpin": "3D-IND-600001-005-BAL",
+          "area_sq_m": 7.55,
+          "aabb_blender": {
+            "min": [
+              -1883.287,
+              -1768.797,
+              0.0
+            ],
+            "max": [
+              -1826.087,
+              -1755.597,
+              14.0
+            ],
+            "center": [
+              -1854.687,
+              -1762.197,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-005-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-005-LIV",
+          "building_id": "INTEL-BLDG-005",
+          "building_name": "Skyline Hub",
+          "ulpin": "3D-IND-600001-005-LIV",
+          "area_sq_m": 28.943,
+          "aabb_blender": {
+            "min": [
+              -1883.287,
+              -1755.597,
+              0.0
+            ],
+            "max": [
+              -1826.087,
+              -1704.997,
+              14.0
+            ],
+            "center": [
+              -1854.687,
+              -1730.297,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-005-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-005-KIT",
+          "building_id": "INTEL-BLDG-005",
+          "building_name": "Skyline Hub",
+          "ulpin": "3D-IND-600001-005-KIT",
+          "area_sq_m": 14.23,
+          "aabb_blender": {
+            "min": [
+              -1883.287,
+              -1704.997,
+              0.0
+            ],
+            "max": [
+              -1852.487,
+              -1658.797,
+              14.0
+            ],
+            "center": [
+              -1867.887,
+              -1681.897,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-005-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-005-DIN",
+          "building_id": "INTEL-BLDG-005",
+          "building_name": "Skyline Hub",
+          "ulpin": "3D-IND-600001-005-DIN",
+          "area_sq_m": 12.197,
+          "aabb_blender": {
+            "min": [
+              -1852.487,
+              -1704.997,
+              0.0
+            ],
+            "max": [
+              -1826.087,
+              -1658.797,
+              14.0
+            ],
+            "center": [
+              -1839.287,
+              -1681.897,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-005-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-005-HAL",
+          "building_id": "INTEL-BLDG-005",
+          "building_name": "Skyline Hub",
+          "ulpin": "3D-IND-600001-005-HAL",
+          "area_sq_m": 12.778,
+          "aabb_blender": {
+            "min": [
+              -1826.087,
+              -1755.597,
+              0.0
+            ],
+            "max": [
+              -1812.887,
+              -1658.797,
+              14.0
+            ],
+            "center": [
+              -1819.487,
+              -1707.197,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-005-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-005-MBR",
+          "building_id": "INTEL-BLDG-005",
+          "building_name": "Skyline Hub",
+          "ulpin": "3D-IND-600001-005-MBR",
+          "area_sq_m": 18.731,
+          "aabb_blender": {
+            "min": [
+              -1812.887,
+              -1755.597,
+              0.0
+            ],
+            "max": [
+              -1773.287,
+              -1708.297,
+              14.0
+            ],
+            "center": [
+              -1793.087,
+              -1731.947,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-005-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-005-BR2",
+          "building_id": "INTEL-BLDG-005",
+          "building_name": "Skyline Hub",
+          "ulpin": "3D-IND-600001-005-BR2",
+          "area_sq_m": 11.761,
+          "aabb_blender": {
+            "min": [
+              -1812.887,
+              -1708.297,
+              0.0
+            ],
+            "max": [
+              -1773.287,
+              -1678.597,
+              14.0
+            ],
+            "center": [
+              -1793.087,
+              -1693.447,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-005-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-005-BATH1",
+          "building_id": "INTEL-BLDG-005",
+          "building_name": "Skyline Hub",
+          "ulpin": "3D-IND-600001-005-BATH1",
+          "area_sq_m": 7.841,
+          "aabb_blender": {
+            "min": [
+              -1812.887,
+              -1678.597,
+              0.0
+            ],
+            "max": [
+              -1773.287,
+              -1658.797,
+              14.0
+            ],
+            "center": [
+              -1793.087,
+              -1668.697,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-006",
+      "building_id": "INTEL-BLDG-006",
+      "building_name": "North Needle",
+      "kind": "skyscraper",
+      "ulpin": "3D-IND-600001-I6",
+      "group_name": "INT-INTEL-BLDG-006",
+      "plate_blender": {
+        "min": [
+          -509.559,
+          1331.395,
+          0.0
+        ],
+        "max": [
+          -407.559,
+          1390.896,
+          14.0
+        ],
+        "center": [
+          -458.559,
+          1361.146,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-006-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-006-BAL",
+          "building_id": "INTEL-BLDG-006",
+          "building_name": "North Needle",
+          "ulpin": "3D-IND-600001-006-BAL",
+          "area_sq_m": 3.787,
+          "aabb_blender": {
+            "min": [
+              -509.559,
+              1331.395,
+              0.0
+            ],
+            "max": [
+              -456.519,
+              1338.535,
+              14.0
+            ],
+            "center": [
+              -483.039,
+              1334.965,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-006-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-006-LIV",
+          "building_id": "INTEL-BLDG-006",
+          "building_name": "North Needle",
+          "ulpin": "3D-IND-600001-006-LIV",
+          "area_sq_m": 14.517,
+          "aabb_blender": {
+            "min": [
+              -509.559,
+              1338.535,
+              0.0
+            ],
+            "max": [
+              -456.519,
+              1365.906,
+              14.0
+            ],
+            "center": [
+              -483.039,
+              1352.22,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-006-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-006-KIT",
+          "building_id": "INTEL-BLDG-006",
+          "building_name": "North Needle",
+          "ulpin": "3D-IND-600001-006-KIT",
+          "area_sq_m": 7.137,
+          "aabb_blender": {
+            "min": [
+              -509.559,
+              1365.906,
+              0.0
+            ],
+            "max": [
+              -480.999,
+              1390.896,
+              14.0
+            ],
+            "center": [
+              -495.279,
+              1378.401,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-006-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-006-DIN",
+          "building_id": "INTEL-BLDG-006",
+          "building_name": "North Needle",
+          "ulpin": "3D-IND-600001-006-DIN",
+          "area_sq_m": 6.118,
+          "aabb_blender": {
+            "min": [
+              -480.999,
+              1365.906,
+              0.0
+            ],
+            "max": [
+              -456.519,
+              1390.896,
+              14.0
+            ],
+            "center": [
+              -468.759,
+              1378.401,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-006-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-006-HAL",
+          "building_id": "INTEL-BLDG-006",
+          "building_name": "North Needle",
+          "ulpin": "3D-IND-600001-006-HAL",
+          "area_sq_m": 6.409,
+          "aabb_blender": {
+            "min": [
+              -456.519,
+              1338.535,
+              0.0
+            ],
+            "max": [
+              -444.279,
+              1390.896,
+              14.0
+            ],
+            "center": [
+              -450.399,
+              1364.716,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-006-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-006-MBR",
+          "building_id": "INTEL-BLDG-006",
+          "building_name": "North Needle",
+          "ulpin": "3D-IND-600001-006-MBR",
+          "area_sq_m": 9.395,
+          "aabb_blender": {
+            "min": [
+              -444.279,
+              1338.535,
+              0.0
+            ],
+            "max": [
+              -407.559,
+              1364.121,
+              14.0
+            ],
+            "center": [
+              -425.919,
+              1351.328,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-006-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-006-BR2",
+          "building_id": "INTEL-BLDG-006",
+          "building_name": "North Needle",
+          "ulpin": "3D-IND-600001-006-BR2",
+          "area_sq_m": 5.899,
+          "aabb_blender": {
+            "min": [
+              -444.279,
+              1364.121,
+              0.0
+            ],
+            "max": [
+              -407.559,
+              1380.186,
+              14.0
+            ],
+            "center": [
+              -425.919,
+              1372.153,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-006-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-006-BATH1",
+          "building_id": "INTEL-BLDG-006",
+          "building_name": "North Needle",
+          "ulpin": "3D-IND-600001-006-BATH1",
+          "area_sq_m": 3.933,
+          "aabb_blender": {
+            "min": [
+              -444.279,
+              1380.186,
+              0.0
+            ],
+            "max": [
+              -407.559,
+              1390.896,
+              14.0
+            ],
+            "center": [
+              -425.919,
+              1385.541,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-007",
+      "building_id": "INTEL-BLDG-007",
+      "building_name": "Pearl Court",
+      "kind": "midrise",
+      "ulpin": "3D-IND-600001-I7",
+      "group_name": "INT-INTEL-BLDG-007",
+      "plate_blender": {
+        "min": [
+          -1852.207,
+          -687.937,
+          0.0
+        ],
+        "max": [
+          -1712.207,
+          -547.937,
+          14.0
+        ],
+        "center": [
+          -1782.207,
+          -617.937,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-007-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-007-BAL",
+          "building_id": "INTEL-BLDG-007",
+          "building_name": "Pearl Court",
+          "ulpin": "3D-IND-600001-007-BAL",
+          "area_sq_m": 12.23,
+          "aabb_blender": {
+            "min": [
+              -1852.207,
+              -687.937,
+              0.0
+            ],
+            "max": [
+              -1779.408,
+              -671.137,
+              14.0
+            ],
+            "center": [
+              -1815.807,
+              -679.537,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-007-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-007-LIV",
+          "building_id": "INTEL-BLDG-007",
+          "building_name": "Pearl Court",
+          "ulpin": "3D-IND-600001-007-LIV",
+          "area_sq_m": 46.883,
+          "aabb_blender": {
+            "min": [
+              -1852.207,
+              -671.137,
+              0.0
+            ],
+            "max": [
+              -1779.408,
+              -606.737,
+              14.0
+            ],
+            "center": [
+              -1815.807,
+              -638.937,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-007-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-007-KIT",
+          "building_id": "INTEL-BLDG-007",
+          "building_name": "Pearl Court",
+          "ulpin": "3D-IND-600001-007-KIT",
+          "area_sq_m": 23.05,
+          "aabb_blender": {
+            "min": [
+              -1852.207,
+              -606.737,
+              0.0
+            ],
+            "max": [
+              -1813.007,
+              -547.937,
+              14.0
+            ],
+            "center": [
+              -1832.608,
+              -577.337,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-007-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-007-DIN",
+          "building_id": "INTEL-BLDG-007",
+          "building_name": "Pearl Court",
+          "ulpin": "3D-IND-600001-007-DIN",
+          "area_sq_m": 19.757,
+          "aabb_blender": {
+            "min": [
+              -1813.007,
+              -606.737,
+              0.0
+            ],
+            "max": [
+              -1779.408,
+              -547.937,
+              14.0
+            ],
+            "center": [
+              -1796.207,
+              -577.337,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-007-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-007-HAL",
+          "building_id": "INTEL-BLDG-007",
+          "building_name": "Pearl Court",
+          "ulpin": "3D-IND-600001-007-HAL",
+          "area_sq_m": 20.698,
+          "aabb_blender": {
+            "min": [
+              -1779.408,
+              -671.137,
+              0.0
+            ],
+            "max": [
+              -1762.608,
+              -547.937,
+              14.0
+            ],
+            "center": [
+              -1771.008,
+              -609.537,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-007-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-007-MBR",
+          "building_id": "INTEL-BLDG-007",
+          "building_name": "Pearl Court",
+          "ulpin": "3D-IND-600001-007-MBR",
+          "area_sq_m": 30.341,
+          "aabb_blender": {
+            "min": [
+              -1762.608,
+              -671.137,
+              0.0
+            ],
+            "max": [
+              -1712.207,
+              -610.937,
+              14.0
+            ],
+            "center": [
+              -1737.408,
+              -641.037,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-007-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-007-BR2",
+          "building_id": "INTEL-BLDG-007",
+          "building_name": "Pearl Court",
+          "ulpin": "3D-IND-600001-007-BR2",
+          "area_sq_m": 19.051,
+          "aabb_blender": {
+            "min": [
+              -1762.608,
+              -610.937,
+              0.0
+            ],
+            "max": [
+              -1712.207,
+              -573.137,
+              14.0
+            ],
+            "center": [
+              -1737.408,
+              -592.037,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-007-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-007-BATH1",
+          "building_id": "INTEL-BLDG-007",
+          "building_name": "Pearl Court",
+          "ulpin": "3D-IND-600001-007-BATH1",
+          "area_sq_m": 12.701,
+          "aabb_blender": {
+            "min": [
+              -1762.608,
+              -573.137,
+              0.0
+            ],
+            "max": [
+              -1712.207,
+              -547.937,
+              14.0
+            ],
+            "center": [
+              -1737.408,
+              -560.537,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-008",
+      "building_id": "INTEL-BLDG-008",
+      "building_name": "Amber Residences",
+      "kind": "midrise",
+      "ulpin": "3D-IND-600001-I8",
+      "group_name": "INT-INTEL-BLDG-008",
+      "plate_blender": {
+        "min": [
+          -735.639,
+          1332.175,
+          0.0
+        ],
+        "max": [
+          -620.183,
+          1399.013,
+          14.0
+        ],
+        "center": [
+          -677.911,
+          1365.594,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-008-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-008-BAL",
+          "building_id": "INTEL-BLDG-008",
+          "building_name": "Amber Residences",
+          "ulpin": "3D-IND-600001-008-BAL",
+          "area_sq_m": 4.815,
+          "aabb_blender": {
+            "min": [
+              -735.639,
+              1332.175,
+              0.0
+            ],
+            "max": [
+              -675.602,
+              1340.196,
+              14.0
+            ],
+            "center": [
+              -705.62,
+              1336.185,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-008-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-008-LIV",
+          "building_id": "INTEL-BLDG-008",
+          "building_name": "Amber Residences",
+          "ulpin": "3D-IND-600001-008-LIV",
+          "area_sq_m": 18.459,
+          "aabb_blender": {
+            "min": [
+              -735.639,
+              1340.196,
+              0.0
+            ],
+            "max": [
+              -675.602,
+              1370.941,
+              14.0
+            ],
+            "center": [
+              -705.62,
+              1355.568,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-008-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-008-KIT",
+          "building_id": "INTEL-BLDG-008",
+          "building_name": "Amber Residences",
+          "ulpin": "3D-IND-600001-008-KIT",
+          "area_sq_m": 9.075,
+          "aabb_blender": {
+            "min": [
+              -735.639,
+              1370.941,
+              0.0
+            ],
+            "max": [
+              -703.311,
+              1399.013,
+              14.0
+            ],
+            "center": [
+              -719.475,
+              1384.977,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-008-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-008-DIN",
+          "building_id": "INTEL-BLDG-008",
+          "building_name": "Amber Residences",
+          "ulpin": "3D-IND-600001-008-DIN",
+          "area_sq_m": 7.779,
+          "aabb_blender": {
+            "min": [
+              -703.311,
+              1370.941,
+              0.0
+            ],
+            "max": [
+              -675.602,
+              1399.013,
+              14.0
+            ],
+            "center": [
+              -689.457,
+              1384.977,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-008-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-008-HAL",
+          "building_id": "INTEL-BLDG-008",
+          "building_name": "Amber Residences",
+          "ulpin": "3D-IND-600001-008-HAL",
+          "area_sq_m": 8.149,
+          "aabb_blender": {
+            "min": [
+              -675.602,
+              1340.196,
+              0.0
+            ],
+            "max": [
+              -661.747,
+              1399.013,
+              14.0
+            ],
+            "center": [
+              -668.675,
+              1369.604,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-008-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-008-MBR",
+          "building_id": "INTEL-BLDG-008",
+          "building_name": "Amber Residences",
+          "ulpin": "3D-IND-600001-008-MBR",
+          "area_sq_m": 11.946,
+          "aabb_blender": {
+            "min": [
+              -661.747,
+              1340.196,
+              0.0
+            ],
+            "max": [
+              -620.183,
+              1368.936,
+              14.0
+            ],
+            "center": [
+              -640.965,
+              1354.566,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-008-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-008-BR2",
+          "building_id": "INTEL-BLDG-008",
+          "building_name": "Amber Residences",
+          "ulpin": "3D-IND-600001-008-BR2",
+          "area_sq_m": 7.501,
+          "aabb_blender": {
+            "min": [
+              -661.747,
+              1368.936,
+              0.0
+            ],
+            "max": [
+              -620.183,
+              1386.982,
+              14.0
+            ],
+            "center": [
+              -640.965,
+              1377.959,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-008-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-008-BATH1",
+          "building_id": "INTEL-BLDG-008",
+          "building_name": "Amber Residences",
+          "ulpin": "3D-IND-600001-008-BATH1",
+          "area_sq_m": 5.0,
+          "aabb_blender": {
+            "min": [
+              -661.747,
+              1386.982,
+              0.0
+            ],
+            "max": [
+              -620.183,
+              1399.013,
+              14.0
+            ],
+            "center": [
+              -640.965,
+              1392.997,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-009",
+      "building_id": "INTEL-BLDG-009",
+      "building_name": "Harbour Block",
+      "kind": "midrise",
+      "ulpin": "3D-IND-600001-I9",
+      "group_name": "INT-INTEL-BLDG-009",
+      "plate_blender": {
+        "min": [
+          438.043,
+          1946.188,
+          0.0
+        ],
+        "max": [
+          499.65,
+          2051.886,
+          14.0
+        ],
+        "center": [
+          468.846,
+          1999.037,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-009-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-009-BAL",
+          "building_id": "INTEL-BLDG-009",
+          "building_name": "Harbour Block",
+          "ulpin": "3D-IND-600001-009-BAL",
+          "area_sq_m": 4.063,
+          "aabb_blender": {
+            "min": [
+              438.043,
+              1946.188,
+              0.0
+            ],
+            "max": [
+              470.079,
+              1958.872,
+              14.0
+            ],
+            "center": [
+              454.061,
+              1952.53,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-009-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-009-LIV",
+          "building_id": "INTEL-BLDG-009",
+          "building_name": "Harbour Block",
+          "ulpin": "3D-IND-600001-009-LIV",
+          "area_sq_m": 15.576,
+          "aabb_blender": {
+            "min": [
+              438.043,
+              1958.872,
+              0.0
+            ],
+            "max": [
+              470.079,
+              2007.493,
+              14.0
+            ],
+            "center": [
+              454.061,
+              1983.182,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-009-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-009-KIT",
+          "building_id": "INTEL-BLDG-009",
+          "building_name": "Harbour Block",
+          "ulpin": "3D-IND-600001-009-KIT",
+          "area_sq_m": 7.658,
+          "aabb_blender": {
+            "min": [
+              438.043,
+              2007.493,
+              0.0
+            ],
+            "max": [
+              455.293,
+              2051.886,
+              14.0
+            ],
+            "center": [
+              446.668,
+              2029.69,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-009-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-009-DIN",
+          "building_id": "INTEL-BLDG-009",
+          "building_name": "Harbour Block",
+          "ulpin": "3D-IND-600001-009-DIN",
+          "area_sq_m": 6.564,
+          "aabb_blender": {
+            "min": [
+              455.293,
+              2007.493,
+              0.0
+            ],
+            "max": [
+              470.079,
+              2051.886,
+              14.0
+            ],
+            "center": [
+              462.686,
+              2029.69,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-009-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-009-HAL",
+          "building_id": "INTEL-BLDG-009",
+          "building_name": "Harbour Block",
+          "ulpin": "3D-IND-600001-009-HAL",
+          "area_sq_m": 6.877,
+          "aabb_blender": {
+            "min": [
+              470.079,
+              1958.872,
+              0.0
+            ],
+            "max": [
+              477.472,
+              2051.886,
+              14.0
+            ],
+            "center": [
+              473.775,
+              2005.379,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-009-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-009-MBR",
+          "building_id": "INTEL-BLDG-009",
+          "building_name": "Harbour Block",
+          "ulpin": "3D-IND-600001-009-MBR",
+          "area_sq_m": 10.08,
+          "aabb_blender": {
+            "min": [
+              477.472,
+              1958.872,
+              0.0
+            ],
+            "max": [
+              499.65,
+              2004.322,
+              14.0
+            ],
+            "center": [
+              488.561,
+              1981.597,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-009-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-009-BR2",
+          "building_id": "INTEL-BLDG-009",
+          "building_name": "Harbour Block",
+          "ulpin": "3D-IND-600001-009-BR2",
+          "area_sq_m": 6.33,
+          "aabb_blender": {
+            "min": [
+              477.472,
+              2004.322,
+              0.0
+            ],
+            "max": [
+              499.65,
+              2032.861,
+              14.0
+            ],
+            "center": [
+              488.561,
+              2018.591,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-009-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-009-BATH1",
+          "building_id": "INTEL-BLDG-009",
+          "building_name": "Harbour Block",
+          "ulpin": "3D-IND-600001-009-BATH1",
+          "area_sq_m": 4.22,
+          "aabb_blender": {
+            "min": [
+              477.472,
+              2032.861,
+              0.0
+            ],
+            "max": [
+              499.65,
+              2051.886,
+              14.0
+            ],
+            "center": [
+              488.561,
+              2042.373,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-010",
+      "building_id": "INTEL-BLDG-010",
+      "building_name": "Lotus Residences",
+      "kind": "midrise",
+      "ulpin": "3D-IND-600001-I10",
+      "group_name": "INT-INTEL-BLDG-010",
+      "plate_blender": {
+        "min": [
+          205.955,
+          -1442.149,
+          0.0
+        ],
+        "max": [
+          345.955,
+          -1302.149,
+          14.0
+        ],
+        "center": [
+          275.955,
+          -1372.149,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-010-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-010-BAL",
+          "building_id": "INTEL-BLDG-010",
+          "building_name": "Lotus Residences",
+          "ulpin": "3D-IND-600001-010-BAL",
+          "area_sq_m": 12.23,
+          "aabb_blender": {
+            "min": [
+              205.955,
+              -1442.149,
+              0.0
+            ],
+            "max": [
+              278.755,
+              -1425.35,
+              14.0
+            ],
+            "center": [
+              242.355,
+              -1433.749,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-010-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-010-LIV",
+          "building_id": "INTEL-BLDG-010",
+          "building_name": "Lotus Residences",
+          "ulpin": "3D-IND-600001-010-LIV",
+          "area_sq_m": 46.883,
+          "aabb_blender": {
+            "min": [
+              205.955,
+              -1425.35,
+              0.0
+            ],
+            "max": [
+              278.755,
+              -1360.949,
+              14.0
+            ],
+            "center": [
+              242.355,
+              -1393.149,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-010-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-010-KIT",
+          "building_id": "INTEL-BLDG-010",
+          "building_name": "Lotus Residences",
+          "ulpin": "3D-IND-600001-010-KIT",
+          "area_sq_m": 23.05,
+          "aabb_blender": {
+            "min": [
+              205.955,
+              -1360.949,
+              0.0
+            ],
+            "max": [
+              245.155,
+              -1302.149,
+              14.0
+            ],
+            "center": [
+              225.555,
+              -1331.55,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-010-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-010-DIN",
+          "building_id": "INTEL-BLDG-010",
+          "building_name": "Lotus Residences",
+          "ulpin": "3D-IND-600001-010-DIN",
+          "area_sq_m": 19.757,
+          "aabb_blender": {
+            "min": [
+              245.155,
+              -1360.949,
+              0.0
+            ],
+            "max": [
+              278.755,
+              -1302.149,
+              14.0
+            ],
+            "center": [
+              261.955,
+              -1331.55,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-010-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-010-HAL",
+          "building_id": "INTEL-BLDG-010",
+          "building_name": "Lotus Residences",
+          "ulpin": "3D-IND-600001-010-HAL",
+          "area_sq_m": 20.698,
+          "aabb_blender": {
+            "min": [
+              278.755,
+              -1425.35,
+              0.0
+            ],
+            "max": [
+              295.555,
+              -1302.149,
+              14.0
+            ],
+            "center": [
+              287.155,
+              -1363.749,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-010-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-010-MBR",
+          "building_id": "INTEL-BLDG-010",
+          "building_name": "Lotus Residences",
+          "ulpin": "3D-IND-600001-010-MBR",
+          "area_sq_m": 30.341,
+          "aabb_blender": {
+            "min": [
+              295.555,
+              -1425.35,
+              0.0
+            ],
+            "max": [
+              345.955,
+              -1365.149,
+              14.0
+            ],
+            "center": [
+              320.755,
+              -1395.249,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-010-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-010-BR2",
+          "building_id": "INTEL-BLDG-010",
+          "building_name": "Lotus Residences",
+          "ulpin": "3D-IND-600001-010-BR2",
+          "area_sq_m": 19.051,
+          "aabb_blender": {
+            "min": [
+              295.555,
+              -1365.149,
+              0.0
+            ],
+            "max": [
+              345.955,
+              -1327.35,
+              14.0
+            ],
+            "center": [
+              320.755,
+              -1346.249,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-010-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-010-BATH1",
+          "building_id": "INTEL-BLDG-010",
+          "building_name": "Lotus Residences",
+          "ulpin": "3D-IND-600001-010-BATH1",
+          "area_sq_m": 12.701,
+          "aabb_blender": {
+            "min": [
+              295.555,
+              -1327.35,
+              0.0
+            ],
+            "max": [
+              345.955,
+              -1302.149,
+              14.0
+            ],
+            "center": [
+              320.755,
+              -1314.749,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-011",
+      "building_id": "INTEL-BLDG-011",
+      "building_name": "Crescent Court",
+      "kind": "midrise",
+      "ulpin": "3D-IND-600001-I11",
+      "group_name": "INT-INTEL-BLDG-011",
+      "plate_blender": {
+        "min": [
+          -772.804,
+          901.445,
+          0.0
+        ],
+        "max": [
+          -634.941,
+          1041.445,
+          14.0
+        ],
+        "center": [
+          -703.872,
+          971.445,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-011-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-011-BAL",
+          "building_id": "INTEL-BLDG-011",
+          "building_name": "Crescent Court",
+          "ulpin": "3D-IND-600001-011-BAL",
+          "area_sq_m": 12.044,
+          "aabb_blender": {
+            "min": [
+              -772.804,
+              901.445,
+              0.0
+            ],
+            "max": [
+              -701.115,
+              918.245,
+              14.0
+            ],
+            "center": [
+              -736.96,
+              909.845,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-011-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-011-LIV",
+          "building_id": "INTEL-BLDG-011",
+          "building_name": "Crescent Court",
+          "ulpin": "3D-IND-600001-011-LIV",
+          "area_sq_m": 46.168,
+          "aabb_blender": {
+            "min": [
+              -772.804,
+              918.245,
+              0.0
+            ],
+            "max": [
+              -701.115,
+              982.645,
+              14.0
+            ],
+            "center": [
+              -736.96,
+              950.445,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-011-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-011-KIT",
+          "building_id": "INTEL-BLDG-011",
+          "building_name": "Crescent Court",
+          "ulpin": "3D-IND-600001-011-KIT",
+          "area_sq_m": 22.698,
+          "aabb_blender": {
+            "min": [
+              -772.804,
+              982.645,
+              0.0
+            ],
+            "max": [
+              -734.202,
+              1041.445,
+              14.0
+            ],
+            "center": [
+              -753.503,
+              1012.045,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-011-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-011-DIN",
+          "building_id": "INTEL-BLDG-011",
+          "building_name": "Crescent Court",
+          "ulpin": "3D-IND-600001-011-DIN",
+          "area_sq_m": 19.455,
+          "aabb_blender": {
+            "min": [
+              -734.202,
+              982.645,
+              0.0
+            ],
+            "max": [
+              -701.115,
+              1041.445,
+              14.0
+            ],
+            "center": [
+              -717.659,
+              1012.045,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-011-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-011-HAL",
+          "building_id": "INTEL-BLDG-011",
+          "building_name": "Crescent Court",
+          "ulpin": "3D-IND-600001-011-HAL",
+          "area_sq_m": 20.382,
+          "aabb_blender": {
+            "min": [
+              -701.115,
+              918.245,
+              0.0
+            ],
+            "max": [
+              -684.572,
+              1041.445,
+              14.0
+            ],
+            "center": [
+              -692.843,
+              979.845,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-011-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-011-MBR",
+          "building_id": "INTEL-BLDG-011",
+          "building_name": "Crescent Court",
+          "ulpin": "3D-IND-600001-011-MBR",
+          "area_sq_m": 29.878,
+          "aabb_blender": {
+            "min": [
+              -684.572,
+              918.245,
+              0.0
+            ],
+            "max": [
+              -634.941,
+              978.445,
+              14.0
+            ],
+            "center": [
+              -659.756,
+              948.345,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-011-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-011-BR2",
+          "building_id": "INTEL-BLDG-011",
+          "building_name": "Crescent Court",
+          "ulpin": "3D-IND-600001-011-BR2",
+          "area_sq_m": 18.76,
+          "aabb_blender": {
+            "min": [
+              -684.572,
+              978.445,
+              0.0
+            ],
+            "max": [
+              -634.941,
+              1016.245,
+              14.0
+            ],
+            "center": [
+              -659.756,
+              997.345,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-011-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-011-BATH1",
+          "building_id": "INTEL-BLDG-011",
+          "building_name": "Crescent Court",
+          "ulpin": "3D-IND-600001-011-BATH1",
+          "area_sq_m": 12.507,
+          "aabb_blender": {
+            "min": [
+              -684.572,
+              1016.245,
+              0.0
+            ],
+            "max": [
+              -634.941,
+              1041.445,
+              14.0
+            ],
+            "center": [
+              -659.756,
+              1028.845,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-012",
+      "building_id": "INTEL-BLDG-012",
+      "building_name": "Maple Plaza",
+      "kind": "midrise",
+      "ulpin": "3D-IND-600001-I12",
+      "group_name": "INT-INTEL-BLDG-012",
+      "plate_blender": {
+        "min": [
+          -135.833,
+          -1814.133,
+          0.0
+        ],
+        "max": [
+          4.167,
+          -1674.133,
+          14.0
+        ],
+        "center": [
+          -65.833,
+          -1744.133,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-012-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-012-BAL",
+          "building_id": "INTEL-BLDG-012",
+          "building_name": "Maple Plaza",
+          "ulpin": "3D-IND-600001-012-BAL",
+          "area_sq_m": 12.23,
+          "aabb_blender": {
+            "min": [
+              -135.833,
+              -1814.133,
+              0.0
+            ],
+            "max": [
+              -63.033,
+              -1797.333,
+              14.0
+            ],
+            "center": [
+              -99.433,
+              -1805.733,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-012-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-012-LIV",
+          "building_id": "INTEL-BLDG-012",
+          "building_name": "Maple Plaza",
+          "ulpin": "3D-IND-600001-012-LIV",
+          "area_sq_m": 46.883,
+          "aabb_blender": {
+            "min": [
+              -135.833,
+              -1797.333,
+              0.0
+            ],
+            "max": [
+              -63.033,
+              -1732.933,
+              14.0
+            ],
+            "center": [
+              -99.433,
+              -1765.133,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-012-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-012-KIT",
+          "building_id": "INTEL-BLDG-012",
+          "building_name": "Maple Plaza",
+          "ulpin": "3D-IND-600001-012-KIT",
+          "area_sq_m": 23.05,
+          "aabb_blender": {
+            "min": [
+              -135.833,
+              -1732.933,
+              0.0
+            ],
+            "max": [
+              -96.633,
+              -1674.133,
+              14.0
+            ],
+            "center": [
+              -116.233,
+              -1703.534,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-012-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-012-DIN",
+          "building_id": "INTEL-BLDG-012",
+          "building_name": "Maple Plaza",
+          "ulpin": "3D-IND-600001-012-DIN",
+          "area_sq_m": 19.757,
+          "aabb_blender": {
+            "min": [
+              -96.633,
+              -1732.933,
+              0.0
+            ],
+            "max": [
+              -63.033,
+              -1674.133,
+              14.0
+            ],
+            "center": [
+              -79.833,
+              -1703.534,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-012-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-012-HAL",
+          "building_id": "INTEL-BLDG-012",
+          "building_name": "Maple Plaza",
+          "ulpin": "3D-IND-600001-012-HAL",
+          "area_sq_m": 20.698,
+          "aabb_blender": {
+            "min": [
+              -63.033,
+              -1797.333,
+              0.0
+            ],
+            "max": [
+              -46.233,
+              -1674.133,
+              14.0
+            ],
+            "center": [
+              -54.633,
+              -1735.733,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-012-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-012-MBR",
+          "building_id": "INTEL-BLDG-012",
+          "building_name": "Maple Plaza",
+          "ulpin": "3D-IND-600001-012-MBR",
+          "area_sq_m": 30.341,
+          "aabb_blender": {
+            "min": [
+              -46.233,
+              -1797.333,
+              0.0
+            ],
+            "max": [
+              4.167,
+              -1737.133,
+              14.0
+            ],
+            "center": [
+              -21.033,
+              -1767.233,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-012-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-012-BR2",
+          "building_id": "INTEL-BLDG-012",
+          "building_name": "Maple Plaza",
+          "ulpin": "3D-IND-600001-012-BR2",
+          "area_sq_m": 19.051,
+          "aabb_blender": {
+            "min": [
+              -46.233,
+              -1737.133,
+              0.0
+            ],
+            "max": [
+              4.167,
+              -1699.333,
+              14.0
+            ],
+            "center": [
+              -21.033,
+              -1718.233,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-012-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-012-BATH1",
+          "building_id": "INTEL-BLDG-012",
+          "building_name": "Maple Plaza",
+          "ulpin": "3D-IND-600001-012-BATH1",
+          "area_sq_m": 12.701,
+          "aabb_blender": {
+            "min": [
+              -46.233,
+              -1699.333,
+              0.0
+            ],
+            "max": [
+              4.167,
+              -1674.133,
+              14.0
+            ],
+            "center": [
+              -21.033,
+              -1686.733,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-013",
+      "building_id": "INTEL-BLDG-013",
+      "building_name": "Indigo Quarters",
+      "kind": "midrise",
+      "ulpin": "3D-IND-600001-I13",
+      "group_name": "INT-INTEL-BLDG-013",
+      "plate_blender": {
+        "min": [
+          286.946,
+          1931.233,
+          0.0
+        ],
+        "max": [
+          342.936,
+          2015.667,
+          14.0
+        ],
+        "center": [
+          314.941,
+          1973.45,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-013-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-013-BAL",
+          "building_id": "INTEL-BLDG-013",
+          "building_name": "Indigo Quarters",
+          "ulpin": "3D-IND-600001-013-BAL",
+          "area_sq_m": 2.95,
+          "aabb_blender": {
+            "min": [
+              286.946,
+              1931.233,
+              0.0
+            ],
+            "max": [
+              316.061,
+              1941.365,
+              14.0
+            ],
+            "center": [
+              301.504,
+              1936.299,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-013-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-013-LIV",
+          "building_id": "INTEL-BLDG-013",
+          "building_name": "Indigo Quarters",
+          "ulpin": "3D-IND-600001-013-LIV",
+          "area_sq_m": 11.308,
+          "aabb_blender": {
+            "min": [
+              286.946,
+              1941.365,
+              0.0
+            ],
+            "max": [
+              316.061,
+              1980.205,
+              14.0
+            ],
+            "center": [
+              301.504,
+              1960.785,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-013-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-013-KIT",
+          "building_id": "INTEL-BLDG-013",
+          "building_name": "Indigo Quarters",
+          "ulpin": "3D-IND-600001-013-KIT",
+          "area_sq_m": 5.559,
+          "aabb_blender": {
+            "min": [
+              286.946,
+              1980.205,
+              0.0
+            ],
+            "max": [
+              302.623,
+              2015.667,
+              14.0
+            ],
+            "center": [
+              294.785,
+              1997.936,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-013-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-013-DIN",
+          "building_id": "INTEL-BLDG-013",
+          "building_name": "Indigo Quarters",
+          "ulpin": "3D-IND-600001-013-DIN",
+          "area_sq_m": 4.765,
+          "aabb_blender": {
+            "min": [
+              302.623,
+              1980.205,
+              0.0
+            ],
+            "max": [
+              316.061,
+              2015.667,
+              14.0
+            ],
+            "center": [
+              309.342,
+              1997.936,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-013-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-013-HAL",
+          "building_id": "INTEL-BLDG-013",
+          "building_name": "Indigo Quarters",
+          "ulpin": "3D-IND-600001-013-HAL",
+          "area_sq_m": 4.992,
+          "aabb_blender": {
+            "min": [
+              316.061,
+              1941.365,
+              0.0
+            ],
+            "max": [
+              322.779,
+              2015.667,
+              14.0
+            ],
+            "center": [
+              319.42,
+              1978.516,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-013-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-013-MBR",
+          "building_id": "INTEL-BLDG-013",
+          "building_name": "Indigo Quarters",
+          "ulpin": "3D-IND-600001-013-MBR",
+          "area_sq_m": 7.318,
+          "aabb_blender": {
+            "min": [
+              322.779,
+              1941.365,
+              0.0
+            ],
+            "max": [
+              342.936,
+              1977.672,
+              14.0
+            ],
+            "center": [
+              332.858,
+              1959.518,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-013-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-013-BR2",
+          "building_id": "INTEL-BLDG-013",
+          "building_name": "Indigo Quarters",
+          "ulpin": "3D-IND-600001-013-BR2",
+          "area_sq_m": 4.595,
+          "aabb_blender": {
+            "min": [
+              322.779,
+              1977.672,
+              0.0
+            ],
+            "max": [
+              342.936,
+              2000.469,
+              14.0
+            ],
+            "center": [
+              332.858,
+              1989.07,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-013-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-013-BATH1",
+          "building_id": "INTEL-BLDG-013",
+          "building_name": "Indigo Quarters",
+          "ulpin": "3D-IND-600001-013-BATH1",
+          "area_sq_m": 3.063,
+          "aabb_blender": {
+            "min": [
+              322.779,
+              2000.469,
+              0.0
+            ],
+            "max": [
+              342.936,
+              2015.667,
+              14.0
+            ],
+            "center": [
+              332.858,
+              2008.068,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-014",
+      "building_id": "INTEL-BLDG-014",
+      "building_name": "Cedar Walk",
+      "kind": "midrise",
+      "ulpin": "3D-IND-600001-I14",
+      "group_name": "INT-INTEL-BLDG-014",
+      "plate_blender": {
+        "min": [
+          37.092,
+          1892.77,
+          0.0
+        ],
+        "max": [
+          177.092,
+          2032.77,
+          14.0
+        ],
+        "center": [
+          107.092,
+          1962.77,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-014-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-014-BAL",
+          "building_id": "INTEL-BLDG-014",
+          "building_name": "Cedar Walk",
+          "ulpin": "3D-IND-600001-014-BAL",
+          "area_sq_m": 12.23,
+          "aabb_blender": {
+            "min": [
+              37.092,
+              1892.77,
+              0.0
+            ],
+            "max": [
+              109.892,
+              1909.57,
+              14.0
+            ],
+            "center": [
+              73.492,
+              1901.17,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-014-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-014-LIV",
+          "building_id": "INTEL-BLDG-014",
+          "building_name": "Cedar Walk",
+          "ulpin": "3D-IND-600001-014-LIV",
+          "area_sq_m": 46.883,
+          "aabb_blender": {
+            "min": [
+              37.092,
+              1909.57,
+              0.0
+            ],
+            "max": [
+              109.892,
+              1973.97,
+              14.0
+            ],
+            "center": [
+              73.492,
+              1941.77,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-014-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-014-KIT",
+          "building_id": "INTEL-BLDG-014",
+          "building_name": "Cedar Walk",
+          "ulpin": "3D-IND-600001-014-KIT",
+          "area_sq_m": 23.05,
+          "aabb_blender": {
+            "min": [
+              37.092,
+              1973.97,
+              0.0
+            ],
+            "max": [
+              76.292,
+              2032.77,
+              14.0
+            ],
+            "center": [
+              56.692,
+              2003.37,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-014-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-014-DIN",
+          "building_id": "INTEL-BLDG-014",
+          "building_name": "Cedar Walk",
+          "ulpin": "3D-IND-600001-014-DIN",
+          "area_sq_m": 19.757,
+          "aabb_blender": {
+            "min": [
+              76.292,
+              1973.97,
+              0.0
+            ],
+            "max": [
+              109.892,
+              2032.77,
+              14.0
+            ],
+            "center": [
+              93.092,
+              2003.37,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-014-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-014-HAL",
+          "building_id": "INTEL-BLDG-014",
+          "building_name": "Cedar Walk",
+          "ulpin": "3D-IND-600001-014-HAL",
+          "area_sq_m": 20.698,
+          "aabb_blender": {
+            "min": [
+              109.892,
+              1909.57,
+              0.0
+            ],
+            "max": [
+              126.692,
+              2032.77,
+              14.0
+            ],
+            "center": [
+              118.292,
+              1971.17,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-014-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-014-MBR",
+          "building_id": "INTEL-BLDG-014",
+          "building_name": "Cedar Walk",
+          "ulpin": "3D-IND-600001-014-MBR",
+          "area_sq_m": 30.341,
+          "aabb_blender": {
+            "min": [
+              126.692,
+              1909.57,
+              0.0
+            ],
+            "max": [
+              177.092,
+              1969.77,
+              14.0
+            ],
+            "center": [
+              151.892,
+              1939.67,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-014-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-014-BR2",
+          "building_id": "INTEL-BLDG-014",
+          "building_name": "Cedar Walk",
+          "ulpin": "3D-IND-600001-014-BR2",
+          "area_sq_m": 19.051,
+          "aabb_blender": {
+            "min": [
+              126.692,
+              1969.77,
+              0.0
+            ],
+            "max": [
+              177.092,
+              2007.57,
+              14.0
+            ],
+            "center": [
+              151.892,
+              1988.67,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-014-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-014-BATH1",
+          "building_id": "INTEL-BLDG-014",
+          "building_name": "Cedar Walk",
+          "ulpin": "3D-IND-600001-014-BATH1",
+          "area_sq_m": 12.701,
+          "aabb_blender": {
+            "min": [
+              126.692,
+              2007.57,
+              0.0
+            ],
+            "max": [
+              177.092,
+              2032.77,
+              14.0
+            ],
+            "center": [
+              151.892,
+              2020.17,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-016",
+      "building_id": "INTEL-BLDG-016",
+      "building_name": "Pocket Flat",
+      "kind": "lowrise",
+      "ulpin": "3D-IND-600001-I16",
+      "group_name": "INT-INTEL-BLDG-016",
+      "plate_blender": {
+        "min": [
+          -1219.688,
+          -1921.866,
+          0.0
+        ],
+        "max": [
+          -1059.688,
+          -1761.866,
+          14.0
+        ],
+        "center": [
+          -1139.688,
+          -1841.866,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-016-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-016-BAL",
+          "building_id": "INTEL-BLDG-016",
+          "building_name": "Pocket Flat",
+          "ulpin": "3D-IND-600001-016-BAL",
+          "area_sq_m": 15.974,
+          "aabb_blender": {
+            "min": [
+              -1219.688,
+              -1921.866,
+              0.0
+            ],
+            "max": [
+              -1136.487,
+              -1902.666,
+              14.0
+            ],
+            "center": [
+              -1178.088,
+              -1912.266,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-016-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-016-LIV",
+          "building_id": "INTEL-BLDG-016",
+          "building_name": "Pocket Flat",
+          "ulpin": "3D-IND-600001-016-LIV",
+          "area_sq_m": 61.235,
+          "aabb_blender": {
+            "min": [
+              -1219.688,
+              -1902.666,
+              0.0
+            ],
+            "max": [
+              -1136.487,
+              -1829.066,
+              14.0
+            ],
+            "center": [
+              -1178.088,
+              -1865.866,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-016-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-016-KIT",
+          "building_id": "INTEL-BLDG-016",
+          "building_name": "Pocket Flat",
+          "ulpin": "3D-IND-600001-016-KIT",
+          "area_sq_m": 30.106,
+          "aabb_blender": {
+            "min": [
+              -1219.688,
+              -1829.066,
+              0.0
+            ],
+            "max": [
+              -1174.888,
+              -1761.866,
+              14.0
+            ],
+            "center": [
+              -1197.287,
+              -1795.466,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-016-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-016-DIN",
+          "building_id": "INTEL-BLDG-016",
+          "building_name": "Pocket Flat",
+          "ulpin": "3D-IND-600001-016-DIN",
+          "area_sq_m": 25.805,
+          "aabb_blender": {
+            "min": [
+              -1174.888,
+              -1829.066,
+              0.0
+            ],
+            "max": [
+              -1136.487,
+              -1761.866,
+              14.0
+            ],
+            "center": [
+              -1155.688,
+              -1795.466,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-016-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-016-HAL",
+          "building_id": "INTEL-BLDG-016",
+          "building_name": "Pocket Flat",
+          "ulpin": "3D-IND-600001-016-HAL",
+          "area_sq_m": 27.034,
+          "aabb_blender": {
+            "min": [
+              -1136.487,
+              -1902.666,
+              0.0
+            ],
+            "max": [
+              -1117.287,
+              -1761.866,
+              14.0
+            ],
+            "center": [
+              -1126.887,
+              -1832.266,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-016-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-016-MBR",
+          "building_id": "INTEL-BLDG-016",
+          "building_name": "Pocket Flat",
+          "ulpin": "3D-IND-600001-016-MBR",
+          "area_sq_m": 39.629,
+          "aabb_blender": {
+            "min": [
+              -1117.287,
+              -1902.666,
+              0.0
+            ],
+            "max": [
+              -1059.688,
+              -1833.866,
+              14.0
+            ],
+            "center": [
+              -1088.487,
+              -1868.266,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-016-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-016-BR2",
+          "building_id": "INTEL-BLDG-016",
+          "building_name": "Pocket Flat",
+          "ulpin": "3D-IND-600001-016-BR2",
+          "area_sq_m": 24.883,
+          "aabb_blender": {
+            "min": [
+              -1117.287,
+              -1833.866,
+              0.0
+            ],
+            "max": [
+              -1059.688,
+              -1790.666,
+              14.0
+            ],
+            "center": [
+              -1088.487,
+              -1812.266,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-016-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-016-BATH1",
+          "building_id": "INTEL-BLDG-016",
+          "building_name": "Pocket Flat",
+          "ulpin": "3D-IND-600001-016-BATH1",
+          "area_sq_m": 16.589,
+          "aabb_blender": {
+            "min": [
+              -1117.287,
+              -1790.666,
+              0.0
+            ],
+            "max": [
+              -1059.688,
+              -1761.866,
+              14.0
+            ],
+            "center": [
+              -1088.487,
+              -1776.266,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-017",
+      "building_id": "INTEL-BLDG-017",
+      "building_name": "Corner Shop Row",
+      "kind": "lowrise",
+      "ulpin": "3D-IND-600001-I17",
+      "group_name": "INT-INTEL-BLDG-017",
+      "plate_blender": {
+        "min": [
+          1546.97,
+          326.001,
+          0.0
+        ],
+        "max": [
+          1706.97,
+          486.001,
+          14.0
+        ],
+        "center": [
+          1626.97,
+          406.001,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-017-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-017-BAL",
+          "building_id": "INTEL-BLDG-017",
+          "building_name": "Corner Shop Row",
+          "ulpin": "3D-IND-600001-017-BAL",
+          "area_sq_m": 15.974,
+          "aabb_blender": {
+            "min": [
+              1546.97,
+              326.001,
+              0.0
+            ],
+            "max": [
+              1630.17,
+              345.201,
+              14.0
+            ],
+            "center": [
+              1588.57,
+              335.601,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-017-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-017-LIV",
+          "building_id": "INTEL-BLDG-017",
+          "building_name": "Corner Shop Row",
+          "ulpin": "3D-IND-600001-017-LIV",
+          "area_sq_m": 61.235,
+          "aabb_blender": {
+            "min": [
+              1546.97,
+              345.201,
+              0.0
+            ],
+            "max": [
+              1630.17,
+              418.801,
+              14.0
+            ],
+            "center": [
+              1588.57,
+              382.001,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-017-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-017-KIT",
+          "building_id": "INTEL-BLDG-017",
+          "building_name": "Corner Shop Row",
+          "ulpin": "3D-IND-600001-017-KIT",
+          "area_sq_m": 30.106,
+          "aabb_blender": {
+            "min": [
+              1546.97,
+              418.801,
+              0.0
+            ],
+            "max": [
+              1591.77,
+              486.001,
+              14.0
+            ],
+            "center": [
+              1569.37,
+              452.401,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-017-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-017-DIN",
+          "building_id": "INTEL-BLDG-017",
+          "building_name": "Corner Shop Row",
+          "ulpin": "3D-IND-600001-017-DIN",
+          "area_sq_m": 25.805,
+          "aabb_blender": {
+            "min": [
+              1591.77,
+              418.801,
+              0.0
+            ],
+            "max": [
+              1630.17,
+              486.001,
+              14.0
+            ],
+            "center": [
+              1610.97,
+              452.401,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-017-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-017-HAL",
+          "building_id": "INTEL-BLDG-017",
+          "building_name": "Corner Shop Row",
+          "ulpin": "3D-IND-600001-017-HAL",
+          "area_sq_m": 27.034,
+          "aabb_blender": {
+            "min": [
+              1630.17,
+              345.201,
+              0.0
+            ],
+            "max": [
+              1649.37,
+              486.001,
+              14.0
+            ],
+            "center": [
+              1639.771,
+              415.601,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-017-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-017-MBR",
+          "building_id": "INTEL-BLDG-017",
+          "building_name": "Corner Shop Row",
+          "ulpin": "3D-IND-600001-017-MBR",
+          "area_sq_m": 39.629,
+          "aabb_blender": {
+            "min": [
+              1649.37,
+              345.201,
+              0.0
+            ],
+            "max": [
+              1706.97,
+              414.001,
+              14.0
+            ],
+            "center": [
+              1678.17,
+              379.601,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-017-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-017-BR2",
+          "building_id": "INTEL-BLDG-017",
+          "building_name": "Corner Shop Row",
+          "ulpin": "3D-IND-600001-017-BR2",
+          "area_sq_m": 24.883,
+          "aabb_blender": {
+            "min": [
+              1649.37,
+              414.001,
+              0.0
+            ],
+            "max": [
+              1706.97,
+              457.201,
+              14.0
+            ],
+            "center": [
+              1678.17,
+              435.601,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-017-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-017-BATH1",
+          "building_id": "INTEL-BLDG-017",
+          "building_name": "Corner Shop Row",
+          "ulpin": "3D-IND-600001-017-BATH1",
+          "area_sq_m": 16.589,
+          "aabb_blender": {
+            "min": [
+              1649.37,
+              457.201,
+              0.0
+            ],
+            "max": [
+              1706.97,
+              486.001,
+              14.0
+            ],
+            "center": [
+              1678.17,
+              471.601,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-018",
+      "building_id": "INTEL-BLDG-018",
+      "building_name": "Garden Walk",
+      "kind": "lowrise",
+      "ulpin": "3D-IND-600001-I18",
+      "group_name": "INT-INTEL-BLDG-018",
+      "plate_blender": {
+        "min": [
+          -1953.736,
+          1754.092,
+          0.0
+        ],
+        "max": [
+          -1893.767,
+          1873.837,
+          14.0
+        ],
+        "center": [
+          -1923.751,
+          1813.965,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-018-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-018-BAL",
+          "building_id": "INTEL-BLDG-018",
+          "building_name": "Garden Walk",
+          "ulpin": "3D-IND-600001-018-BAL",
+          "area_sq_m": 4.481,
+          "aabb_blender": {
+            "min": [
+              -1953.736,
+              1754.092,
+              0.0
+            ],
+            "max": [
+              -1922.552,
+              1768.461,
+              14.0
+            ],
+            "center": [
+              -1938.144,
+              1761.276,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-018-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-018-LIV",
+          "building_id": "INTEL-BLDG-018",
+          "building_name": "Garden Walk",
+          "ulpin": "3D-IND-600001-018-LIV",
+          "area_sq_m": 17.177,
+          "aabb_blender": {
+            "min": [
+              -1953.736,
+              1768.461,
+              0.0
+            ],
+            "max": [
+              -1922.552,
+              1823.544,
+              14.0
+            ],
+            "center": [
+              -1938.144,
+              1796.003,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-018-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-018-KIT",
+          "building_id": "INTEL-BLDG-018",
+          "building_name": "Garden Walk",
+          "ulpin": "3D-IND-600001-018-KIT",
+          "area_sq_m": 8.445,
+          "aabb_blender": {
+            "min": [
+              -1953.736,
+              1823.544,
+              0.0
+            ],
+            "max": [
+              -1936.945,
+              1873.837,
+              14.0
+            ],
+            "center": [
+              -1945.341,
+              1848.691,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-018-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-018-DIN",
+          "building_id": "INTEL-BLDG-018",
+          "building_name": "Garden Walk",
+          "ulpin": "3D-IND-600001-018-DIN",
+          "area_sq_m": 7.239,
+          "aabb_blender": {
+            "min": [
+              -1936.945,
+              1823.544,
+              0.0
+            ],
+            "max": [
+              -1922.552,
+              1873.837,
+              14.0
+            ],
+            "center": [
+              -1929.748,
+              1848.691,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-018-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-018-HAL",
+          "building_id": "INTEL-BLDG-018",
+          "building_name": "Garden Walk",
+          "ulpin": "3D-IND-600001-018-HAL",
+          "area_sq_m": 7.583,
+          "aabb_blender": {
+            "min": [
+              -1922.552,
+              1768.461,
+              0.0
+            ],
+            "max": [
+              -1915.356,
+              1873.837,
+              14.0
+            ],
+            "center": [
+              -1918.954,
+              1821.149,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-018-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-018-MBR",
+          "building_id": "INTEL-BLDG-018",
+          "building_name": "Garden Walk",
+          "ulpin": "3D-IND-600001-018-MBR",
+          "area_sq_m": 11.116,
+          "aabb_blender": {
+            "min": [
+              -1915.356,
+              1768.461,
+              0.0
+            ],
+            "max": [
+              -1893.767,
+              1819.952,
+              14.0
+            ],
+            "center": [
+              -1904.561,
+              1794.206,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-018-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-018-BR2",
+          "building_id": "INTEL-BLDG-018",
+          "building_name": "Garden Walk",
+          "ulpin": "3D-IND-600001-018-BR2",
+          "area_sq_m": 6.98,
+          "aabb_blender": {
+            "min": [
+              -1915.356,
+              1819.952,
+              0.0
+            ],
+            "max": [
+              -1893.767,
+              1852.283,
+              14.0
+            ],
+            "center": [
+              -1904.561,
+              1836.117,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-018-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-018-BATH1",
+          "building_id": "INTEL-BLDG-018",
+          "building_name": "Garden Walk",
+          "ulpin": "3D-IND-600001-018-BATH1",
+          "area_sq_m": 4.653,
+          "aabb_blender": {
+            "min": [
+              -1915.356,
+              1852.283,
+              0.0
+            ],
+            "max": [
+              -1893.767,
+              1873.837,
+              14.0
+            ],
+            "center": [
+              -1904.561,
+              1863.06,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-019",
+      "building_id": "INTEL-BLDG-019",
+      "building_name": "Lane House",
+      "kind": "lowrise",
+      "ulpin": "3D-IND-600001-I19",
+      "group_name": "INT-INTEL-BLDG-019",
+      "plate_blender": {
+        "min": [
+          -1230.815,
+          1879.929,
+          0.0
+        ],
+        "max": [
+          -1166.689,
+          2000.477,
+          14.0
+        ],
+        "center": [
+          -1198.752,
+          1940.203,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-019-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-019-BAL",
+          "building_id": "INTEL-BLDG-019",
+          "building_name": "Lane House",
+          "ulpin": "3D-IND-600001-019-BAL",
+          "area_sq_m": 4.824,
+          "aabb_blender": {
+            "min": [
+              -1230.815,
+              1879.929,
+              0.0
+            ],
+            "max": [
+              -1197.469,
+              1894.395,
+              14.0
+            ],
+            "center": [
+              -1214.142,
+              1887.162,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-019-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-019-LIV",
+          "building_id": "INTEL-BLDG-019",
+          "building_name": "Lane House",
+          "ulpin": "3D-IND-600001-019-LIV",
+          "area_sq_m": 18.491,
+          "aabb_blender": {
+            "min": [
+              -1230.815,
+              1894.395,
+              0.0
+            ],
+            "max": [
+              -1197.469,
+              1949.847,
+              14.0
+            ],
+            "center": [
+              -1214.142,
+              1922.121,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-019-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-019-KIT",
+          "building_id": "INTEL-BLDG-019",
+          "building_name": "Lane House",
+          "ulpin": "3D-IND-600001-019-KIT",
+          "area_sq_m": 9.091,
+          "aabb_blender": {
+            "min": [
+              -1230.815,
+              1949.847,
+              0.0
+            ],
+            "max": [
+              -1212.86,
+              2000.477,
+              14.0
+            ],
+            "center": [
+              -1221.838,
+              1975.162,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-019-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-019-DIN",
+          "building_id": "INTEL-BLDG-019",
+          "building_name": "Lane House",
+          "ulpin": "3D-IND-600001-019-DIN",
+          "area_sq_m": 7.792,
+          "aabb_blender": {
+            "min": [
+              -1212.86,
+              1949.847,
+              0.0
+            ],
+            "max": [
+              -1197.469,
+              2000.477,
+              14.0
+            ],
+            "center": [
+              -1205.165,
+              1975.162,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-019-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-019-HAL",
+          "building_id": "INTEL-BLDG-019",
+          "building_name": "Lane House",
+          "ulpin": "3D-IND-600001-019-HAL",
+          "area_sq_m": 8.163,
+          "aabb_blender": {
+            "min": [
+              -1197.469,
+              1894.395,
+              0.0
+            ],
+            "max": [
+              -1189.774,
+              2000.477,
+              14.0
+            ],
+            "center": [
+              -1193.622,
+              1947.436,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-019-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-019-MBR",
+          "building_id": "INTEL-BLDG-019",
+          "building_name": "Lane House",
+          "ulpin": "3D-IND-600001-019-MBR",
+          "area_sq_m": 11.967,
+          "aabb_blender": {
+            "min": [
+              -1189.774,
+              1894.395,
+              0.0
+            ],
+            "max": [
+              -1166.689,
+              1946.23,
+              14.0
+            ],
+            "center": [
+              -1178.231,
+              1920.313,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-019-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-019-BR2",
+          "building_id": "INTEL-BLDG-019",
+          "building_name": "Lane House",
+          "ulpin": "3D-IND-600001-019-BR2",
+          "area_sq_m": 7.514,
+          "aabb_blender": {
+            "min": [
+              -1189.774,
+              1946.23,
+              0.0
+            ],
+            "max": [
+              -1166.689,
+              1978.778,
+              14.0
+            ],
+            "center": [
+              -1178.231,
+              1962.504,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-019-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-019-BATH1",
+          "building_id": "INTEL-BLDG-019",
+          "building_name": "Lane House",
+          "ulpin": "3D-IND-600001-019-BATH1",
+          "area_sq_m": 5.009,
+          "aabb_blender": {
+            "min": [
+              -1189.774,
+              1978.778,
+              0.0
+            ],
+            "max": [
+              -1166.689,
+              2000.477,
+              14.0
+            ],
+            "center": [
+              -1178.231,
+              1989.628,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-020",
+      "building_id": "INTEL-BLDG-020",
+      "building_name": "Studio Annex",
+      "kind": "lowrise",
+      "ulpin": "3D-IND-600001-I20",
+      "group_name": "INT-INTEL-BLDG-020",
+      "plate_blender": {
+        "min": [
+          -1874.894,
+          1216.08,
+          0.0
+        ],
+        "max": [
+          -1808.447,
+          1336.994,
+          14.0
+        ],
+        "center": [
+          -1841.671,
+          1276.537,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-020-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-020-BAL",
+          "building_id": "INTEL-BLDG-020",
+          "building_name": "Studio Annex",
+          "ulpin": "3D-IND-600001-020-BAL",
+          "area_sq_m": 5.013,
+          "aabb_blender": {
+            "min": [
+              -1874.894,
+              1216.08,
+              0.0
+            ],
+            "max": [
+              -1840.342,
+              1230.59,
+              14.0
+            ],
+            "center": [
+              -1857.618,
+              1223.335,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-020-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-020-LIV",
+          "building_id": "INTEL-BLDG-020",
+          "building_name": "Studio Annex",
+          "ulpin": "3D-IND-600001-020-LIV",
+          "area_sq_m": 19.218,
+          "aabb_blender": {
+            "min": [
+              -1874.894,
+              1230.59,
+              0.0
+            ],
+            "max": [
+              -1840.342,
+              1286.21,
+              14.0
+            ],
+            "center": [
+              -1857.618,
+              1258.4,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-020-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-020-KIT",
+          "building_id": "INTEL-BLDG-020",
+          "building_name": "Studio Annex",
+          "ulpin": "3D-IND-600001-020-KIT",
+          "area_sq_m": 9.448,
+          "aabb_blender": {
+            "min": [
+              -1874.894,
+              1286.21,
+              0.0
+            ],
+            "max": [
+              -1856.289,
+              1336.994,
+              14.0
+            ],
+            "center": [
+              -1865.592,
+              1311.602,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-020-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-020-DIN",
+          "building_id": "INTEL-BLDG-020",
+          "building_name": "Studio Annex",
+          "ulpin": "3D-IND-600001-020-DIN",
+          "area_sq_m": 8.099,
+          "aabb_blender": {
+            "min": [
+              -1856.289,
+              1286.21,
+              0.0
+            ],
+            "max": [
+              -1840.342,
+              1336.994,
+              14.0
+            ],
+            "center": [
+              -1848.315,
+              1311.602,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-020-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-020-HAL",
+          "building_id": "INTEL-BLDG-020",
+          "building_name": "Studio Annex",
+          "ulpin": "3D-IND-600001-020-HAL",
+          "area_sq_m": 8.484,
+          "aabb_blender": {
+            "min": [
+              -1840.342,
+              1230.59,
+              0.0
+            ],
+            "max": [
+              -1832.368,
+              1336.994,
+              14.0
+            ],
+            "center": [
+              -1836.355,
+              1283.792,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-020-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-020-MBR",
+          "building_id": "INTEL-BLDG-020",
+          "building_name": "Studio Annex",
+          "ulpin": "3D-IND-600001-020-MBR",
+          "area_sq_m": 12.437,
+          "aabb_blender": {
+            "min": [
+              -1832.368,
+              1230.59,
+              0.0
+            ],
+            "max": [
+              -1808.447,
+              1282.583,
+              14.0
+            ],
+            "center": [
+              -1820.407,
+              1256.586,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-020-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-020-BR2",
+          "building_id": "INTEL-BLDG-020",
+          "building_name": "Studio Annex",
+          "ulpin": "3D-IND-600001-020-BR2",
+          "area_sq_m": 7.809,
+          "aabb_blender": {
+            "min": [
+              -1832.368,
+              1282.583,
+              0.0
+            ],
+            "max": [
+              -1808.447,
+              1315.229,
+              14.0
+            ],
+            "center": [
+              -1820.407,
+              1298.906,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-020-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-020-BATH1",
+          "building_id": "INTEL-BLDG-020",
+          "building_name": "Studio Annex",
+          "ulpin": "3D-IND-600001-020-BATH1",
+          "area_sq_m": 5.206,
+          "aabb_blender": {
+            "min": [
+              -1832.368,
+              1315.229,
+              0.0
+            ],
+            "max": [
+              -1808.447,
+              1336.994,
+              14.0
+            ],
+            "center": [
+              -1820.407,
+              1326.111,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-021",
+      "building_id": "INTEL-BLDG-021",
+      "building_name": "Parcel Cottage",
+      "kind": "lowrise",
+      "ulpin": "3D-IND-600001-I21",
+      "group_name": "INT-INTEL-BLDG-021",
+      "plate_blender": {
+        "min": [
+          -1143.33,
+          1345.066,
+          0.0
+        ],
+        "max": [
+          -1076.859,
+          1465.982,
+          14.0
+        ],
+        "center": [
+          -1110.094,
+          1405.524,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-021-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-021-BAL",
+          "building_id": "INTEL-BLDG-021",
+          "building_name": "Parcel Cottage",
+          "ulpin": "3D-IND-600001-021-BAL",
+          "area_sq_m": 5.015,
+          "aabb_blender": {
+            "min": [
+              -1143.33,
+              1345.066,
+              0.0
+            ],
+            "max": [
+              -1108.765,
+              1359.576,
+              14.0
+            ],
+            "center": [
+              -1126.048,
+              1352.321,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-021-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-021-LIV",
+          "building_id": "INTEL-BLDG-021",
+          "building_name": "Parcel Cottage",
+          "ulpin": "3D-IND-600001-021-LIV",
+          "area_sq_m": 19.226,
+          "aabb_blender": {
+            "min": [
+              -1143.33,
+              1359.576,
+              0.0
+            ],
+            "max": [
+              -1108.765,
+              1415.197,
+              14.0
+            ],
+            "center": [
+              -1126.048,
+              1387.386,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-021-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-021-KIT",
+          "building_id": "INTEL-BLDG-021",
+          "building_name": "Parcel Cottage",
+          "ulpin": "3D-IND-600001-021-KIT",
+          "area_sq_m": 9.452,
+          "aabb_blender": {
+            "min": [
+              -1143.33,
+              1415.197,
+              0.0
+            ],
+            "max": [
+              -1124.718,
+              1465.982,
+              14.0
+            ],
+            "center": [
+              -1134.024,
+              1440.59,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-021-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-021-DIN",
+          "building_id": "INTEL-BLDG-021",
+          "building_name": "Parcel Cottage",
+          "ulpin": "3D-IND-600001-021-DIN",
+          "area_sq_m": 8.102,
+          "aabb_blender": {
+            "min": [
+              -1124.718,
+              1415.197,
+              0.0
+            ],
+            "max": [
+              -1108.765,
+              1465.982,
+              14.0
+            ],
+            "center": [
+              -1116.742,
+              1440.59,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-021-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-021-HAL",
+          "building_id": "INTEL-BLDG-021",
+          "building_name": "Parcel Cottage",
+          "ulpin": "3D-IND-600001-021-HAL",
+          "area_sq_m": 8.488,
+          "aabb_blender": {
+            "min": [
+              -1108.765,
+              1359.576,
+              0.0
+            ],
+            "max": [
+              -1100.789,
+              1465.982,
+              14.0
+            ],
+            "center": [
+              -1104.777,
+              1412.779,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-021-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-021-MBR",
+          "building_id": "INTEL-BLDG-021",
+          "building_name": "Parcel Cottage",
+          "ulpin": "3D-IND-600001-021-MBR",
+          "area_sq_m": 12.442,
+          "aabb_blender": {
+            "min": [
+              -1100.789,
+              1359.576,
+              0.0
+            ],
+            "max": [
+              -1076.859,
+              1411.57,
+              14.0
+            ],
+            "center": [
+              -1088.824,
+              1385.573,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-021-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-021-BR2",
+          "building_id": "INTEL-BLDG-021",
+          "building_name": "Parcel Cottage",
+          "ulpin": "3D-IND-600001-021-BR2",
+          "area_sq_m": 7.812,
+          "aabb_blender": {
+            "min": [
+              -1100.789,
+              1411.57,
+              0.0
+            ],
+            "max": [
+              -1076.859,
+              1444.217,
+              14.0
+            ],
+            "center": [
+              -1088.824,
+              1427.894,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-021-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-021-BATH1",
+          "building_id": "INTEL-BLDG-021",
+          "building_name": "Parcel Cottage",
+          "ulpin": "3D-IND-600001-021-BATH1",
+          "area_sq_m": 5.208,
+          "aabb_blender": {
+            "min": [
+              -1100.789,
+              1444.217,
+              0.0
+            ],
+            "max": [
+              -1076.859,
+              1465.982,
+              14.0
+            ],
+            "center": [
+              -1088.824,
+              1455.1,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-022",
+      "building_id": "INTEL-BLDG-022",
+      "building_name": "Bazaar Lane",
+      "kind": "lowrise",
+      "ulpin": "3D-IND-600001-I22",
+      "group_name": "INT-INTEL-BLDG-022",
+      "plate_blender": {
+        "min": [
+          677.66,
+          1604.173,
+          0.0
+        ],
+        "max": [
+          821.49,
+          1696.423,
+          14.0
+        ],
+        "center": [
+          749.575,
+          1650.298,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-022-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-022-BAL",
+          "building_id": "INTEL-BLDG-022",
+          "building_name": "Bazaar Lane",
+          "ulpin": "3D-IND-600001-022-BAL",
+          "area_sq_m": 8.279,
+          "aabb_blender": {
+            "min": [
+              677.66,
+              1604.173,
+              0.0
+            ],
+            "max": [
+              752.452,
+              1615.243,
+              14.0
+            ],
+            "center": [
+              715.056,
+              1609.708,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-022-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-022-LIV",
+          "building_id": "INTEL-BLDG-022",
+          "building_name": "Bazaar Lane",
+          "ulpin": "3D-IND-600001-022-LIV",
+          "area_sq_m": 31.738,
+          "aabb_blender": {
+            "min": [
+              677.66,
+              1615.243,
+              0.0
+            ],
+            "max": [
+              752.452,
+              1657.678,
+              14.0
+            ],
+            "center": [
+              715.056,
+              1636.46,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-022-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-022-KIT",
+          "building_id": "INTEL-BLDG-022",
+          "building_name": "Bazaar Lane",
+          "ulpin": "3D-IND-600001-022-KIT",
+          "area_sq_m": 15.604,
+          "aabb_blender": {
+            "min": [
+              677.66,
+              1657.678,
+              0.0
+            ],
+            "max": [
+              717.932,
+              1696.423,
+              14.0
+            ],
+            "center": [
+              697.796,
+              1677.05,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-022-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-022-DIN",
+          "building_id": "INTEL-BLDG-022",
+          "building_name": "Bazaar Lane",
+          "ulpin": "3D-IND-600001-022-DIN",
+          "area_sq_m": 13.375,
+          "aabb_blender": {
+            "min": [
+              717.932,
+              1657.678,
+              0.0
+            ],
+            "max": [
+              752.452,
+              1696.423,
+              14.0
+            ],
+            "center": [
+              735.192,
+              1677.05,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-022-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-022-HAL",
+          "building_id": "INTEL-BLDG-022",
+          "building_name": "Bazaar Lane",
+          "ulpin": "3D-IND-600001-022-HAL",
+          "area_sq_m": 14.011,
+          "aabb_blender": {
+            "min": [
+              752.452,
+              1615.243,
+              0.0
+            ],
+            "max": [
+              769.711,
+              1696.423,
+              14.0
+            ],
+            "center": [
+              761.081,
+              1655.833,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-022-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-022-MBR",
+          "building_id": "INTEL-BLDG-022",
+          "building_name": "Bazaar Lane",
+          "ulpin": "3D-IND-600001-022-MBR",
+          "area_sq_m": 20.539,
+          "aabb_blender": {
+            "min": [
+              769.711,
+              1615.243,
+              0.0
+            ],
+            "max": [
+              821.49,
+              1654.91,
+              14.0
+            ],
+            "center": [
+              795.601,
+              1635.077,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-022-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-022-BR2",
+          "building_id": "INTEL-BLDG-022",
+          "building_name": "Bazaar Lane",
+          "ulpin": "3D-IND-600001-022-BR2",
+          "area_sq_m": 12.897,
+          "aabb_blender": {
+            "min": [
+              769.711,
+              1654.91,
+              0.0
+            ],
+            "max": [
+              821.49,
+              1679.818,
+              14.0
+            ],
+            "center": [
+              795.601,
+              1667.364,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-022-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-022-BATH1",
+          "building_id": "INTEL-BLDG-022",
+          "building_name": "Bazaar Lane",
+          "ulpin": "3D-IND-600001-022-BATH1",
+          "area_sq_m": 8.598,
+          "aabb_blender": {
+            "min": [
+              769.711,
+              1679.818,
+              0.0
+            ],
+            "max": [
+              821.49,
+              1696.423,
+              14.0
+            ],
+            "center": [
+              795.601,
+              1688.12,
+              7.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "INTEL-BLDG-023",
+      "building_id": "INTEL-BLDG-023",
+      "building_name": "Court Villa",
+      "kind": "lowrise",
+      "ulpin": "3D-IND-600001-I23",
+      "group_name": "INT-INTEL-BLDG-023",
+      "plate_blender": {
+        "min": [
+          256.281,
+          -1841.859,
+          0.0
+        ],
+        "max": [
+          416.281,
+          -1681.859,
+          14.0
+        ],
+        "center": [
+          336.281,
+          -1761.859,
+          7.0
+        ]
+      },
+      "rooms": [
+        {
+          "id": "INT-023-BAL",
+          "type": "balcony",
+          "label": "Balcony",
+          "mesh_name": "INT-023-BAL",
+          "building_id": "INTEL-BLDG-023",
+          "building_name": "Court Villa",
+          "ulpin": "3D-IND-600001-023-BAL",
+          "area_sq_m": 15.974,
+          "aabb_blender": {
+            "min": [
+              256.281,
+              -1841.859,
+              0.0
+            ],
+            "max": [
+              339.481,
+              -1822.659,
+              14.0
+            ],
+            "center": [
+              297.881,
+              -1832.259,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-023-LIV",
+          "type": "living_room",
+          "label": "Living Room",
+          "mesh_name": "INT-023-LIV",
+          "building_id": "INTEL-BLDG-023",
+          "building_name": "Court Villa",
+          "ulpin": "3D-IND-600001-023-LIV",
+          "area_sq_m": 61.235,
+          "aabb_blender": {
+            "min": [
+              256.281,
+              -1822.659,
+              0.0
+            ],
+            "max": [
+              339.481,
+              -1749.059,
+              14.0
+            ],
+            "center": [
+              297.881,
+              -1785.859,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-023-KIT",
+          "type": "kitchen",
+          "label": "Kitchen",
+          "mesh_name": "INT-023-KIT",
+          "building_id": "INTEL-BLDG-023",
+          "building_name": "Court Villa",
+          "ulpin": "3D-IND-600001-023-KIT",
+          "area_sq_m": 30.106,
+          "aabb_blender": {
+            "min": [
+              256.281,
+              -1749.059,
+              0.0
+            ],
+            "max": [
+              301.081,
+              -1681.859,
+              14.0
+            ],
+            "center": [
+              278.681,
+              -1715.459,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-023-DIN",
+          "type": "dining",
+          "label": "Dining",
+          "mesh_name": "INT-023-DIN",
+          "building_id": "INTEL-BLDG-023",
+          "building_name": "Court Villa",
+          "ulpin": "3D-IND-600001-023-DIN",
+          "area_sq_m": 25.805,
+          "aabb_blender": {
+            "min": [
+              301.081,
+              -1749.059,
+              0.0
+            ],
+            "max": [
+              339.481,
+              -1681.859,
+              14.0
+            ],
+            "center": [
+              320.281,
+              -1715.459,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-023-HAL",
+          "type": "hall",
+          "label": "Hall",
+          "mesh_name": "INT-023-HAL",
+          "building_id": "INTEL-BLDG-023",
+          "building_name": "Court Villa",
+          "ulpin": "3D-IND-600001-023-HAL",
+          "area_sq_m": 27.034,
+          "aabb_blender": {
+            "min": [
+              339.481,
+              -1822.659,
+              0.0
+            ],
+            "max": [
+              358.681,
+              -1681.859,
+              14.0
+            ],
+            "center": [
+              349.081,
+              -1752.259,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-023-MBR",
+          "type": "master_bedroom",
+          "label": "Master Bedroom",
+          "mesh_name": "INT-023-MBR",
+          "building_id": "INTEL-BLDG-023",
+          "building_name": "Court Villa",
+          "ulpin": "3D-IND-600001-023-MBR",
+          "area_sq_m": 39.629,
+          "aabb_blender": {
+            "min": [
+              358.681,
+              -1822.659,
+              0.0
+            ],
+            "max": [
+              416.281,
+              -1753.859,
+              14.0
+            ],
+            "center": [
+              387.481,
+              -1788.259,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-023-BR2",
+          "type": "bedroom",
+          "label": "Bedroom",
+          "mesh_name": "INT-023-BR2",
+          "building_id": "INTEL-BLDG-023",
+          "building_name": "Court Villa",
+          "ulpin": "3D-IND-600001-023-BR2",
+          "area_sq_m": 24.883,
+          "aabb_blender": {
+            "min": [
+              358.681,
+              -1753.859,
+              0.0
+            ],
+            "max": [
+              416.281,
+              -1710.659,
+              14.0
+            ],
+            "center": [
+              387.481,
+              -1732.259,
+              7.0
+            ]
+          }
+        },
+        {
+          "id": "INT-023-BATH1",
+          "type": "bathroom",
+          "label": "Bathroom",
+          "mesh_name": "INT-023-BATH1",
+          "building_id": "INTEL-BLDG-023",
+          "building_name": "Court Villa",
+          "ulpin": "3D-IND-600001-023-BATH1",
+          "area_sq_m": 16.589,
+          "aabb_blender": {
+            "min": [
+              358.681,
+              -1710.659,
+              0.0
+            ],
+            "max": [
+              416.281,
+              -1681.859,
+              14.0
+            ],
+            "center": [
+              387.481,
+              -1696.259,
+              7.0
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4218 @@
+{
+  "meta": {
+    "pincode": "600001",
+    "coord_space": "blender_world_xyz_zup",
+    "source": "blender_underground_v2_dense",
+    "glb": "intel_city_underground.glb",
+    "depth_scale": 16.0,
+    "cover_min": 38.0,
+    "corridor_step": 220.0,
+    "ground_z_blender": -19.817,
+    "utility_count": 390,
+    "structure_count": 23
+  },
+  "utilities": [
+    {
+      "id": "UG-FIBER-M001",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M001",
+      "mesh_name": "UG-FIBER-M001"
+    },
+    {
+      "id": "UG-FIBER-M002",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M002",
+      "mesh_name": "UG-FIBER-M002"
+    },
+    {
+      "id": "UG-ELEC-M001",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M001",
+      "mesh_name": "UG-ELEC-M001"
+    },
+    {
+      "id": "UG-WATER-M001",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M001",
+      "mesh_name": "UG-WATER-M001"
+    },
+    {
+      "id": "UG-WATER-M002",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M002",
+      "mesh_name": "UG-WATER-M002"
+    },
+    {
+      "id": "UG-SEWER-M001",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M001",
+      "mesh_name": "UG-SEWER-M001"
+    },
+    {
+      "id": "UG-FIBER-M003",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M003",
+      "mesh_name": "UG-FIBER-M003"
+    },
+    {
+      "id": "UG-FIBER-M004",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M004",
+      "mesh_name": "UG-FIBER-M004"
+    },
+    {
+      "id": "UG-ELEC-M002",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M002",
+      "mesh_name": "UG-ELEC-M002"
+    },
+    {
+      "id": "UG-WATER-M003",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M003",
+      "mesh_name": "UG-WATER-M003"
+    },
+    {
+      "id": "UG-WATER-M004",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M004",
+      "mesh_name": "UG-WATER-M004"
+    },
+    {
+      "id": "UG-SEWER-M002",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M002",
+      "mesh_name": "UG-SEWER-M002"
+    },
+    {
+      "id": "UG-FIBER-M005",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M005",
+      "mesh_name": "UG-FIBER-M005"
+    },
+    {
+      "id": "UG-FIBER-M006",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M006",
+      "mesh_name": "UG-FIBER-M006"
+    },
+    {
+      "id": "UG-ELEC-M003",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M003",
+      "mesh_name": "UG-ELEC-M003"
+    },
+    {
+      "id": "UG-WATER-M005",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M005",
+      "mesh_name": "UG-WATER-M005"
+    },
+    {
+      "id": "UG-WATER-M006",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M006",
+      "mesh_name": "UG-WATER-M006"
+    },
+    {
+      "id": "UG-SEWER-M003",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M003",
+      "mesh_name": "UG-SEWER-M003"
+    },
+    {
+      "id": "UG-FIBER-M007",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M007",
+      "mesh_name": "UG-FIBER-M007"
+    },
+    {
+      "id": "UG-FIBER-M008",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M008",
+      "mesh_name": "UG-FIBER-M008"
+    },
+    {
+      "id": "UG-ELEC-M004",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M004",
+      "mesh_name": "UG-ELEC-M004"
+    },
+    {
+      "id": "UG-WATER-M007",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M007",
+      "mesh_name": "UG-WATER-M007"
+    },
+    {
+      "id": "UG-WATER-M008",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M008",
+      "mesh_name": "UG-WATER-M008"
+    },
+    {
+      "id": "UG-SEWER-M004",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M004",
+      "mesh_name": "UG-SEWER-M004"
+    },
+    {
+      "id": "UG-FIBER-M009",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M009",
+      "mesh_name": "UG-FIBER-M009"
+    },
+    {
+      "id": "UG-FIBER-M010",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M010",
+      "mesh_name": "UG-FIBER-M010"
+    },
+    {
+      "id": "UG-ELEC-M005",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M005",
+      "mesh_name": "UG-ELEC-M005"
+    },
+    {
+      "id": "UG-WATER-M009",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M009",
+      "mesh_name": "UG-WATER-M009"
+    },
+    {
+      "id": "UG-WATER-M010",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M010",
+      "mesh_name": "UG-WATER-M010"
+    },
+    {
+      "id": "UG-SEWER-M005",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M005",
+      "mesh_name": "UG-SEWER-M005"
+    },
+    {
+      "id": "UG-FIBER-M011",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M011",
+      "mesh_name": "UG-FIBER-M011"
+    },
+    {
+      "id": "UG-FIBER-M012",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M012",
+      "mesh_name": "UG-FIBER-M012"
+    },
+    {
+      "id": "UG-ELEC-M006",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M006",
+      "mesh_name": "UG-ELEC-M006"
+    },
+    {
+      "id": "UG-WATER-M011",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M011",
+      "mesh_name": "UG-WATER-M011"
+    },
+    {
+      "id": "UG-WATER-M012",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M012",
+      "mesh_name": "UG-WATER-M012"
+    },
+    {
+      "id": "UG-SEWER-M006",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M006",
+      "mesh_name": "UG-SEWER-M006"
+    },
+    {
+      "id": "UG-FIBER-M013",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M013",
+      "mesh_name": "UG-FIBER-M013"
+    },
+    {
+      "id": "UG-FIBER-M014",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M014",
+      "mesh_name": "UG-FIBER-M014"
+    },
+    {
+      "id": "UG-ELEC-M007",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M007",
+      "mesh_name": "UG-ELEC-M007"
+    },
+    {
+      "id": "UG-WATER-M013",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M013",
+      "mesh_name": "UG-WATER-M013"
+    },
+    {
+      "id": "UG-WATER-M014",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M014",
+      "mesh_name": "UG-WATER-M014"
+    },
+    {
+      "id": "UG-SEWER-M007",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M007",
+      "mesh_name": "UG-SEWER-M007"
+    },
+    {
+      "id": "UG-FIBER-M015",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M015",
+      "mesh_name": "UG-FIBER-M015"
+    },
+    {
+      "id": "UG-FIBER-M016",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M016",
+      "mesh_name": "UG-FIBER-M016"
+    },
+    {
+      "id": "UG-ELEC-M008",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M008",
+      "mesh_name": "UG-ELEC-M008"
+    },
+    {
+      "id": "UG-WATER-M015",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M015",
+      "mesh_name": "UG-WATER-M015"
+    },
+    {
+      "id": "UG-WATER-M016",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M016",
+      "mesh_name": "UG-WATER-M016"
+    },
+    {
+      "id": "UG-SEWER-M008",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M008",
+      "mesh_name": "UG-SEWER-M008"
+    },
+    {
+      "id": "UG-FIBER-M017",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M017",
+      "mesh_name": "UG-FIBER-M017"
+    },
+    {
+      "id": "UG-FIBER-M018",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M018",
+      "mesh_name": "UG-FIBER-M018"
+    },
+    {
+      "id": "UG-ELEC-M009",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M009",
+      "mesh_name": "UG-ELEC-M009"
+    },
+    {
+      "id": "UG-WATER-M017",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M017",
+      "mesh_name": "UG-WATER-M017"
+    },
+    {
+      "id": "UG-WATER-M018",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M018",
+      "mesh_name": "UG-WATER-M018"
+    },
+    {
+      "id": "UG-SEWER-M009",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M009",
+      "mesh_name": "UG-SEWER-M009"
+    },
+    {
+      "id": "UG-FIBER-M019",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M019",
+      "mesh_name": "UG-FIBER-M019"
+    },
+    {
+      "id": "UG-FIBER-M020",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M020",
+      "mesh_name": "UG-FIBER-M020"
+    },
+    {
+      "id": "UG-ELEC-M010",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M010",
+      "mesh_name": "UG-ELEC-M010"
+    },
+    {
+      "id": "UG-WATER-M019",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M019",
+      "mesh_name": "UG-WATER-M019"
+    },
+    {
+      "id": "UG-WATER-M020",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M020",
+      "mesh_name": "UG-WATER-M020"
+    },
+    {
+      "id": "UG-SEWER-M010",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M010",
+      "mesh_name": "UG-SEWER-M010"
+    },
+    {
+      "id": "UG-FIBER-M021",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M021",
+      "mesh_name": "UG-FIBER-M021"
+    },
+    {
+      "id": "UG-FIBER-M022",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M022",
+      "mesh_name": "UG-FIBER-M022"
+    },
+    {
+      "id": "UG-ELEC-M011",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M011",
+      "mesh_name": "UG-ELEC-M011"
+    },
+    {
+      "id": "UG-WATER-M021",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M021",
+      "mesh_name": "UG-WATER-M021"
+    },
+    {
+      "id": "UG-WATER-M022",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M022",
+      "mesh_name": "UG-WATER-M022"
+    },
+    {
+      "id": "UG-SEWER-M011",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M011",
+      "mesh_name": "UG-SEWER-M011"
+    },
+    {
+      "id": "UG-FIBER-M023",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M023",
+      "mesh_name": "UG-FIBER-M023"
+    },
+    {
+      "id": "UG-FIBER-M024",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M024",
+      "mesh_name": "UG-FIBER-M024"
+    },
+    {
+      "id": "UG-ELEC-M012",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M012",
+      "mesh_name": "UG-ELEC-M012"
+    },
+    {
+      "id": "UG-WATER-M023",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M023",
+      "mesh_name": "UG-WATER-M023"
+    },
+    {
+      "id": "UG-WATER-M024",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M024",
+      "mesh_name": "UG-WATER-M024"
+    },
+    {
+      "id": "UG-SEWER-M012",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M012",
+      "mesh_name": "UG-SEWER-M012"
+    },
+    {
+      "id": "UG-FIBER-M025",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M025",
+      "mesh_name": "UG-FIBER-M025"
+    },
+    {
+      "id": "UG-FIBER-M026",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M026",
+      "mesh_name": "UG-FIBER-M026"
+    },
+    {
+      "id": "UG-ELEC-M013",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M013",
+      "mesh_name": "UG-ELEC-M013"
+    },
+    {
+      "id": "UG-WATER-M025",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M025",
+      "mesh_name": "UG-WATER-M025"
+    },
+    {
+      "id": "UG-WATER-M026",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M026",
+      "mesh_name": "UG-WATER-M026"
+    },
+    {
+      "id": "UG-SEWER-M013",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M013",
+      "mesh_name": "UG-SEWER-M013"
+    },
+    {
+      "id": "UG-FIBER-M027",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M027",
+      "mesh_name": "UG-FIBER-M027"
+    },
+    {
+      "id": "UG-FIBER-M028",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M028",
+      "mesh_name": "UG-FIBER-M028"
+    },
+    {
+      "id": "UG-ELEC-M014",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M014",
+      "mesh_name": "UG-ELEC-M014"
+    },
+    {
+      "id": "UG-WATER-M027",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M027",
+      "mesh_name": "UG-WATER-M027"
+    },
+    {
+      "id": "UG-WATER-M028",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M028",
+      "mesh_name": "UG-WATER-M028"
+    },
+    {
+      "id": "UG-SEWER-M014",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M014",
+      "mesh_name": "UG-SEWER-M014"
+    },
+    {
+      "id": "UG-FIBER-M029",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M029",
+      "mesh_name": "UG-FIBER-M029"
+    },
+    {
+      "id": "UG-FIBER-M030",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M030",
+      "mesh_name": "UG-FIBER-M030"
+    },
+    {
+      "id": "UG-ELEC-M015",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M015",
+      "mesh_name": "UG-ELEC-M015"
+    },
+    {
+      "id": "UG-WATER-M029",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M029",
+      "mesh_name": "UG-WATER-M029"
+    },
+    {
+      "id": "UG-WATER-M030",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M030",
+      "mesh_name": "UG-WATER-M030"
+    },
+    {
+      "id": "UG-SEWER-M015",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M015",
+      "mesh_name": "UG-SEWER-M015"
+    },
+    {
+      "id": "UG-FIBER-M031",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M031",
+      "mesh_name": "UG-FIBER-M031"
+    },
+    {
+      "id": "UG-FIBER-M032",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M032",
+      "mesh_name": "UG-FIBER-M032"
+    },
+    {
+      "id": "UG-ELEC-M016",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M016",
+      "mesh_name": "UG-ELEC-M016"
+    },
+    {
+      "id": "UG-WATER-M031",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M031",
+      "mesh_name": "UG-WATER-M031"
+    },
+    {
+      "id": "UG-WATER-M032",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M032",
+      "mesh_name": "UG-WATER-M032"
+    },
+    {
+      "id": "UG-SEWER-M016",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M016",
+      "mesh_name": "UG-SEWER-M016"
+    },
+    {
+      "id": "UG-FIBER-M033",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M033",
+      "mesh_name": "UG-FIBER-M033"
+    },
+    {
+      "id": "UG-FIBER-M034",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M034",
+      "mesh_name": "UG-FIBER-M034"
+    },
+    {
+      "id": "UG-ELEC-M017",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M017",
+      "mesh_name": "UG-ELEC-M017"
+    },
+    {
+      "id": "UG-WATER-M033",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M033",
+      "mesh_name": "UG-WATER-M033"
+    },
+    {
+      "id": "UG-WATER-M034",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M034",
+      "mesh_name": "UG-WATER-M034"
+    },
+    {
+      "id": "UG-SEWER-M017",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M017",
+      "mesh_name": "UG-SEWER-M017"
+    },
+    {
+      "id": "UG-FIBER-M035",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M035",
+      "mesh_name": "UG-FIBER-M035"
+    },
+    {
+      "id": "UG-FIBER-M036",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M036",
+      "mesh_name": "UG-FIBER-M036"
+    },
+    {
+      "id": "UG-ELEC-M018",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M018",
+      "mesh_name": "UG-ELEC-M018"
+    },
+    {
+      "id": "UG-WATER-M035",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M035",
+      "mesh_name": "UG-WATER-M035"
+    },
+    {
+      "id": "UG-WATER-M036",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M036",
+      "mesh_name": "UG-WATER-M036"
+    },
+    {
+      "id": "UG-SEWER-M018",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M018",
+      "mesh_name": "UG-SEWER-M018"
+    },
+    {
+      "id": "UG-FIBER-M037",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M037",
+      "mesh_name": "UG-FIBER-M037"
+    },
+    {
+      "id": "UG-FIBER-M038",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M038",
+      "mesh_name": "UG-FIBER-M038"
+    },
+    {
+      "id": "UG-ELEC-M019",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M019",
+      "mesh_name": "UG-ELEC-M019"
+    },
+    {
+      "id": "UG-WATER-M037",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M037",
+      "mesh_name": "UG-WATER-M037"
+    },
+    {
+      "id": "UG-WATER-M038",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M038",
+      "mesh_name": "UG-WATER-M038"
+    },
+    {
+      "id": "UG-SEWER-M019",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M019",
+      "mesh_name": "UG-SEWER-M019"
+    },
+    {
+      "id": "UG-FIBER-M039",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M039",
+      "mesh_name": "UG-FIBER-M039"
+    },
+    {
+      "id": "UG-FIBER-M040",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-M040",
+      "mesh_name": "UG-FIBER-M040"
+    },
+    {
+      "id": "UG-ELEC-M020",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-M020",
+      "mesh_name": "UG-ELEC-M020"
+    },
+    {
+      "id": "UG-WATER-M039",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M039",
+      "mesh_name": "UG-WATER-M039"
+    },
+    {
+      "id": "UG-WATER-M040",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-M040",
+      "mesh_name": "UG-WATER-M040"
+    },
+    {
+      "id": "UG-SEWER-M020",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-M020",
+      "mesh_name": "UG-SEWER-M020"
+    },
+    {
+      "id": "UG-FIBER-F041",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F041",
+      "mesh_name": "UG-FIBER-F041"
+    },
+    {
+      "id": "UG-FIBER-F042",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F042",
+      "mesh_name": "UG-FIBER-F042"
+    },
+    {
+      "id": "UG-ELEC-F021",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F021",
+      "mesh_name": "UG-ELEC-F021"
+    },
+    {
+      "id": "UG-WATER-F041",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F041",
+      "mesh_name": "UG-WATER-F041"
+    },
+    {
+      "id": "UG-WATER-F042",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F042",
+      "mesh_name": "UG-WATER-F042"
+    },
+    {
+      "id": "UG-SEWER-F021",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F021",
+      "mesh_name": "UG-SEWER-F021"
+    },
+    {
+      "id": "UG-FIBER-F043",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F043",
+      "mesh_name": "UG-FIBER-F043"
+    },
+    {
+      "id": "UG-FIBER-F044",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F044",
+      "mesh_name": "UG-FIBER-F044"
+    },
+    {
+      "id": "UG-ELEC-F022",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F022",
+      "mesh_name": "UG-ELEC-F022"
+    },
+    {
+      "id": "UG-WATER-F043",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F043",
+      "mesh_name": "UG-WATER-F043"
+    },
+    {
+      "id": "UG-WATER-F044",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F044",
+      "mesh_name": "UG-WATER-F044"
+    },
+    {
+      "id": "UG-SEWER-F022",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F022",
+      "mesh_name": "UG-SEWER-F022"
+    },
+    {
+      "id": "UG-FIBER-F045",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F045",
+      "mesh_name": "UG-FIBER-F045"
+    },
+    {
+      "id": "UG-FIBER-F046",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F046",
+      "mesh_name": "UG-FIBER-F046"
+    },
+    {
+      "id": "UG-ELEC-F023",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F023",
+      "mesh_name": "UG-ELEC-F023"
+    },
+    {
+      "id": "UG-WATER-F045",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F045",
+      "mesh_name": "UG-WATER-F045"
+    },
+    {
+      "id": "UG-WATER-F046",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F046",
+      "mesh_name": "UG-WATER-F046"
+    },
+    {
+      "id": "UG-SEWER-F023",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F023",
+      "mesh_name": "UG-SEWER-F023"
+    },
+    {
+      "id": "UG-FIBER-F047",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F047",
+      "mesh_name": "UG-FIBER-F047"
+    },
+    {
+      "id": "UG-FIBER-F048",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F048",
+      "mesh_name": "UG-FIBER-F048"
+    },
+    {
+      "id": "UG-ELEC-F024",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F024",
+      "mesh_name": "UG-ELEC-F024"
+    },
+    {
+      "id": "UG-WATER-F047",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F047",
+      "mesh_name": "UG-WATER-F047"
+    },
+    {
+      "id": "UG-WATER-F048",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F048",
+      "mesh_name": "UG-WATER-F048"
+    },
+    {
+      "id": "UG-SEWER-F024",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F024",
+      "mesh_name": "UG-SEWER-F024"
+    },
+    {
+      "id": "UG-FIBER-F049",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F049",
+      "mesh_name": "UG-FIBER-F049"
+    },
+    {
+      "id": "UG-FIBER-F050",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F050",
+      "mesh_name": "UG-FIBER-F050"
+    },
+    {
+      "id": "UG-ELEC-F025",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F025",
+      "mesh_name": "UG-ELEC-F025"
+    },
+    {
+      "id": "UG-WATER-F049",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F049",
+      "mesh_name": "UG-WATER-F049"
+    },
+    {
+      "id": "UG-WATER-F050",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F050",
+      "mesh_name": "UG-WATER-F050"
+    },
+    {
+      "id": "UG-SEWER-F025",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F025",
+      "mesh_name": "UG-SEWER-F025"
+    },
+    {
+      "id": "UG-FIBER-F051",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F051",
+      "mesh_name": "UG-FIBER-F051"
+    },
+    {
+      "id": "UG-FIBER-F052",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F052",
+      "mesh_name": "UG-FIBER-F052"
+    },
+    {
+      "id": "UG-ELEC-F026",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F026",
+      "mesh_name": "UG-ELEC-F026"
+    },
+    {
+      "id": "UG-WATER-F051",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F051",
+      "mesh_name": "UG-WATER-F051"
+    },
+    {
+      "id": "UG-WATER-F052",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F052",
+      "mesh_name": "UG-WATER-F052"
+    },
+    {
+      "id": "UG-SEWER-F026",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F026",
+      "mesh_name": "UG-SEWER-F026"
+    },
+    {
+      "id": "UG-FIBER-F053",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F053",
+      "mesh_name": "UG-FIBER-F053"
+    },
+    {
+      "id": "UG-FIBER-F054",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F054",
+      "mesh_name": "UG-FIBER-F054"
+    },
+    {
+      "id": "UG-ELEC-F027",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F027",
+      "mesh_name": "UG-ELEC-F027"
+    },
+    {
+      "id": "UG-WATER-F053",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F053",
+      "mesh_name": "UG-WATER-F053"
+    },
+    {
+      "id": "UG-WATER-F054",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F054",
+      "mesh_name": "UG-WATER-F054"
+    },
+    {
+      "id": "UG-SEWER-F027",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F027",
+      "mesh_name": "UG-SEWER-F027"
+    },
+    {
+      "id": "UG-FIBER-F055",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F055",
+      "mesh_name": "UG-FIBER-F055"
+    },
+    {
+      "id": "UG-FIBER-F056",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F056",
+      "mesh_name": "UG-FIBER-F056"
+    },
+    {
+      "id": "UG-ELEC-F028",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F028",
+      "mesh_name": "UG-ELEC-F028"
+    },
+    {
+      "id": "UG-WATER-F055",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F055",
+      "mesh_name": "UG-WATER-F055"
+    },
+    {
+      "id": "UG-WATER-F056",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F056",
+      "mesh_name": "UG-WATER-F056"
+    },
+    {
+      "id": "UG-SEWER-F028",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F028",
+      "mesh_name": "UG-SEWER-F028"
+    },
+    {
+      "id": "UG-FIBER-F057",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F057",
+      "mesh_name": "UG-FIBER-F057"
+    },
+    {
+      "id": "UG-FIBER-F058",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F058",
+      "mesh_name": "UG-FIBER-F058"
+    },
+    {
+      "id": "UG-ELEC-F029",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F029",
+      "mesh_name": "UG-ELEC-F029"
+    },
+    {
+      "id": "UG-WATER-F057",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F057",
+      "mesh_name": "UG-WATER-F057"
+    },
+    {
+      "id": "UG-WATER-F058",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F058",
+      "mesh_name": "UG-WATER-F058"
+    },
+    {
+      "id": "UG-SEWER-F029",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F029",
+      "mesh_name": "UG-SEWER-F029"
+    },
+    {
+      "id": "UG-FIBER-F059",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F059",
+      "mesh_name": "UG-FIBER-F059"
+    },
+    {
+      "id": "UG-FIBER-F060",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F060",
+      "mesh_name": "UG-FIBER-F060"
+    },
+    {
+      "id": "UG-ELEC-F030",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F030",
+      "mesh_name": "UG-ELEC-F030"
+    },
+    {
+      "id": "UG-WATER-F059",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F059",
+      "mesh_name": "UG-WATER-F059"
+    },
+    {
+      "id": "UG-WATER-F060",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F060",
+      "mesh_name": "UG-WATER-F060"
+    },
+    {
+      "id": "UG-SEWER-F030",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F030",
+      "mesh_name": "UG-SEWER-F030"
+    },
+    {
+      "id": "UG-FIBER-F061",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F061",
+      "mesh_name": "UG-FIBER-F061"
+    },
+    {
+      "id": "UG-FIBER-F062",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F062",
+      "mesh_name": "UG-FIBER-F062"
+    },
+    {
+      "id": "UG-ELEC-F031",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F031",
+      "mesh_name": "UG-ELEC-F031"
+    },
+    {
+      "id": "UG-WATER-F061",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F061",
+      "mesh_name": "UG-WATER-F061"
+    },
+    {
+      "id": "UG-WATER-F062",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F062",
+      "mesh_name": "UG-WATER-F062"
+    },
+    {
+      "id": "UG-SEWER-F031",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F031",
+      "mesh_name": "UG-SEWER-F031"
+    },
+    {
+      "id": "UG-FIBER-F063",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F063",
+      "mesh_name": "UG-FIBER-F063"
+    },
+    {
+      "id": "UG-FIBER-F064",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F064",
+      "mesh_name": "UG-FIBER-F064"
+    },
+    {
+      "id": "UG-ELEC-F032",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F032",
+      "mesh_name": "UG-ELEC-F032"
+    },
+    {
+      "id": "UG-WATER-F063",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F063",
+      "mesh_name": "UG-WATER-F063"
+    },
+    {
+      "id": "UG-WATER-F064",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F064",
+      "mesh_name": "UG-WATER-F064"
+    },
+    {
+      "id": "UG-SEWER-F032",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F032",
+      "mesh_name": "UG-SEWER-F032"
+    },
+    {
+      "id": "UG-FIBER-F065",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F065",
+      "mesh_name": "UG-FIBER-F065"
+    },
+    {
+      "id": "UG-FIBER-F066",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F066",
+      "mesh_name": "UG-FIBER-F066"
+    },
+    {
+      "id": "UG-ELEC-F033",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F033",
+      "mesh_name": "UG-ELEC-F033"
+    },
+    {
+      "id": "UG-WATER-F065",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F065",
+      "mesh_name": "UG-WATER-F065"
+    },
+    {
+      "id": "UG-WATER-F066",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F066",
+      "mesh_name": "UG-WATER-F066"
+    },
+    {
+      "id": "UG-SEWER-F033",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F033",
+      "mesh_name": "UG-SEWER-F033"
+    },
+    {
+      "id": "UG-FIBER-F067",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F067",
+      "mesh_name": "UG-FIBER-F067"
+    },
+    {
+      "id": "UG-FIBER-F068",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F068",
+      "mesh_name": "UG-FIBER-F068"
+    },
+    {
+      "id": "UG-ELEC-F034",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F034",
+      "mesh_name": "UG-ELEC-F034"
+    },
+    {
+      "id": "UG-WATER-F067",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F067",
+      "mesh_name": "UG-WATER-F067"
+    },
+    {
+      "id": "UG-WATER-F068",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F068",
+      "mesh_name": "UG-WATER-F068"
+    },
+    {
+      "id": "UG-SEWER-F034",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F034",
+      "mesh_name": "UG-SEWER-F034"
+    },
+    {
+      "id": "UG-FIBER-F069",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F069",
+      "mesh_name": "UG-FIBER-F069"
+    },
+    {
+      "id": "UG-FIBER-F070",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F070",
+      "mesh_name": "UG-FIBER-F070"
+    },
+    {
+      "id": "UG-ELEC-F035",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F035",
+      "mesh_name": "UG-ELEC-F035"
+    },
+    {
+      "id": "UG-WATER-F069",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F069",
+      "mesh_name": "UG-WATER-F069"
+    },
+    {
+      "id": "UG-WATER-F070",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F070",
+      "mesh_name": "UG-WATER-F070"
+    },
+    {
+      "id": "UG-SEWER-F035",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F035",
+      "mesh_name": "UG-SEWER-F035"
+    },
+    {
+      "id": "UG-FIBER-F071",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F071",
+      "mesh_name": "UG-FIBER-F071"
+    },
+    {
+      "id": "UG-FIBER-F072",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F072",
+      "mesh_name": "UG-FIBER-F072"
+    },
+    {
+      "id": "UG-ELEC-F036",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F036",
+      "mesh_name": "UG-ELEC-F036"
+    },
+    {
+      "id": "UG-WATER-F071",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F071",
+      "mesh_name": "UG-WATER-F071"
+    },
+    {
+      "id": "UG-WATER-F072",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F072",
+      "mesh_name": "UG-WATER-F072"
+    },
+    {
+      "id": "UG-SEWER-F036",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F036",
+      "mesh_name": "UG-SEWER-F036"
+    },
+    {
+      "id": "UG-FIBER-F073",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F073",
+      "mesh_name": "UG-FIBER-F073"
+    },
+    {
+      "id": "UG-FIBER-F074",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F074",
+      "mesh_name": "UG-FIBER-F074"
+    },
+    {
+      "id": "UG-ELEC-F037",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F037",
+      "mesh_name": "UG-ELEC-F037"
+    },
+    {
+      "id": "UG-WATER-F073",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F073",
+      "mesh_name": "UG-WATER-F073"
+    },
+    {
+      "id": "UG-WATER-F074",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F074",
+      "mesh_name": "UG-WATER-F074"
+    },
+    {
+      "id": "UG-SEWER-F037",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F037",
+      "mesh_name": "UG-SEWER-F037"
+    },
+    {
+      "id": "UG-FIBER-F075",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F075",
+      "mesh_name": "UG-FIBER-F075"
+    },
+    {
+      "id": "UG-FIBER-F076",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F076",
+      "mesh_name": "UG-FIBER-F076"
+    },
+    {
+      "id": "UG-ELEC-F038",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F038",
+      "mesh_name": "UG-ELEC-F038"
+    },
+    {
+      "id": "UG-WATER-F075",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F075",
+      "mesh_name": "UG-WATER-F075"
+    },
+    {
+      "id": "UG-WATER-F076",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F076",
+      "mesh_name": "UG-WATER-F076"
+    },
+    {
+      "id": "UG-SEWER-F038",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F038",
+      "mesh_name": "UG-SEWER-F038"
+    },
+    {
+      "id": "UG-FIBER-F077",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F077",
+      "mesh_name": "UG-FIBER-F077"
+    },
+    {
+      "id": "UG-FIBER-F078",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F078",
+      "mesh_name": "UG-FIBER-F078"
+    },
+    {
+      "id": "UG-ELEC-F039",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F039",
+      "mesh_name": "UG-ELEC-F039"
+    },
+    {
+      "id": "UG-WATER-F077",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F077",
+      "mesh_name": "UG-WATER-F077"
+    },
+    {
+      "id": "UG-WATER-F078",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F078",
+      "mesh_name": "UG-WATER-F078"
+    },
+    {
+      "id": "UG-SEWER-F039",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F039",
+      "mesh_name": "UG-SEWER-F039"
+    },
+    {
+      "id": "UG-FIBER-F079",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F079",
+      "mesh_name": "UG-FIBER-F079"
+    },
+    {
+      "id": "UG-FIBER-F080",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-F080",
+      "mesh_name": "UG-FIBER-F080"
+    },
+    {
+      "id": "UG-ELEC-F040",
+      "type": "electrical_cable",
+      "label": "Electrical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-F040",
+      "mesh_name": "UG-ELEC-F040"
+    },
+    {
+      "id": "UG-WATER-F079",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F079",
+      "mesh_name": "UG-WATER-F079"
+    },
+    {
+      "id": "UG-WATER-F080",
+      "type": "water_pipeline",
+      "label": "Water",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-F080",
+      "mesh_name": "UG-WATER-F080"
+    },
+    {
+      "id": "UG-SEWER-F040",
+      "type": "sewer",
+      "label": "Sewage",
+      "depth_m": 7.5,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-SEWER-F040",
+      "mesh_name": "UG-SEWER-F040"
+    },
+    {
+      "id": "UG-FIBER-S001",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S001",
+      "mesh_name": "UG-FIBER-S001"
+    },
+    {
+      "id": "UG-FIBER-J001",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J001",
+      "mesh_name": "UG-FIBER-J001"
+    },
+    {
+      "id": "UG-WATER-S002",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S002",
+      "mesh_name": "UG-WATER-S002"
+    },
+    {
+      "id": "UG-WATER-J002",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J002",
+      "mesh_name": "UG-WATER-J002"
+    },
+    {
+      "id": "UG-WATER-V002",
+      "type": "water_pipeline",
+      "label": "Water vertical",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-V002",
+      "mesh_name": "UG-WATER-V002"
+    },
+    {
+      "id": "UG-ELEC-S003",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S003",
+      "mesh_name": "UG-ELEC-S003"
+    },
+    {
+      "id": "UG-ELEC-J003",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J003",
+      "mesh_name": "UG-ELEC-J003"
+    },
+    {
+      "id": "UG-FIBER-S004",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S004",
+      "mesh_name": "UG-FIBER-S004"
+    },
+    {
+      "id": "UG-FIBER-J004",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J004",
+      "mesh_name": "UG-FIBER-J004"
+    },
+    {
+      "id": "UG-FIBER-V004",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber vertical",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-V004",
+      "mesh_name": "UG-FIBER-V004"
+    },
+    {
+      "id": "UG-WATER-S005",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S005",
+      "mesh_name": "UG-WATER-S005"
+    },
+    {
+      "id": "UG-WATER-J005",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J005",
+      "mesh_name": "UG-WATER-J005"
+    },
+    {
+      "id": "UG-ELEC-S006",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S006",
+      "mesh_name": "UG-ELEC-S006"
+    },
+    {
+      "id": "UG-ELEC-J006",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J006",
+      "mesh_name": "UG-ELEC-J006"
+    },
+    {
+      "id": "UG-ELEC-V006",
+      "type": "electrical_cable",
+      "label": "Electrical vertical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-V006",
+      "mesh_name": "UG-ELEC-V006"
+    },
+    {
+      "id": "UG-FIBER-S007",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S007",
+      "mesh_name": "UG-FIBER-S007"
+    },
+    {
+      "id": "UG-FIBER-J007",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J007",
+      "mesh_name": "UG-FIBER-J007"
+    },
+    {
+      "id": "UG-WATER-S008",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S008",
+      "mesh_name": "UG-WATER-S008"
+    },
+    {
+      "id": "UG-WATER-J008",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J008",
+      "mesh_name": "UG-WATER-J008"
+    },
+    {
+      "id": "UG-WATER-V008",
+      "type": "water_pipeline",
+      "label": "Water vertical",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-V008",
+      "mesh_name": "UG-WATER-V008"
+    },
+    {
+      "id": "UG-ELEC-S009",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S009",
+      "mesh_name": "UG-ELEC-S009"
+    },
+    {
+      "id": "UG-ELEC-J009",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J009",
+      "mesh_name": "UG-ELEC-J009"
+    },
+    {
+      "id": "UG-FIBER-S010",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S010",
+      "mesh_name": "UG-FIBER-S010"
+    },
+    {
+      "id": "UG-FIBER-J010",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J010",
+      "mesh_name": "UG-FIBER-J010"
+    },
+    {
+      "id": "UG-FIBER-V010",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber vertical",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-V010",
+      "mesh_name": "UG-FIBER-V010"
+    },
+    {
+      "id": "UG-WATER-S011",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S011",
+      "mesh_name": "UG-WATER-S011"
+    },
+    {
+      "id": "UG-WATER-J011",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J011",
+      "mesh_name": "UG-WATER-J011"
+    },
+    {
+      "id": "UG-ELEC-S012",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S012",
+      "mesh_name": "UG-ELEC-S012"
+    },
+    {
+      "id": "UG-ELEC-J012",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J012",
+      "mesh_name": "UG-ELEC-J012"
+    },
+    {
+      "id": "UG-ELEC-V012",
+      "type": "electrical_cable",
+      "label": "Electrical vertical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-V012",
+      "mesh_name": "UG-ELEC-V012"
+    },
+    {
+      "id": "UG-FIBER-S013",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S013",
+      "mesh_name": "UG-FIBER-S013"
+    },
+    {
+      "id": "UG-FIBER-J013",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J013",
+      "mesh_name": "UG-FIBER-J013"
+    },
+    {
+      "id": "UG-WATER-S014",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S014",
+      "mesh_name": "UG-WATER-S014"
+    },
+    {
+      "id": "UG-WATER-J014",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J014",
+      "mesh_name": "UG-WATER-J014"
+    },
+    {
+      "id": "UG-WATER-V014",
+      "type": "water_pipeline",
+      "label": "Water vertical",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-V014",
+      "mesh_name": "UG-WATER-V014"
+    },
+    {
+      "id": "UG-ELEC-S015",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S015",
+      "mesh_name": "UG-ELEC-S015"
+    },
+    {
+      "id": "UG-ELEC-J015",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J015",
+      "mesh_name": "UG-ELEC-J015"
+    },
+    {
+      "id": "UG-FIBER-S016",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S016",
+      "mesh_name": "UG-FIBER-S016"
+    },
+    {
+      "id": "UG-FIBER-J016",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J016",
+      "mesh_name": "UG-FIBER-J016"
+    },
+    {
+      "id": "UG-FIBER-V016",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber vertical",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-V016",
+      "mesh_name": "UG-FIBER-V016"
+    },
+    {
+      "id": "UG-WATER-S017",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S017",
+      "mesh_name": "UG-WATER-S017"
+    },
+    {
+      "id": "UG-WATER-J017",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J017",
+      "mesh_name": "UG-WATER-J017"
+    },
+    {
+      "id": "UG-ELEC-S018",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S018",
+      "mesh_name": "UG-ELEC-S018"
+    },
+    {
+      "id": "UG-ELEC-J018",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J018",
+      "mesh_name": "UG-ELEC-J018"
+    },
+    {
+      "id": "UG-ELEC-V018",
+      "type": "electrical_cable",
+      "label": "Electrical vertical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-V018",
+      "mesh_name": "UG-ELEC-V018"
+    },
+    {
+      "id": "UG-FIBER-S019",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S019",
+      "mesh_name": "UG-FIBER-S019"
+    },
+    {
+      "id": "UG-FIBER-J019",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J019",
+      "mesh_name": "UG-FIBER-J019"
+    },
+    {
+      "id": "UG-WATER-S020",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S020",
+      "mesh_name": "UG-WATER-S020"
+    },
+    {
+      "id": "UG-WATER-J020",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J020",
+      "mesh_name": "UG-WATER-J020"
+    },
+    {
+      "id": "UG-WATER-V020",
+      "type": "water_pipeline",
+      "label": "Water vertical",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-V020",
+      "mesh_name": "UG-WATER-V020"
+    },
+    {
+      "id": "UG-ELEC-S021",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S021",
+      "mesh_name": "UG-ELEC-S021"
+    },
+    {
+      "id": "UG-ELEC-J021",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J021",
+      "mesh_name": "UG-ELEC-J021"
+    },
+    {
+      "id": "UG-FIBER-S022",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S022",
+      "mesh_name": "UG-FIBER-S022"
+    },
+    {
+      "id": "UG-FIBER-J022",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J022",
+      "mesh_name": "UG-FIBER-J022"
+    },
+    {
+      "id": "UG-FIBER-V022",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber vertical",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-V022",
+      "mesh_name": "UG-FIBER-V022"
+    },
+    {
+      "id": "UG-WATER-S023",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S023",
+      "mesh_name": "UG-WATER-S023"
+    },
+    {
+      "id": "UG-WATER-J023",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J023",
+      "mesh_name": "UG-WATER-J023"
+    },
+    {
+      "id": "UG-ELEC-S024",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S024",
+      "mesh_name": "UG-ELEC-S024"
+    },
+    {
+      "id": "UG-ELEC-J024",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J024",
+      "mesh_name": "UG-ELEC-J024"
+    },
+    {
+      "id": "UG-ELEC-V024",
+      "type": "electrical_cable",
+      "label": "Electrical vertical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-V024",
+      "mesh_name": "UG-ELEC-V024"
+    },
+    {
+      "id": "UG-FIBER-S025",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S025",
+      "mesh_name": "UG-FIBER-S025"
+    },
+    {
+      "id": "UG-FIBER-J025",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J025",
+      "mesh_name": "UG-FIBER-J025"
+    },
+    {
+      "id": "UG-WATER-S026",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S026",
+      "mesh_name": "UG-WATER-S026"
+    },
+    {
+      "id": "UG-WATER-J026",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J026",
+      "mesh_name": "UG-WATER-J026"
+    },
+    {
+      "id": "UG-WATER-V026",
+      "type": "water_pipeline",
+      "label": "Water vertical",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-V026",
+      "mesh_name": "UG-WATER-V026"
+    },
+    {
+      "id": "UG-ELEC-S027",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S027",
+      "mesh_name": "UG-ELEC-S027"
+    },
+    {
+      "id": "UG-ELEC-J027",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J027",
+      "mesh_name": "UG-ELEC-J027"
+    },
+    {
+      "id": "UG-FIBER-S028",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S028",
+      "mesh_name": "UG-FIBER-S028"
+    },
+    {
+      "id": "UG-FIBER-J028",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J028",
+      "mesh_name": "UG-FIBER-J028"
+    },
+    {
+      "id": "UG-FIBER-V028",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber vertical",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-V028",
+      "mesh_name": "UG-FIBER-V028"
+    },
+    {
+      "id": "UG-WATER-S029",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S029",
+      "mesh_name": "UG-WATER-S029"
+    },
+    {
+      "id": "UG-WATER-J029",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J029",
+      "mesh_name": "UG-WATER-J029"
+    },
+    {
+      "id": "UG-ELEC-S030",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S030",
+      "mesh_name": "UG-ELEC-S030"
+    },
+    {
+      "id": "UG-ELEC-J030",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J030",
+      "mesh_name": "UG-ELEC-J030"
+    },
+    {
+      "id": "UG-ELEC-V030",
+      "type": "electrical_cable",
+      "label": "Electrical vertical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-V030",
+      "mesh_name": "UG-ELEC-V030"
+    },
+    {
+      "id": "UG-FIBER-S031",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S031",
+      "mesh_name": "UG-FIBER-S031"
+    },
+    {
+      "id": "UG-FIBER-J031",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J031",
+      "mesh_name": "UG-FIBER-J031"
+    },
+    {
+      "id": "UG-WATER-S032",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S032",
+      "mesh_name": "UG-WATER-S032"
+    },
+    {
+      "id": "UG-WATER-J032",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J032",
+      "mesh_name": "UG-WATER-J032"
+    },
+    {
+      "id": "UG-WATER-V032",
+      "type": "water_pipeline",
+      "label": "Water vertical",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-V032",
+      "mesh_name": "UG-WATER-V032"
+    },
+    {
+      "id": "UG-ELEC-S033",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S033",
+      "mesh_name": "UG-ELEC-S033"
+    },
+    {
+      "id": "UG-ELEC-J033",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J033",
+      "mesh_name": "UG-ELEC-J033"
+    },
+    {
+      "id": "UG-FIBER-S034",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S034",
+      "mesh_name": "UG-FIBER-S034"
+    },
+    {
+      "id": "UG-FIBER-J034",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J034",
+      "mesh_name": "UG-FIBER-J034"
+    },
+    {
+      "id": "UG-FIBER-V034",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber vertical",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-V034",
+      "mesh_name": "UG-FIBER-V034"
+    },
+    {
+      "id": "UG-WATER-S035",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S035",
+      "mesh_name": "UG-WATER-S035"
+    },
+    {
+      "id": "UG-WATER-J035",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J035",
+      "mesh_name": "UG-WATER-J035"
+    },
+    {
+      "id": "UG-ELEC-S036",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S036",
+      "mesh_name": "UG-ELEC-S036"
+    },
+    {
+      "id": "UG-ELEC-J036",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J036",
+      "mesh_name": "UG-ELEC-J036"
+    },
+    {
+      "id": "UG-ELEC-V036",
+      "type": "electrical_cable",
+      "label": "Electrical vertical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-V036",
+      "mesh_name": "UG-ELEC-V036"
+    },
+    {
+      "id": "UG-FIBER-S037",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S037",
+      "mesh_name": "UG-FIBER-S037"
+    },
+    {
+      "id": "UG-FIBER-J037",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J037",
+      "mesh_name": "UG-FIBER-J037"
+    },
+    {
+      "id": "UG-WATER-S038",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S038",
+      "mesh_name": "UG-WATER-S038"
+    },
+    {
+      "id": "UG-WATER-J038",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J038",
+      "mesh_name": "UG-WATER-J038"
+    },
+    {
+      "id": "UG-WATER-V038",
+      "type": "water_pipeline",
+      "label": "Water vertical",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-V038",
+      "mesh_name": "UG-WATER-V038"
+    },
+    {
+      "id": "UG-ELEC-S039",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S039",
+      "mesh_name": "UG-ELEC-S039"
+    },
+    {
+      "id": "UG-ELEC-J039",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J039",
+      "mesh_name": "UG-ELEC-J039"
+    },
+    {
+      "id": "UG-FIBER-S040",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S040",
+      "mesh_name": "UG-FIBER-S040"
+    },
+    {
+      "id": "UG-FIBER-J040",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J040",
+      "mesh_name": "UG-FIBER-J040"
+    },
+    {
+      "id": "UG-FIBER-V040",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber vertical",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-V040",
+      "mesh_name": "UG-FIBER-V040"
+    },
+    {
+      "id": "UG-WATER-S041",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S041",
+      "mesh_name": "UG-WATER-S041"
+    },
+    {
+      "id": "UG-WATER-J041",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J041",
+      "mesh_name": "UG-WATER-J041"
+    },
+    {
+      "id": "UG-ELEC-S042",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S042",
+      "mesh_name": "UG-ELEC-S042"
+    },
+    {
+      "id": "UG-ELEC-J042",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J042",
+      "mesh_name": "UG-ELEC-J042"
+    },
+    {
+      "id": "UG-ELEC-V042",
+      "type": "electrical_cable",
+      "label": "Electrical vertical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-V042",
+      "mesh_name": "UG-ELEC-V042"
+    },
+    {
+      "id": "UG-FIBER-S043",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S043",
+      "mesh_name": "UG-FIBER-S043"
+    },
+    {
+      "id": "UG-FIBER-J043",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J043",
+      "mesh_name": "UG-FIBER-J043"
+    },
+    {
+      "id": "UG-WATER-S044",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S044",
+      "mesh_name": "UG-WATER-S044"
+    },
+    {
+      "id": "UG-WATER-J044",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J044",
+      "mesh_name": "UG-WATER-J044"
+    },
+    {
+      "id": "UG-WATER-V044",
+      "type": "water_pipeline",
+      "label": "Water vertical",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-V044",
+      "mesh_name": "UG-WATER-V044"
+    },
+    {
+      "id": "UG-ELEC-S045",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S045",
+      "mesh_name": "UG-ELEC-S045"
+    },
+    {
+      "id": "UG-ELEC-J045",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J045",
+      "mesh_name": "UG-ELEC-J045"
+    },
+    {
+      "id": "UG-FIBER-S046",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S046",
+      "mesh_name": "UG-FIBER-S046"
+    },
+    {
+      "id": "UG-FIBER-J046",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J046",
+      "mesh_name": "UG-FIBER-J046"
+    },
+    {
+      "id": "UG-FIBER-V046",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber vertical",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-V046",
+      "mesh_name": "UG-FIBER-V046"
+    },
+    {
+      "id": "UG-WATER-S047",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S047",
+      "mesh_name": "UG-WATER-S047"
+    },
+    {
+      "id": "UG-WATER-J047",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J047",
+      "mesh_name": "UG-WATER-J047"
+    },
+    {
+      "id": "UG-ELEC-S048",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S048",
+      "mesh_name": "UG-ELEC-S048"
+    },
+    {
+      "id": "UG-ELEC-J048",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J048",
+      "mesh_name": "UG-ELEC-J048"
+    },
+    {
+      "id": "UG-ELEC-V048",
+      "type": "electrical_cable",
+      "label": "Electrical vertical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-V048",
+      "mesh_name": "UG-ELEC-V048"
+    },
+    {
+      "id": "UG-FIBER-S049",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S049",
+      "mesh_name": "UG-FIBER-S049"
+    },
+    {
+      "id": "UG-FIBER-J049",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J049",
+      "mesh_name": "UG-FIBER-J049"
+    },
+    {
+      "id": "UG-WATER-S050",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S050",
+      "mesh_name": "UG-WATER-S050"
+    },
+    {
+      "id": "UG-WATER-J050",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J050",
+      "mesh_name": "UG-WATER-J050"
+    },
+    {
+      "id": "UG-WATER-V050",
+      "type": "water_pipeline",
+      "label": "Water vertical",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-V050",
+      "mesh_name": "UG-WATER-V050"
+    },
+    {
+      "id": "UG-ELEC-S051",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S051",
+      "mesh_name": "UG-ELEC-S051"
+    },
+    {
+      "id": "UG-ELEC-J051",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J051",
+      "mesh_name": "UG-ELEC-J051"
+    },
+    {
+      "id": "UG-FIBER-S052",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S052",
+      "mesh_name": "UG-FIBER-S052"
+    },
+    {
+      "id": "UG-FIBER-J052",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J052",
+      "mesh_name": "UG-FIBER-J052"
+    },
+    {
+      "id": "UG-FIBER-V052",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber vertical",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-V052",
+      "mesh_name": "UG-FIBER-V052"
+    },
+    {
+      "id": "UG-WATER-S053",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S053",
+      "mesh_name": "UG-WATER-S053"
+    },
+    {
+      "id": "UG-WATER-J053",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J053",
+      "mesh_name": "UG-WATER-J053"
+    },
+    {
+      "id": "UG-ELEC-S054",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S054",
+      "mesh_name": "UG-ELEC-S054"
+    },
+    {
+      "id": "UG-ELEC-J054",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J054",
+      "mesh_name": "UG-ELEC-J054"
+    },
+    {
+      "id": "UG-ELEC-V054",
+      "type": "electrical_cable",
+      "label": "Electrical vertical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-V054",
+      "mesh_name": "UG-ELEC-V054"
+    },
+    {
+      "id": "UG-FIBER-S055",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S055",
+      "mesh_name": "UG-FIBER-S055"
+    },
+    {
+      "id": "UG-FIBER-J055",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J055",
+      "mesh_name": "UG-FIBER-J055"
+    },
+    {
+      "id": "UG-WATER-S056",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S056",
+      "mesh_name": "UG-WATER-S056"
+    },
+    {
+      "id": "UG-WATER-J056",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J056",
+      "mesh_name": "UG-WATER-J056"
+    },
+    {
+      "id": "UG-WATER-V056",
+      "type": "water_pipeline",
+      "label": "Water vertical",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-V056",
+      "mesh_name": "UG-WATER-V056"
+    },
+    {
+      "id": "UG-ELEC-S057",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S057",
+      "mesh_name": "UG-ELEC-S057"
+    },
+    {
+      "id": "UG-ELEC-J057",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J057",
+      "mesh_name": "UG-ELEC-J057"
+    },
+    {
+      "id": "UG-FIBER-S058",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber lateral",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-S058",
+      "mesh_name": "UG-FIBER-S058"
+    },
+    {
+      "id": "UG-FIBER-J058",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber junction",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-J058",
+      "mesh_name": "UG-FIBER-J058"
+    },
+    {
+      "id": "UG-FIBER-V058",
+      "type": "fiber_optic",
+      "label": "Broadband / fiber vertical",
+      "depth_m": 2.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-FIBER-V058",
+      "mesh_name": "UG-FIBER-V058"
+    },
+    {
+      "id": "UG-WATER-S059",
+      "type": "water_pipeline",
+      "label": "Water lateral",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-S059",
+      "mesh_name": "UG-WATER-S059"
+    },
+    {
+      "id": "UG-WATER-J059",
+      "type": "water_pipeline",
+      "label": "Water junction",
+      "depth_m": 5.8,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-WATER-J059",
+      "mesh_name": "UG-WATER-J059"
+    },
+    {
+      "id": "UG-ELEC-S060",
+      "type": "electrical_cable",
+      "label": "Electrical lateral",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-S060",
+      "mesh_name": "UG-ELEC-S060"
+    },
+    {
+      "id": "UG-ELEC-J060",
+      "type": "electrical_cable",
+      "label": "Electrical junction",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-J060",
+      "mesh_name": "UG-ELEC-J060"
+    },
+    {
+      "id": "UG-ELEC-V060",
+      "type": "electrical_cable",
+      "label": "Electrical vertical",
+      "depth_m": 4.2,
+      "status": "active",
+      "ulpin": "3D-IND-600001-UG-ELEC-V060",
+      "mesh_name": "UG-ELEC-V060"
+    }
+  ],
+  "structures": [
+    {
+      "id": "UG-PARK-1",
+      "type": "underground_parking",
+      "label": "Parking \u2014 Glass Spire",
+      "building_id": "INTEL-BLDG-001",
+      "building_name": "Glass Spire",
+      "building_kind": "skyscraper",
+      "ulpin": "3D-IND-600001-I1-UG-P",
+      "spaces": 80,
+      "depth_m": 6.4,
+      "status": "active",
+      "mesh_name": "UG-PARK-1",
+      "aabb_blender": {
+        "min": [
+          88.411,
+          30.465,
+          -143.117
+        ],
+        "max": [
+          355.768,
+          272.376,
+          -40.717
+        ],
+        "center": [
+          222.09,
+          151.421,
+          -91.917
+        ]
+      }
+    },
+    {
+      "id": "UG-PARK-2",
+      "type": "underground_parking",
+      "label": "Parking \u2014 Horizon Tower",
+      "building_id": "INTEL-BLDG-002",
+      "building_name": "Horizon Tower",
+      "building_kind": "skyscraper",
+      "ulpin": "3D-IND-600001-I2-UG-P",
+      "spaces": 80,
+      "depth_m": 6.4,
+      "status": "active",
+      "mesh_name": "UG-PARK-2",
+      "aabb_blender": {
+        "min": [
+          -526.127,
+          -1113.715,
+          -143.117
+        ],
+        "max": [
+          -439.01,
+          -981.397,
+          -40.717
+        ],
+        "center": [
+          -482.568,
+          -1047.556,
+          -91.917
+        ]
+      }
+    },
+    {
+      "id": "UG-PARK-3",
+      "type": "underground_parking",
+      "label": "Parking \u2014 Meridian Peak",
+      "building_id": "INTEL-BLDG-003",
+      "building_name": "Meridian Peak",
+      "building_kind": "skyscraper",
+      "ulpin": "3D-IND-600001-I3-UG-P",
+      "spaces": 80,
+      "depth_m": 6.4,
+      "status": "active",
+      "mesh_name": "UG-PARK-3",
+      "aabb_blender": {
+        "min": [
+          -273.582,
+          1209.579,
+          -143.117
+        ],
+        "max": [
+          -139.292,
+          1377.981,
+          -40.717
+        ],
+        "center": [
+          -206.437,
+          1293.78,
+          -91.917
+        ]
+      }
+    },
+    {
+      "id": "UG-PARK-4",
+      "type": "underground_parking",
+      "label": "Parking \u2014 Azure Column",
+      "building_id": "INTEL-BLDG-004",
+      "building_name": "Azure Column",
+      "building_kind": "skyscraper",
+      "ulpin": "3D-IND-600001-I4-UG-P",
+      "spaces": 80,
+      "depth_m": 6.4,
+      "status": "active",
+      "mesh_name": "UG-PARK-4",
+      "aabb_blender": {
+        "min": [
+          -448.908,
+          1926.773,
+          -143.117
+        ],
+        "max": [
+          -179.992,
+          2005.523,
+          -40.717
+        ],
+        "center": [
+          -314.45,
+          1966.148,
+          -91.917
+        ]
+      }
+    },
+    {
+      "id": "UG-PARK-5",
+      "type": "underground_parking",
+      "label": "Parking \u2014 Skyline Hub",
+      "building_id": "INTEL-BLDG-005",
+      "building_name": "Skyline Hub",
+      "building_kind": "skyscraper",
+      "ulpin": "3D-IND-600001-I5-UG-P",
+      "spaces": 80,
+      "depth_m": 6.4,
+      "status": "active",
+      "mesh_name": "UG-PARK-5",
+      "aabb_blender": {
+        "min": [
+          -2008.287,
+          -1893.797,
+          -143.117
+        ],
+        "max": [
+          -1648.287,
+          -1533.797,
+          -40.717
+        ],
+        "center": [
+          -1828.287,
+          -1713.797,
+          -91.917
+        ]
+      }
+    },
+    {
+      "id": "UG-PARK-6",
+      "type": "underground_parking",
+      "label": "Parking \u2014 North Needle",
+      "building_id": "INTEL-BLDG-006",
+      "building_name": "North Needle",
+      "building_kind": "skyscraper",
+      "ulpin": "3D-IND-600001-I6-UG-P",
+      "spaces": 80,
+      "depth_m": 6.4,
+      "status": "active",
+      "mesh_name": "UG-PARK-6",
+      "aabb_blender": {
+        "min": [
+          -501.759,
+          1335.945,
+          -143.117
+        ],
+        "max": [
+          -415.359,
+          1386.346,
+          -40.717
+        ],
+        "center": [
+          -458.559,
+          1361.146,
+          -91.917
+        ]
+      }
+    },
+    {
+      "id": "UG-PARK-7",
+      "type": "underground_parking",
+      "label": "Parking \u2014 Pearl Court",
+      "building_id": "INTEL-BLDG-007",
+      "building_name": "Pearl Court",
+      "building_kind": "midrise",
+      "ulpin": "3D-IND-600001-I7-UG-P",
+      "spaces": 48,
+      "depth_m": 4.8,
+      "status": "active",
+      "mesh_name": "UG-PARK-7",
+      "aabb_blender": {
+        "min": [
+          -1962.207,
+          -775.31,
+          -117.517
+        ],
+        "max": [
+          -1602.207,
+          -460.564,
+          -40.717
+        ],
+        "center": [
+          -1782.207,
+          -617.937,
+          -79.117
+        ]
+      }
+    },
+    {
+      "id": "UG-PARK-8",
+      "type": "underground_parking",
+      "label": "Parking \u2014 Amber Residences",
+      "building_id": "INTEL-BLDG-008",
+      "building_name": "Amber Residences",
+      "building_kind": "midrise",
+      "ulpin": "3D-IND-600001-I8-UG-P",
+      "spaces": 48,
+      "depth_m": 4.8,
+      "status": "active",
+      "mesh_name": "UG-PARK-8",
+      "aabb_blender": {
+        "min": [
+          -725.143,
+          1338.251,
+          -117.517
+        ],
+        "max": [
+          -630.679,
+          1392.937,
+          -40.717
+        ],
+        "center": [
+          -677.911,
+          1365.594,
+          -79.117
+        ]
+      }
+    },
+    {
+      "id": "UG-PARK-9",
+      "type": "underground_parking",
+      "label": "Parking \u2014 Harbour Block",
+      "building_id": "INTEL-BLDG-009",
+      "building_name": "Harbour Block",
+      "building_kind": "midrise",
+      "ulpin": "3D-IND-600001-I9-UG-P",
+      "spaces": 48,
+      "depth_m": 4.8,
+      "status": "active",
+      "mesh_name": "UG-PARK-9",
+      "aabb_blender": {
+        "min": [
+          443.643,
+          1955.797,
+          -117.517
+        ],
+        "max": [
+          494.05,
+          2042.277,
+          -40.717
+        ],
+        "center": [
+          468.846,
+          1999.037,
+          -79.117
+        ]
+      }
+    },
+    {
+      "id": "UG-PARK-10",
+      "type": "underground_parking",
+      "label": "Parking \u2014 Lotus Residences",
+      "building_id": "INTEL-BLDG-010",
+      "building_name": "Lotus Residences",
+      "building_kind": "midrise",
+      "ulpin": "3D-IND-600001-I10-UG-P",
+      "spaces": 48,
+      "depth_m": 4.8,
+      "status": "active",
+      "mesh_name": "UG-PARK-10",
+      "aabb_blender": {
+        "min": [
+          122.302,
+          -1466.396,
+          -117.517
+        ],
+        "max": [
+          429.608,
+          -1277.903,
+          -40.717
+        ],
+        "center": [
+          275.955,
+          -1372.149,
+          -79.117
+        ]
+      }
+    },
+    {
+      "id": "UG-PARK-11",
+      "type": "underground_parking",
+      "label": "Parking \u2014 Crescent Court",
+      "building_id": "INTEL-BLDG-011",
+      "building_name": "Crescent Court",
+      "building_kind": "midrise",
+      "ulpin": "3D-IND-600001-I11-UG-P",
+      "spaces": 48,
+      "depth_m": 4.8,
+      "status": "active",
+      "mesh_name": "UG-PARK-11",
+      "aabb_blender": {
+        "min": [
+          -760.271,
+          903.945,
+          -117.517
+        ],
+        "max": [
+          -647.474,
+          1038.945,
+          -40.717
+        ],
+        "center": [
+          -703.872,
+          971.445,
+          -79.117
+        ]
+      }
+    },
+    {
+      "id": "UG-PARK-12",
+      "type": "underground_parking",
+      "label": "Parking \u2014 Maple Plaza",
+      "building_id": "INTEL-BLDG-012",
+      "building_name": "Maple Plaza",
+      "building_kind": "midrise",
+      "ulpin": "3D-IND-600001-I12-UG-P",
+      "spaces": 48,
+      "depth_m": 4.8,
+      "status": "active",
+      "mesh_name": "UG-PARK-12",
+      "aabb_blender": {
+        "min": [
+          -190.938,
+          -1859.212,
+          -117.517
+        ],
+        "max": [
+          59.272,
+          -1629.054,
+          -40.717
+        ],
+        "center": [
+          -65.833,
+          -1744.133,
+          -79.117
+        ]
+      }
+    },
+    {
+      "id": "UG-PARK-13",
+      "type": "underground_parking",
+      "label": "Parking \u2014 Indigo Quarters",
+      "building_id": "INTEL-BLDG-013",
+      "building_name": "Indigo Quarters",
+      "building_kind": "midrise",
+      "ulpin": "3D-IND-600001-I13-UG-P",
+      "spaces": 48,
+      "depth_m": 4.8,
+      "status": "active",
+      "mesh_name": "UG-PARK-13",
+      "aabb_blender": {
+        "min": [
+          292.036,
+          1938.909,
+          -117.517
+        ],
+        "max": [
+          337.846,
+          2007.991,
+          -40.717
+        ],
+        "center": [
+          314.941,
+          1973.45,
+          -79.117
+        ]
+      }
+    },
+    {
+      "id": "UG-PARK-14",
+      "type": "underground_parking",
+      "label": "Parking \u2014 Cedar Walk",
+      "building_id": "INTEL-BLDG-014",
+      "building_name": "Cedar Walk",
+      "building_kind": "midrise",
+      "ulpin": "3D-IND-600001-I14-UG-P",
+      "spaces": 48,
+      "depth_m": 4.8,
+      "status": "active",
+      "mesh_name": "UG-PARK-14",
+      "aabb_blender": {
+        "min": [
+          20.8,
+          1886.786,
+          -117.517
+        ],
+        "max": [
+          193.384,
+          2038.754,
+          -40.717
+        ],
+        "center": [
+          107.092,
+          1962.77,
+          -79.117
+        ]
+      }
+    },
+    {
+      "id": "UG-PARK-15",
+      "type": "underground_parking",
+      "label": "Parking \u2014 Under-Construction Tower",
+      "building_id": "INTEL-BLDG-015",
+      "building_name": "Under-Construction Tower",
+      "building_kind": "construction",
+      "ulpin": "3D-IND-600001-I15-UG-P",
+      "spaces": 24,
+      "depth_m": 4.8,
+      "status": "active",
+      "mesh_name": "UG-PARK-15",
+      "aabb_blender": {
+        "min": [
+          -910.889,
+          -1146.785,
+          -117.517
+        ],
+        "max": [
+          -676.994,
+          -829.985,
+          -40.717
+        ],
+        "center": [
+          -793.942,
+          -988.385,
+          -79.117
+        ]
+      }
+    },
+    {
+      "id": "UG-BASE-16",
+      "type": "basement",
+      "label": "Basement \u2014 Pocket Flat",
+      "building_id": "INTEL-BLDG-016",
+      "building_name": "Pocket Flat",
+      "building_kind": "lowrise",
+      "ulpin": "3D-IND-600001-I16-UG-B",
+      "spaces": null,
+      "depth_m": 3.2,
+      "status": "active",
+      "mesh_name": "UG-BASE-16",
+      "aabb_blender": {
+        "min": [
+          -1279.173,
+          -1923.031,
+          -91.917
+        ],
+        "max": [
+          -1000.202,
+          -1760.701,
+          -40.717
+        ],
+        "center": [
+          -1139.688,
+          -1841.866,
+          -66.317
+        ]
+      }
+    },
+    {
+      "id": "UG-BASE-17",
+      "type": "basement",
+      "label": "Basement \u2014 Corner Shop Row",
+      "building_id": "INTEL-BLDG-017",
+      "building_name": "Corner Shop Row",
+      "building_kind": "lowrise",
+      "ulpin": "3D-IND-600001-I17-UG-B",
+      "spaces": null,
+      "depth_m": 3.2,
+      "status": "active",
+      "mesh_name": "UG-BASE-17",
+      "aabb_blender": {
+        "min": [
+          1480.008,
+          244.001,
+          -91.917
+        ],
+        "max": [
+          1773.933,
+          568.001,
+          -40.717
+        ],
+        "center": [
+          1626.97,
+          406.001,
+          -66.317
+        ]
+      }
+    },
+    {
+      "id": "UG-BASE-18",
+      "type": "basement",
+      "label": "Basement \u2014 Garden Walk",
+      "building_id": "INTEL-BLDG-018",
+      "building_name": "Garden Walk",
+      "building_kind": "lowrise",
+      "ulpin": "3D-IND-600001-I18-UG-B",
+      "spaces": null,
+      "depth_m": 3.2,
+      "status": "active",
+      "mesh_name": "UG-BASE-18",
+      "aabb_blender": {
+        "min": [
+          -1945.341,
+          1770.856,
+          -91.917
+        ],
+        "max": [
+          -1902.162,
+          1857.073,
+          -40.717
+        ],
+        "center": [
+          -1923.751,
+          1813.965,
+          -66.317
+        ]
+      }
+    },
+    {
+      "id": "UG-BASE-19",
+      "type": "basement",
+      "label": "Basement \u2014 Lane House",
+      "building_id": "INTEL-BLDG-019",
+      "building_name": "Lane House",
+      "building_kind": "lowrise",
+      "ulpin": "3D-IND-600001-I19-UG-B",
+      "spaces": null,
+      "depth_m": 3.2,
+      "status": "active",
+      "mesh_name": "UG-BASE-19",
+      "aabb_blender": {
+        "min": [
+          -1221.838,
+          1896.806,
+          -91.917
+        ],
+        "max": [
+          -1175.666,
+          1983.6,
+          -40.717
+        ],
+        "center": [
+          -1198.752,
+          1940.203,
+          -66.317
+        ]
+      }
+    },
+    {
+      "id": "UG-BASE-20",
+      "type": "basement",
+      "label": "Basement \u2014 Studio Annex",
+      "building_id": "INTEL-BLDG-020",
+      "building_name": "Studio Annex",
+      "building_kind": "lowrise",
+      "ulpin": "3D-IND-600001-I20-UG-B",
+      "spaces": null,
+      "depth_m": 3.2,
+      "status": "active",
+      "mesh_name": "UG-BASE-20",
+      "aabb_blender": {
+        "min": [
+          -1865.592,
+          1233.008,
+          -91.917
+        ],
+        "max": [
+          -1817.749,
+          1320.066,
+          -40.717
+        ],
+        "center": [
+          -1841.671,
+          1276.537,
+          -66.317
+        ]
+      }
+    },
+    {
+      "id": "UG-BASE-21",
+      "type": "basement",
+      "label": "Basement \u2014 Parcel Cottage",
+      "building_id": "INTEL-BLDG-021",
+      "building_name": "Parcel Cottage",
+      "building_kind": "lowrise",
+      "ulpin": "3D-IND-600001-I21-UG-B",
+      "spaces": null,
+      "depth_m": 3.2,
+      "status": "active",
+      "mesh_name": "UG-BASE-21",
+      "aabb_blender": {
+        "min": [
+          -1134.024,
+          1361.994,
+          -91.917
+        ],
+        "max": [
+          -1086.165,
+          1449.054,
+          -40.717
+        ],
+        "center": [
+          -1110.094,
+          1405.524,
+          -66.317
+        ]
+      }
+    },
+    {
+      "id": "UG-BASE-22",
+      "type": "basement",
+      "label": "Basement \u2014 Bazaar Lane",
+      "building_id": "INTEL-BLDG-022",
+      "building_name": "Bazaar Lane",
+      "building_kind": "lowrise",
+      "ulpin": "3D-IND-600001-I22-UG-B",
+      "spaces": null,
+      "depth_m": 3.2,
+      "status": "active",
+      "mesh_name": "UG-BASE-22",
+      "aabb_blender": {
+        "min": [
+          697.796,
+          1617.088,
+          -91.917
+        ],
+        "max": [
+          801.354,
+          1683.508,
+          -40.717
+        ],
+        "center": [
+          749.575,
+          1650.298,
+          -66.317
+        ]
+      }
+    },
+    {
+      "id": "UG-BASE-23",
+      "type": "basement",
+      "label": "Basement \u2014 Court Villa",
+      "building_id": "INTEL-BLDG-023",
+      "building_name": "Court Villa",
+      "building_kind": "lowrise",
+      "ulpin": "3D-IND-600001-I23-UG-B",
+      "spaces": null,
+      "depth_m": 3.2,
+      "status": "active",
+      "mesh_name": "UG-BASE-23",
+      "aabb_blender": {
+        "min": [
+          243.646,
+          -1820.798,
+          -91.917
+        ],
+        "max": [
+          428.916,
+          -1702.92,
+          -40.717
+        ],
+        "center": [
+          336.281,
+          -1761.859,
+          -66.317
+        ]
+      }
+    }
+  ]
+}
