@@ -57,8 +57,8 @@ export function ParcelizationPage() {
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <Link to="/app/floors" className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white">
-          Manage floors & units
+        <Link to="/app/registry?tab=floors" className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white">
+          Open floors & units
         </Link>
         <Link to="/app/twin" className="rounded-xl border border-signal/30 bg-signal-soft px-4 py-2.5 text-[13px] font-semibold text-signal-deep">
           Inspect in 3D Atlas

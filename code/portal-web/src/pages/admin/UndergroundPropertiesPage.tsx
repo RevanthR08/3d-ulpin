@@ -88,16 +88,16 @@ export function UndergroundPropertiesPage() {
           Inspect underground in 3D Atlas
         </Link>
         <Link
-          to="/app/validation"
+          to="/app/registry"
           className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-semibold text-ink"
         >
-          Validate spatial model
+          Open Registry
         </Link>
         <Link
-          to="/app/ulpin-generation"
+          to="/app/registry?tab=ulpin"
           className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-semibold text-ink"
         >
-          Prepare ULPIN generation
+          Open ULPIN pattern
         </Link>
       </div>
     </div>

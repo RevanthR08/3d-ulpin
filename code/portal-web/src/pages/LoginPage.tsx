@@ -140,7 +140,7 @@ export function LoginPage() {
                   >
                     {a.ulpin}
                     <span className="mt-0.5 block font-sans text-[10px] text-white/35">
-                      {a.building} · F{a.floor} · {a.owner}
+                      {a.building} · F{a.floor}-{a.unit} · {a.owner}
                     </span>
                   </button>
                 </li>

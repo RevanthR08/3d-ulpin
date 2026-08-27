@@ -1,13 +1,76 @@
-import { useEffect, useRef, useState, type ChangeEvent } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import verifiedMarkedPolygons from '../../assets/verified_marked_polygons.png'
 import { PipelineStrip } from '../../components/PipelineStrip'
 
+const STEP_MS = 4800
+
+const TERMINAL_SCRIPT: Array<{ at: number; lines: string[] }> = [
+  {
+    at: 0,
+    lines: [
+      '$ vertica pipeline run --package survey_chennai_block.zip',
+      '[init] loading staged survey package…',
+      '[init] drone tiles=4  lidar=urban_block_scan.laz  gis=building_footprints.geojson',
+    ],
+  },
+  {
+    at: 1,
+    lines: [
+      '',
+      '[1/5] building extraction',
+      '  > opencv: threshold + contour pass on orthomosaic',
+      '  > candidates=128  filtered=82 footprints',
+      '  > writing /tmp/extract/buildings.geojson',
+    ],
+  },
+  {
+    at: 2,
+    lines: [
+      '',
+      '[2/5] floor segmentation',
+      '  > height proxy from DEM/DSM + roof typology',
+      '  > slicing vertical envelopes… floors≈380',
+      '  > ok: midrise=8 skyscraper=6 lowrise=8',
+    ],
+  },
+  {
+    at: 3,
+    lines: [
+      '',
+      '[3/5] vertical parcel delineation',
+      '  > base–top elevation envelopes per apartment volume',
+      '  > unit packs: sky=3 / mid=2 / low=1 houses per floor',
+      '  > parcels ready=944 house units',
+    ],
+  },
+  {
+    at: 4,
+    lines: [
+      '',
+      '[4/5] topology validation',
+      '  > shapely: overlap / containment checks',
+      '  > overlaps=0  containment_ok=true  gaps=0',
+      '  > gate: PASSED',
+    ],
+  },
+  {
+    at: 5,
+    lines: [
+      '',
+      '[5/5] 3D ULPIN generation',
+      '  > pattern 3D-IND-<pin>-<body>-L<floor>-U<unit>',
+      '  > composed 944 unit identities · registry freeze',
+      '[done] pipeline complete — ready for footprint review',
+    ],
+  },
+]
+
 export function ProcessingPage() {
   const [tick, setTick] = useState(0)
-  const [polygonFile, setPolygonFile] = useState('verified_city_block_polygons.geojson')
   const [reviewOpen, setReviewOpen] = useState(false)
-  const polygonInputRef = useRef<HTMLInputElement | null>(null)
+  const [logs, setLogs] = useState<string[]>(TERMINAL_SCRIPT[0].lines)
+  const termRef = useRef<HTMLPreElement | null>(null)
 
   useEffect(() => {
     const id = window.setInterval(() => {
@@ -18,20 +81,26 @@ export function ProcessingPage() {
         }
         return t + 1
       })
-    }, 1800)
-    return () => clearInterval(id)
+    }, STEP_MS)
+    return () => window.clearInterval(id)
   }, [])
 
-  const complete = tick >= 5
+  useEffect(() => {
+    const chunk = TERMINAL_SCRIPT.find((s) => s.at === tick)
+    if (!chunk) return
+    setLogs((prev) => {
+      if (tick === 0) return chunk.lines
+      return [...prev, ...chunk.lines]
+    })
+  }, [tick])
 
-  function onPolygonUpload(e: ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (file) {
-      setPolygonFile(file.name)
-      setReviewOpen(true)
-    }
-    e.target.value = ''
-  }
+  useEffect(() => {
+    const el = termRef.current
+    if (el) el.scrollTop = el.scrollHeight
+  }, [logs])
+
+  const complete = tick >= 5
+  const polygonFile = 'verified_city_block_polygons.geojson'
 
   return (
     <div className="page-enter mx-auto max-w-5xl space-y-8 px-7 py-8">
@@ -51,13 +120,33 @@ export function ProcessingPage() {
         }`}
       >
         <div className={`text-[14px] font-semibold ${complete ? 'text-ok' : 'text-ink'}`}>
-          {complete ? 'AI processing complete' : 'Processing survey package...'}
+          {complete ? 'AI processing complete' : `Processing survey package… step ${Math.min(tick + 1, 5)}/5`}
         </div>
         <div className="mt-1 text-[12px] leading-relaxed text-mute">
           {complete
-            ? 'Extracted geometry is ready for 3D parcelization and footprint review.'
+            ? 'Extracted geometry is ready for footprint review and registry floors & units.'
             : 'The staged survey package is moving through extraction, segmentation, parcel delineation, validation, and ULPIN preparation.'}
         </div>
+      </div>
+
+      <div className="overflow-hidden rounded-2xl border border-line bg-[#0B1210] shadow-inner">
+        <div className="flex items-center justify-between border-b border-white/10 px-4 py-2">
+          <div className="text-[11px] uppercase tracking-[0.14em] text-white/40">Pipeline terminal</div>
+          <div className="font-mono text-[10px] text-signal/80">
+            {complete ? 'exit 0' : 'running…'}
+          </div>
+        </div>
+        <pre
+          ref={termRef}
+          className="font-mono max-h-[280px] overflow-y-auto px-4 py-3 text-[12px] leading-relaxed text-[#9AE6B4]"
+        >
+          {logs.map((line, i) => (
+            <div key={`${i}-${line.slice(0, 24)}`} className={line.startsWith('$') ? 'text-white/80' : undefined}>
+              {line || '\u00a0'}
+            </div>
+          ))}
+          {!complete && <span className="inline-block animate-pulse text-signal">█</span>}
+        </pre>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -84,20 +173,6 @@ export function ProcessingPage() {
                 <div className="font-mono mt-1 text-[11px] text-signal">{polygonFile}</div>
               </div>
               <div className="flex flex-wrap gap-2">
-                <input
-                  ref={polygonInputRef}
-                  type="file"
-                  accept=".geojson,.json"
-                  className="hidden"
-                  onChange={onPolygonUpload}
-                />
-                <button
-                  type="button"
-                  onClick={() => polygonInputRef.current?.click()}
-                  className="rounded-xl border border-line bg-paper px-4 py-2.5 text-[13px] font-semibold text-ink"
-                >
-                  Upload verified GeoJSON
-                </button>
                 <button
                   type="button"
                   onClick={() => setReviewOpen((v) => !v)}
@@ -140,7 +215,7 @@ export function ProcessingPage() {
                       <span className="font-semibold text-ink">6</span> source groups linked
                     </div>
                     <div className="rounded-xl border border-ok/20 bg-ok/5 px-3 py-2 text-ok">
-                      Ready for 3D parcel creation
+                      Ready for registry / 3D Atlas
                     </div>
                   </div>
                 </div>
@@ -150,10 +225,10 @@ export function ProcessingPage() {
 
           <div className="flex flex-wrap gap-3">
             <Link
-              to="/app/parcelization"
+              to="/app/registry?tab=floors"
               className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white"
             >
-              Create 3D parcels
+              Open floors & units
             </Link>
             <a
               href="/extract/"

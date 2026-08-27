@@ -69,12 +69,27 @@ export type GeoSitePlan = {
 }
 
 /** Intel City freeze registry (served as static JSON under /viewer3d). */
+export type IntelCityUnit = {
+  unit_label?: string
+  unit_index?: number
+  ulpin: string
+  owner?: string
+  owner_id?: string
+  legal_status?: string
+  area_sq_m?: number
+  use?: string
+  registered_on?: string
+  deed_no?: string
+}
+
 export type IntelCityFloor = {
   floor_label: string
   floor_index?: number
   ulpin: string
   owner?: string
   owner_id?: string
+  unit_count?: number
+  units?: IntelCityUnit[]
   registered_on?: string
   registration_office?: string
   deed_no?: string
@@ -116,28 +131,44 @@ async function getJson<T>(path: string): Promise<T> {
   return r.json() as Promise<T>
 }
 
-const INTEL_CITY_JSON = '/viewer3d/intel_city/intel_city_buildings.json?v=9'
+const INTEL_CITY_JSON = '/viewer3d/intel_city/intel_city_buildings.json?v=10'
 
-/** Resolve building or floor ULPIN from Intel City registry → UnitDetail shape. */
+/** Resolve building, floor, or house-unit ULPIN from Intel City registry. */
 export function resolveIntelCityUnit(reg: IntelCityRegistry, ulpin: string): UnitDetail | null {
   const needle = ulpin.trim()
   if (!needle) return null
   for (const b of reg.buildings || []) {
     if (b.ulpin === needle) {
       const f = b.floors?.[0]
+      const u = f?.units?.[0]
       return {
         ulpin: b.ulpin,
         unit: b.kind === 'stadium' ? 'landmark' : 'building',
-        owner: f?.owner || (b.kind === 'stadium' ? 'Public assembly' : '—'),
+        owner: u?.owner || f?.owner || (b.kind === 'stadium' ? 'Public assembly' : '—'),
         building_id: b.id,
         building_name: b.name,
         floor_label: f?.floor_label ?? (b.kind === 'stadium' ? '—' : '1'),
-        area_sq_m: f?.area_sq_m,
-        legal_status: f?.legal_status || (b.kind === 'stadium' ? 'surface parcel' : 'registered'),
+        area_sq_m: u?.area_sq_m ?? f?.area_sq_m,
+        legal_status: u?.legal_status || f?.legal_status || (b.kind === 'stadium' ? 'surface parcel' : 'registered'),
         rooms: [],
       }
     }
     for (const f of b.floors || []) {
+      for (const u of f.units || []) {
+        if (u.ulpin === needle) {
+          return {
+            ulpin: u.ulpin,
+            unit: `F${f.floor_label}-${u.unit_label || 'A'}`,
+            owner: u.owner,
+            building_id: b.id,
+            building_name: b.name,
+            floor_label: f.floor_label,
+            area_sq_m: u.area_sq_m ?? f.carpet_sq_m ?? f.area_sq_m,
+            legal_status: u.legal_status || 'registered',
+            rooms: [],
+          }
+        }
+      }
       if (f.ulpin === needle) {
         return {
           ulpin: f.ulpin,

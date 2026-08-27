@@ -48,7 +48,7 @@ export function CitizenHome() {
           {(account || featuredBldg) && (
             <div className="mt-2 text-[13px] text-mute">
               {account?.building || featuredBldg?.name} · {account?.kind || featuredBldg?.kind}
-              {account ? ` · F${account.floor} · ${account.owner}` : ''}
+              {account ? ` · F${account.floor}-${account.unit} · ${account.owner}` : ''}
             </div>
           )}
           {siblings.length > 0 && (

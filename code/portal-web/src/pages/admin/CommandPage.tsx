@@ -72,10 +72,10 @@ export function CommandPage() {
           Full-screen 3D ↗
         </a>
         <Link
-          to="/app/validation"
+          to="/app/registry"
           className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-semibold text-ink hover:border-signal"
         >
-          Validation report
+          Open Registry
         </Link>
         <a
           href={VIEWERS.chennai}
