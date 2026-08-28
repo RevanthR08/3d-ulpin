@@ -23,7 +23,34 @@
       background: radial-gradient(120% 90% at 50% 0%, #c5ddf5 0%, #9ec4e8 45%, #7eafd6 100%);
     }
     #app { display: flex; width: 100vw; height: 100vh; }
-    #wrap { position: relative; flex: 1; min-width: 0; height: 100%; }
+    #wrap {
+      position: relative; flex: 1; min-width: 0; height: 100%;
+      display: flex; flex-direction: row;
+    }
+    #viewport {
+      position: relative; flex: 1; min-width: 0; height: 100%;
+    }
+    #viewport canvas { display: block; width: 100% !important; height: 100% !important; }
+    #sat-pane {
+      display: none; flex: none; width: min(46vw, 560px); height: 100%;
+      flex-direction: column; background: #0b1210; border-left: 1px solid var(--border);
+      z-index: 8;
+    }
+    #wrap.compare-on #sat-pane { display: flex; }
+    #sat-pane .sat-head {
+      flex: none; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 10px 12px; background: var(--panel); border-bottom: 1px solid var(--border);
+      font-size: 12px; color: var(--text);
+    }
+    #sat-pane .sat-head b { color: var(--accent); }
+    #sat-pane .sat-body {
+      flex: 1; min-height: 0; overflow: auto; background: #111;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #sat-pane img {
+      max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain;
+      display: block;
+    }
     #loading {
       position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 12px;
@@ -112,6 +139,16 @@
     }
     #panel .chip.active { background: #d9eef3; border-color: var(--accent); color: var(--accent); font-weight: 650; }
     #panel .chip:hover { border-color: var(--accent); }
+    #panel .house-list { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+    #panel .house-card {
+      display: block; width: 100%; text-align: left;
+      border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px;
+      background: #fff; cursor: pointer; color: var(--text);
+    }
+    #panel .house-card:hover { border-color: var(--accent); }
+    #panel .house-card.active {
+      background: #d9eef3; border-color: var(--accent);
+    }
     #panel .view-controls { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 12px; }
     #panel .view-btn {
       font-size: 11px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border);
@@ -148,7 +185,8 @@
     #hint.show { display: block; }
     @media (max-width: 900px) {
       #app { flex-direction: column; }
-      #wrap { flex: 1; min-height: 55vh; }
+      #wrap { flex: 1; min-height: 55vh; flex-direction: column; }
+      #wrap.compare-on #sat-pane { width: 100%; height: 42%; border-left: none; border-top: 1px solid var(--border); }
       #panel { width: 100%; height: 42vh; border-left: none; border-top: 1px solid var(--border); }
       #badge { display: none; }
     }
@@ -157,34 +195,54 @@
 <body>
   <div id="app">
     <div id="wrap">
-      <div id="loading">
-        <div id="load-text">Downloading Intel city…</div>
-        <div id="bar"><i id="bar-fill"></i></div>
+      <div id="viewport">
+        <div id="loading">
+          <div id="load-text">Downloading Intel city…</div>
+          <div id="bar"><i id="bar-fill"></i></div>
+        </div>
+        <div id="hud">
+          <h1>Intel City — 3D ULPIN Twin</h1>
+          <div class="sub">
+            Scroll to zoom · drag orbit · right-drag pan · hover shows footprint.
+            <br/>Keys: <kbd>+</kbd>/<kbd>−</kbd> zoom · <kbd>R</kbd> reset · <kbd>Esc</kbd> close
+          </div>
+          <div id="controls">
+            <button id="btn-reset" class="primary" type="button">Reset view</button>
+            <button id="btn-zoom-out" type="button" title="Zoom out">Zoom −</button>
+            <button id="btn-zoom-in" type="button" title="Zoom in">Zoom +</button>
+            <button id="btn-top" type="button" title="Top-down overview">Top view</button>
+            <button id="btn-sat-compare" type="button" title="Side-by-side top view vs satellite orthophoto">
+              Compare satellite
+            </button>
+            <button id="btn-ug" type="button" title="Lift city — base stays visible; look underneath for pipes">Underground</button>
+          </div>
+          <div id="ug-chips" class="chips" style="display:none;margin-top:8px">
+            <button type="button" class="chip active" data-ug="fiber_optic">Fiber</button>
+            <button type="button" class="chip active" data-ug="electrical_cable">Power</button>
+            <button type="button" class="chip active" data-ug="water_pipeline">Water</button>
+            <button type="button" class="chip active" data-ug="sewer">Sewer</button>
+            <button type="button" class="chip active" data-ug="structure">Parking / basement</button>
+          </div>
+        </div>
+        <div id="hint"></div>
+        <div id="badge"><b>Loading</b>…</div>
+        <div id="tooltip"></div>
       </div>
-      <div id="hud">
-        <h1>Intel City — 3D ULPIN Twin</h1>
-        <div class="sub">
-          Scroll to zoom · drag orbit · right-drag pan · hover shows footprint.
-          <br/>Keys: <kbd>+</kbd>/<kbd>−</kbd> zoom · <kbd>R</kbd> reset · <kbd>Esc</kbd> close
+      <aside id="sat-pane" aria-label="Satellite compare">
+        <div class="sat-head">
+          <div>
+            <b>Satellite</b>
+            <span style="color:var(--text-dim)"> · orthophoto vs 3D top view</span>
+          </div>
+          <button id="btn-sat-close" type="button">Close</button>
         </div>
-        <div id="controls">
-          <button id="btn-reset" class="primary" type="button">Reset view</button>
-          <button id="btn-zoom-out" type="button" title="Zoom out">Zoom −</button>
-          <button id="btn-zoom-in" type="button" title="Zoom in">Zoom +</button>
-          <button id="btn-top" type="button" title="Top-down overview">Top view</button>
-          <button id="btn-ug" type="button" title="Lift city — base stays visible; look underneath for pipes">Underground</button>
+        <div class="sat-body">
+          <img
+            src="./intel_city/satellite_compare.jpg?v=1"
+            alt="Satellite orthophoto of the city block"
+          />
         </div>
-        <div id="ug-chips" class="chips" style="display:none;margin-top:8px">
-          <button type="button" class="chip active" data-ug="fiber_optic">Fiber</button>
-          <button type="button" class="chip active" data-ug="electrical_cable">Power</button>
-          <button type="button" class="chip active" data-ug="water_pipeline">Water</button>
-          <button type="button" class="chip active" data-ug="sewer">Sewer</button>
-          <button type="button" class="chip active" data-ug="structure">Parking / basement</button>
-        </div>
-      </div>
-      <div id="hint"></div>
-      <div id="badge"><b>Loading</b>…</div>
-      <div id="tooltip"></div>
+      </aside>
     </div>
     <aside id="panel" aria-live="polite">
       <div class="placeholder">
@@ -201,6 +259,6 @@
     "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
   } }
   </script>
-  <script type="module" src="./intel_city_app.js?v=35"></script>
+  <script type="module" src="./intel_city_app.js?v=40"></script>
 </body>
 </html>

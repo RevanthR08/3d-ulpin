@@ -35,8 +35,13 @@ let cityBaseMeshes = [];
 /** Portal citizen twin: lock orbit + picks to one building (mode=citizen&ulpin=…). */
 let citizenMode = false;
 let lockedBuildingId = null;
+let lockedFloorLabel = null;
+let lockedUnitUlpin = null;
 let lockCenter = new THREE.Vector3();
+/** Side-by-side 3D top view vs satellite orthophoto. */
+let satCompareOn = false;
 let lockRadius = 80;
+let citizenStartDist = 70;
 
 // Blender-authored floorplate interiors (one plate per residential building)
 let interiorRoot = null;
@@ -92,8 +97,90 @@ function esc(s) {
 
 function statusClass(st) {
   if (st === "registered") return "ok";
-  if (st === "mortgage") return "warn";
+  if (st === "mortgage" || st === "leasehold") return "warn";
   return "bad";
+}
+
+function round1(n) {
+  const x = Number(n);
+  if (!Number.isFinite(x)) return null;
+  return Math.round(x * 10) / 10;
+}
+
+function shareTax(text, share) {
+  if (!text) return "—";
+  const raw = String(text);
+  const m = raw.replace(/,/g, "").match(/(\d+(?:\.\d+)?)/);
+  if (!m) return raw;
+  const n = Math.round(Number(m[1]) * share);
+  return `₹${n.toLocaleString("en-IN")} / yr`;
+}
+
+function houseEncumbrance(unit, floor) {
+  if (unit?.encumbrance) return unit.encumbrance;
+  const s = String(unit?.legal_status || "").toLowerCase();
+  if (s.includes("mortgage")) return "Mortgage lien";
+  if (s.includes("dispute")) return "Title under dispute";
+  if (s.includes("lease")) return "Leasehold occupancy";
+  return floor?.encumbrance || "—";
+}
+
+/** Bind a house on this floor so the inspector shows that unit, not the floor roll-up. */
+function attachHouse(pick, preferredUlpin, preferredLabel) {
+  const units = pick?.floor?.units || [];
+  if (!units.length) return pick;
+  let unit = null;
+  if (citizenMode && lockedUnitUlpin) {
+    unit = units.find((u) => u.ulpin === lockedUnitUlpin) || units[0];
+  } else if (preferredUlpin) {
+    unit = units.find((u) => u.ulpin === preferredUlpin) || null;
+  }
+  if (!unit && preferredLabel) {
+    unit = units.find((u) => String(u.unit_label) === String(preferredLabel)) || null;
+  }
+  if (!unit) unit = units[0];
+  pick.unit = unit;
+  pick.owner = unit.owner;
+  pick.ulpin = unit.ulpin;
+  return pick;
+}
+
+/** Per-house cadastral fields for the right panel. */
+function houseRecord(floor, unit) {
+  const n = Math.max((floor?.units || []).length, 1);
+  const share = 1 / n;
+  if (!unit) {
+    return {
+      legal_status: floor.legal_status,
+      registered_on: floor.registered_on,
+      registration_office: floor.registration_office,
+      deed_no: floor.deed_no,
+      previous_owners: floor.previous_owners || [],
+      use: floor.use,
+      tax: floor.tax_assessment,
+      encumbrance: floor.encumbrance,
+      utilities: floor.utilities || [],
+      area: floor.area_sq_m,
+      carpet: floor.carpet_sq_m,
+      built_up: floor.built_up_sq_m,
+      notes: floor.notes,
+    };
+  }
+  return {
+    legal_status: unit.legal_status || floor.legal_status,
+    registered_on: unit.registered_on || floor.registered_on,
+    registration_office: unit.registration_office || floor.registration_office,
+    deed_no: unit.deed_no || floor.deed_no,
+    previous_owners: unit.previous_owners || floor.previous_owners || [],
+    use: unit.use || floor.use,
+    tax: unit.tax_assessment || shareTax(floor.tax_assessment, share),
+    encumbrance: houseEncumbrance(unit, floor),
+    utilities: unit.utilities || floor.utilities || [],
+    area: unit.area_sq_m ?? round1(floor.area_sq_m * share),
+    carpet: unit.carpet_sq_m ?? round1(floor.carpet_sq_m * share),
+    built_up: unit.built_up_sq_m ?? round1(floor.built_up_sq_m * share),
+    notes: unit.notes || floor.notes,
+  };
 }
 
 /** Infer utility type from Blender mesh name. */
@@ -271,9 +358,9 @@ function applyUgVisibility() {
 }
 
 function setUgVisible(on) {
+  if (citizenMode) on = false;
   ugVisible = on;
   applyUgVisibility();
-  // Do not force a fixed camera pose — user keeps free control
   flyTarget = null;
 }
 
@@ -289,13 +376,6 @@ function restoreBuildingShell() {
     if (s.mesh) s.mesh.visible = s.visible;
   }
   shellHidden = [];
-  // Citizen lock: other buildings must stay hidden after cutaway exits
-  if (citizenMode && lockedBuildingId) {
-    for (const [bid, other] of buildingRuntime) {
-      if (bid === lockedBuildingId) continue;
-      for (const m of other.meshes || []) m.visible = false;
-    }
-  }
 }
 
 function hideBuildingShell(buildingId) {
@@ -552,6 +632,7 @@ async function setInteriorView(mode) {
 
   interiorView = mode;
   syncInteriorToolbar();
+  applyCitizenZoomLimits(mode !== "exterior");
 
   if (mode === "exterior") {
     if (interiorRoot) interiorRoot.visible = false;
@@ -591,8 +672,9 @@ async function setInteriorView(mode) {
   const rt = buildingRuntime.get(buildingId);
   const look = rt?.center.clone() || new THREE.Vector3();
   look.y = (ent.group?.position.y || 0) + 14;
+  let dist = citizenMode ? Math.max(48, (citizenStartDist || 70) * 0.72) : 90;
   flyTarget = {
-    pos: new THREE.Vector3(look.x + 90, look.y + 70, look.z + 80),
+    pos: new THREE.Vector3(look.x + dist * 0.7, look.y + dist * 0.55, look.z + dist * 0.62),
     look,
   };
   setHint("Cutaway · Rooms from above · Click room chips in the right panel · <kbd>1</kbd> Exterior");
@@ -878,10 +960,11 @@ function applyBuildingRegistry(root) {
 
 function setup() {
   const wrap = document.getElementById("wrap");
+  const viewport = document.getElementById("viewport") || wrap;
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x9ec4e8);
 
-  camera = new THREE.PerspectiveCamera(42, wrap.clientWidth / wrap.clientHeight, 1, 20000);
+  camera = new THREE.PerspectiveCamera(42, viewport.clientWidth / viewport.clientHeight, 1, 20000);
   camera.position.set(1200, 900, 1600);
 
   renderer = new THREE.WebGLRenderer({
@@ -891,13 +974,13 @@ function setup() {
     logarithmicDepthBuffer: true,
   });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
-  renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+  renderer.setSize(viewport.clientWidth, viewport.clientHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  wrap.appendChild(renderer.domElement);
+  viewport.appendChild(renderer.domElement);
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
@@ -928,15 +1011,13 @@ function setup() {
   fill.position.set(-900, 600, -700);
   scene.add(fill);
 
-  window.addEventListener("resize", () => {
-    camera.aspect = wrap.clientWidth / wrap.clientHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(wrap.clientWidth, wrap.clientHeight);
-  });
+  window.addEventListener("resize", resizeViewport);
   document.getElementById("btn-reset").addEventListener("click", resetView);
   document.getElementById("btn-zoom-out")?.addEventListener("click", () => zoomBy(1.35));
   document.getElementById("btn-zoom-in")?.addEventListener("click", () => zoomBy(1 / 1.35));
   document.getElementById("btn-top")?.addEventListener("click", topView);
+  document.getElementById("btn-sat-compare")?.addEventListener("click", () => setSatCompare(!satCompareOn));
+  document.getElementById("btn-sat-close")?.addEventListener("click", () => setSatCompare(false));
   document.getElementById("btn-ug")?.addEventListener("click", () => setUgVisible(!ugVisible));
   // Interior modes live only in the right panel (society-style) — not in left HUD
   document.querySelectorAll("#ug-chips .chip").forEach((btn) => {
@@ -950,10 +1031,15 @@ function setup() {
   });
   window.addEventListener("keydown", (e) => {
     if (e.key === "r" || e.key === "R") resetView();
-    if (e.key === "Escape") closePanel();
+    if (e.key === "Escape") {
+      if (satCompareOn) setSatCompare(false);
+      else closePanel();
+    }
     if (e.key === "+" || e.key === "=") zoomBy(1 / 1.25);
     if (e.key === "-" || e.key === "_") zoomBy(1.25);
-    if (e.key === "u" || e.key === "U") setUgVisible(!ugVisible);
+    if (e.key === "u" || e.key === "U") {
+      if (!citizenMode) setUgVisible(!ugVisible);
+    }
     if (e.key === "1") setInteriorView("exterior");
     if (e.key === "2") setInteriorView("cutaway");
   });
@@ -1063,11 +1149,8 @@ function zoomBy(factor) {
 
 function topView() {
   flyTarget = null;
-  if (citizenMode && lockedBuildingId) {
-    const dist = Math.min(controls.maxDistance * 0.9, lockRadius * 2.8);
-    controls.target.copy(lockCenter);
-    camera.position.set(lockCenter.x, lockCenter.y + dist, lockCenter.z + dist * 0.06);
-    controls.update();
+  if (citizenMode) {
+    resetView();
     return;
   }
   const dist = Math.min(controls.maxDistance * 0.85, cityRadius * 4.2);
@@ -1076,9 +1159,77 @@ function topView() {
   controls.update();
 }
 
+function resizeViewport() {
+  const viewport = document.getElementById("viewport") || document.getElementById("wrap");
+  if (!viewport || !camera || !renderer) return;
+  const w = Math.max(1, viewport.clientWidth);
+  const h = Math.max(1, viewport.clientHeight);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+}
+
+function setSatCompare(on) {
+  if (citizenMode) on = false;
+  satCompareOn = !!on;
+  const wrap = document.getElementById("wrap");
+  const btn = document.getElementById("btn-sat-compare");
+  wrap?.classList.toggle("compare-on", satCompareOn);
+  btn?.classList.toggle("primary", satCompareOn);
+  if (satCompareOn) {
+    topView();
+    setHint("Compare mode · <b>3D top view</b> (left) vs <b>satellite orthophoto</b> (right). Esc closes.");
+  }
+  // Layout change needs a frame before measuring viewport size
+  requestAnimationFrame(() => {
+    resizeViewport();
+    requestAnimationFrame(resizeViewport);
+  });
+}
+
+function citizenVisualBox(rt) {
+  const box = new THREE.Box3();
+  let any = false;
+  for (const m of rt.meshes || []) {
+    if (!m) continue;
+    box.expandByObject(m);
+    any = true;
+  }
+  if (!any || box.isEmpty()) {
+    return { box: rt.box, size: rt.size.clone(), center: rt.center.clone() };
+  }
+  return {
+    box,
+    size: box.getSize(new THREE.Vector3()),
+    center: box.getCenter(new THREE.Vector3()),
+  };
+}
+
+/** Start distance so the house fills ~60% of the view (screenshot framing). */
+function citizenFitDistance(size) {
+  const height = Math.max(size.y, 28);
+  const slim = Math.min(size.x, size.z);
+  const fov = THREE.MathUtils.degToRad(camera?.fov || 42);
+  const isTower = height > 180;
+  if (isTower) {
+    const fill = 0.68;
+    return (height * 0.5) / Math.tan(fov * 0.5) / fill;
+  }
+  // Midrise / mall AABBs are often inflated — keep the close 3/4 street frame
+  return THREE.MathUtils.clamp(height * 0.58 + slim * 0.04, 56, 78);
+}
+
+/** Exterior stays outside the facade; cutaway may move in for rooms. */
+function applyCitizenZoomLimits(cutaway) {
+  if (!citizenMode || !controls) return;
+  const start = citizenStartDist || 70;
+  controls.minDistance = cutaway ? start * 0.55 : start * 0.92;
+  controls.maxDistance = start * 2.5;
+}
+
 /**
- * Citizen portal mode: show only this building, disable city pan/zoom-away.
- * Admin / default mode leaves the full city explorable.
+ * Citizen portal mode: frame their property. Neighbours stay visible.
+ * Default zoom matches a 3/4 street view — house fills most of the frame.
  */
 function applyCitizenLock(buildingId) {
   const rt = buildingRuntime.get(buildingId);
@@ -1088,44 +1239,61 @@ function applyCitizenLock(buildingId) {
   }
   citizenMode = true;
   lockedBuildingId = buildingId;
-  lockCenter.copy(rt.center);
-  lockRadius = Math.max(55, 0.65 * Math.max(rt.size.x, rt.size.z, rt.size.y * 0.35, 70));
-
-  for (const [bid, other] of buildingRuntime) {
-    const mine = bid === buildingId;
-    for (const m of other.meshes || []) {
-      m.visible = mine;
-      if (m.userData) m.userData.citizenHidden = !mine;
-    }
-    if (other.outline) other.outline.visible = mine;
+  const vis = citizenVisualBox(rt);
+  const floorPt = selectedData?.point;
+  lockCenter.copy(vis.center);
+  if (floorPt) {
+    lockCenter.x = floorPt.x;
+    lockCenter.z = floorPt.z;
   }
-  pickableMeshes = (rt.meshes || []).slice();
+  const height = Math.max(vis.size.y, 28);
+  const dist = citizenFitDistance(vis.size);
+  citizenStartDist = dist;
+  lockRadius = Math.max(dist * 0.55, 48);
 
-  // Keep ground context; hide other buildings only
+  for (const [, other] of buildingRuntime) {
+    for (const m of other.meshes || []) {
+      m.visible = true;
+      if (m.userData) m.userData.citizenHidden = false;
+    }
+    if (other.outline) other.outline.visible = true;
+  }
+  showOutline(buildingId);
+
   controls.enablePan = false;
-  controls.minDistance = Math.max(18, lockRadius * 0.28);
-  controls.maxDistance = lockRadius * 3.4;
-  homeTarget.copy(rt.center);
-  const dist = lockRadius * 2.15;
-  homeCam.set(
-    rt.center.x + dist * 0.55,
-    rt.center.y + Math.max(rt.size.y * 0.55, dist * 0.42),
-    rt.center.z + dist * 0.7
-  );
+  applyCitizenZoomLimits(false);
+  homeTarget.copy(lockCenter);
+  const dir = new THREE.Vector3(1.0, 0.9, 1.08).normalize();
+  homeCam.copy(lockCenter).addScaledVector(dir, dist);
+  homeCam.y = Math.max(homeCam.y, lockCenter.y + height * 0.12);
+  flyTarget = null;
   camera.position.copy(homeCam);
   controls.target.copy(homeTarget);
   controls.update();
 
+  const ugBtn = document.getElementById("btn-ug");
+  if (ugBtn) ugBtn.style.display = "none";
+  const topBtn = document.getElementById("btn-top");
+  if (topBtn) topBtn.style.display = "none";
+  const satBtn = document.getElementById("btn-sat-compare");
+  if (satBtn) satBtn.style.display = "none";
+  setSatCompare(false);
+  const chips = document.getElementById("ug-chips");
+  if (chips) chips.style.display = "none";
+
+  const house = selectedData?.unit;
   const badge = document.getElementById("badge");
   if (badge) {
-    badge.innerHTML = `<b>My property</b> · ${esc(rt.building?.name || buildingId)} · locked twin`;
+    const floorBit = lockedFloorLabel ? ` · F${lockedFloorLabel}` : "";
+    const houseBit = house?.unit_label ? ` · House ${house.unit_label}` : "";
+    badge.innerHTML = `<b>My house</b> · ${esc(rt.building?.name || buildingId)}${floorBit}${houseBit}`;
   }
   const sub = document.querySelector("#hud .sub");
   if (sub) {
     sub.innerHTML =
-      `<b>Citizen view</b> — your building only (orbit / zoom in place). Cannot pan to other parcels.<br/>Keys: <kbd>1</kbd>/<kbd>2</kbd> Exterior/Cutaway · <kbd>U</kbd> underground under this plot`;
+      `<b>Citizen view</b> — focused on your house. Neighbours stay in view. Exterior or Cutaway in the right panel.<br/>Keys: <kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway`;
   }
-  setHint("Your house · Use the <b>right panel</b> for floors & rooms · city roam disabled");
+  setHint("Your house · orbit / zoom freely · <kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway");
   return true;
 }
 
@@ -1145,7 +1313,7 @@ function resolveBuildingIdFromUlpin(ulpin) {
 function clampToCity() {
   const t = controls.target;
   if (citizenMode && lockedBuildingId) {
-    const maxOff = lockRadius * 0.55;
+    const maxOff = lockRadius * 0.22;
     t.x = THREE.MathUtils.clamp(t.x, lockCenter.x - maxOff, lockCenter.x + maxOff);
     t.z = THREE.MathUtils.clamp(t.z, lockCenter.z - maxOff, lockCenter.z + maxOff);
     if (ugVisible) {
@@ -1158,11 +1326,17 @@ function clampToCity() {
         lockCenter.y + lockRadius * 3 + ugLiftY
       );
     } else {
-      const yLo = lockCenter.y - lockRadius * 0.15;
-      const yHi = lockCenter.y + lockRadius * 1.1;
+      const yLo = lockCenter.y - lockRadius * 0.55;
+      const yHi = lockCenter.y + lockRadius * 1.2;
       t.y = THREE.MathUtils.clamp(t.y, yLo, yHi);
-      const minY = lockCenter.y;
+      const minY = lockCenter.y - lockRadius * 0.45;
       if (camera.position.y < minY) camera.position.y = minY;
+    }
+    const offset = camera.position.clone().sub(t);
+    const minD = controls?.minDistance || citizenStartDist * 0.92;
+    if (offset.length() < minD && offset.length() > 1e-4) {
+      offset.setLength(minD);
+      camera.position.copy(t).add(offset);
     }
     return;
   }
@@ -1390,6 +1564,8 @@ function selectPick(pick) {
     if (selectedData?.kind === "floor") showPanel(selectedData);
     return;
   }
+  const prevLabel = selectedData?.unit?.unit_label;
+  if (pick.kind === "floor") attachHouse(pick, pick.unit?.ulpin, prevLabel);
   if (selectedMeshes.length) setMeshGlow(selectedMeshes, false);
   selectedMeshes = pick.meshes;
   selectedData = pick;
@@ -1421,31 +1597,43 @@ function flyToPick(pick) {
   }
   const rt = buildingRuntime.get(pick.buildingId);
   if (!rt) return;
-  const radius = 0.55 * Math.max(rt.size.x, rt.size.z, 80);
-  const look = pick.point ? pick.point.clone() : rt.center.clone();
+  const vis = citizenVisualBox(rt);
+  const radius = 0.55 * Math.max(vis.size.x, vis.size.z, 80);
+  const look = pick.point ? pick.point.clone() : vis.center.clone();
   if (pick.floor) {
-    const y0 = rt.box.min.y;
-    const ySpan = Math.max(rt.size.y, 8);
+    const y0 = vis.box.min.y;
+    const ySpan = Math.max(vis.size.y, 8);
     const idx = pick.floor.floor_index ?? 0;
     const n = pick.building.floors.length;
     look.y = y0 + ((idx + 0.5) / Math.max(n, 1)) * ySpan;
   }
-  const dir = new THREE.Vector3(1.35, 0.75, 1.15).normalize();
+  const dir = new THREE.Vector3(1.0, 0.9, 1.08).normalize();
+  let dist = citizenMode
+    ? citizenFitDistance(vis.size)
+    : Math.max(70, radius * 1.45);
+  if (citizenMode && controls) dist = Math.min(dist, controls.maxDistance * 0.95);
   flyTarget = {
-    pos: look.clone().add(dir.multiplyScalar(Math.max(70, radius * 1.45))),
+    pos: look.clone().add(dir.multiplyScalar(dist)),
     look,
   };
 }
 
-function selectFloorOnBuilding(buildingId, floorLabel) {
+function selectFloorOnBuilding(buildingId, floorLabel, unitUlpin) {
   if (citizenMode && lockedBuildingId && buildingId !== lockedBuildingId) {
     setHint("Citizen twin is locked to <b>your</b> property only.");
+    return;
+  }
+  if (citizenMode && lockedFloorLabel && String(floorLabel) !== String(lockedFloorLabel)) {
+    setHint("Citizen twin is locked to <b>your floor</b> only.");
     return;
   }
   const rt = buildingRuntime.get(buildingId);
   if (!rt) return;
   const floor = rt.building.floors.find((f) => f.floor_label === floorLabel);
   if (!floor) return;
+  const sameFloor =
+    selectedData?.buildingId === buildingId &&
+    String(selectedData?.floorLabel) === String(floor.floor_label);
   const y0 = rt.box.min.y;
   const ySpan = Math.max(rt.size.y, 8);
   const idx = floor.floor_index ?? 0;
@@ -1463,12 +1651,18 @@ function selectFloorOnBuilding(buildingId, floorLabel) {
     owner: floor.owner,
     ulpin: floor.ulpin,
   };
+  attachHouse(
+    pick,
+    unitUlpin || (citizenMode ? lockedUnitUlpin : null),
+    unitUlpin ? null : selectedData?.unit?.unit_label,
+  );
   if (selectedMeshes.length) setMeshGlow(selectedMeshes, false);
   selectedMeshes = pick.meshes;
   selectedData = pick;
   setMeshGlow(selectedMeshes, true, 0x0ea5a8);
   showOutline(buildingId);
   if (interiorView !== "exterior") setInteriorView(interiorView);
+  else if (sameFloor) showPanel(pick);
   else {
     flyToPick(pick);
     showPanel(pick);
@@ -1500,19 +1694,26 @@ function closePanel() {
       selectedMeshes = rt.meshes.slice();
       setMeshGlow(selectedMeshes, true, 0x0ea5a8);
       showOutline(lockedBuildingId);
+      const floor = lockedFloorLabel
+        ? rt.building?.floors?.find((f) => String(f.floor_label) === String(lockedFloorLabel))
+        : rt.building?.floors?.[0];
+      const unit = lockedUnitUlpin
+        ? (floor?.units || []).find((u) => u.ulpin === lockedUnitUlpin)
+        : null;
       selectedData = {
         kind: rt.building?.floors?.length ? "floor" : "stadium",
         building: rt.building,
-        floor: rt.building?.floors?.[0],
+        floor,
+        unit: unit || undefined,
         meshes: rt.meshes,
         point: rt.center.clone(),
         buildingId: lockedBuildingId,
-        floorLabel: rt.building?.floors?.[0]?.floor_label,
-        owner: rt.building?.floors?.[0]?.owner,
-        ulpin: rt.building?.floors?.[0]?.ulpin || rt.building?.ulpin,
+        floorLabel: floor?.floor_label,
+        owner: unit?.owner || floor?.owner,
+        ulpin: unit?.ulpin || floor?.ulpin || rt.building?.ulpin,
       };
       showPanel(selectedData);
-      setHint("Your house · floors & rooms in the <b>right panel</b>");
+      setHint("Your house · <kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway");
       return;
     }
   }
@@ -1572,13 +1773,17 @@ function showPanel(data) {
 
   const f = data.floor;
   const b = data.building;
-  const prev = (f.previous_owners || []).map((p) =>
+  const rec = houseRecord(f, data.unit);
+  const prev = (rec.previous_owners || []).map((p) =>
     `<li><b>${esc(p.name)}</b><br/><span>${esc(p.from)} → ${esc(p.to)}</span></li>`
   ).join("");
-  const chips = (b.floors || []).map((fl) =>
+  const chips = (citizenMode && lockedFloorLabel
+    ? (b.floors || []).filter((fl) => String(fl.floor_label) === String(lockedFloorLabel))
+    : (b.floors || [])
+  ).map((fl) =>
     `<button type="button" class="chip ${fl.floor_label === f.floor_label ? "active" : ""}" data-floor="${esc(fl.floor_label)}">F${esc(fl.floor_label)}</button>`
   ).join("");
-  const utils = (f.utilities || []).map((u) => `<i>${esc(u)}</i>`).join("");
+  const utils = (rec.utilities || []).map((u) => `<i>${esc(u)}</i>`).join("");
   const banner = b.kind === "construction"
     ? `<div class="banner">WIP structure — vertical parcel <b>pre-assigned</b> for cadastral continuity.</div>`
     : "";
@@ -1587,49 +1792,56 @@ function showPanel(data) {
   const roomChips = rooms.map((r) =>
     `<button type="button" class="chip" data-room="${esc(r.id)}">${esc(r.label || r.type)}</button>`
   ).join("");
-  const units = f.units || [];
+  const units = citizenMode && lockedUnitUlpin
+    ? (f.units || []).filter((u) => u.ulpin === lockedUnitUlpin)
+    : (f.units || []);
+  const activeUlpin = data.unit?.ulpin;
   const housesHtml = units.length
-    ? `<h3>Houses on this floor</h3>
-    <div class="chips" style="flex-direction:column;align-items:stretch;gap:6px">
-      ${units.map((u) =>
-        `<div style="border:1px solid var(--panel-border);border-radius:10px;padding:8px 10px;background:var(--panel)">
+    ? `<h3>${citizenMode ? "Your house" : "Houses on this floor"}</h3>
+    <div class="house-list">
+      ${units.map((u) => {
+        const on = u.ulpin === activeUlpin;
+        return `<button type="button" class="house-card${on ? " active" : ""}" data-unit="${esc(u.ulpin)}">
           <b>House ${esc(u.unit_label || "?")}</b>
           <div class="ulpin" style="font-size:10px;margin-top:4px">${esc(u.ulpin)}</div>
           <div style="margin-top:4px;font-size:13px">${esc(u.owner || "—")}</div>
           <div style="font-size:11px;opacity:.7">${esc(u.legal_status || "registered")}${u.area_sq_m != null ? ` · ${esc(u.area_sq_m)} m²` : ""}</div>
-        </div>`
-      ).join("")}
+        </button>`;
+      }).join("")}
     </div>`
     : `<div class="owner">${esc(f.owner)}</div>
     <div class="owner-id">${esc(f.owner_id || "")}</div>`;
+  const houseBit = data.unit?.unit_label ? ` · House ${esc(data.unit.unit_label)}` : "";
+  const houseCrumb = data.unit?.unit_label ? ` → House ${esc(data.unit.unit_label)}` : "";
 
   panelEl.innerHTML = `
     <a class="close" id="panel-close">Close</a>
-    <h2>${esc(b.name)} · Floor ${esc(f.floor_label)}</h2>
-    <div class="breadcrumb"><b>City</b> → ${esc(b.name)} → Floor ${esc(f.floor_label)}</div>
-    <div class="ulpin" id="ulpin-copy" title="Click to copy">${esc(f.ulpin)}</div>
+    <h2>${esc(b.name)} · Floor ${esc(f.floor_label)}${houseBit}</h2>
+    <div class="breadcrumb"><b>${citizenMode ? "My house" : "City"}</b> → ${esc(b.name)} → Floor ${esc(f.floor_label)}${houseCrumb}</div>
+    <div class="ulpin" id="ulpin-copy" title="Click to copy">${esc(data.unit?.ulpin || f.ulpin)}</div>
     ${banner}
     ${housesHtml}
     <div class="grid">
-      <div class="stat"><div class="v">${esc(f.carpet_sq_m)} m²</div><div class="k">Carpet</div></div>
-      <div class="stat"><div class="v">${esc(f.built_up_sq_m)} m²</div><div class="k">Built-up</div></div>
-      <div class="stat"><div class="v">${esc(f.area_sq_m)} m²</div><div class="k">Parcel area</div></div>
-      <div class="stat"><div class="v">${esc(units.length || 1)}</div><div class="k">Houses</div></div>
+      <div class="stat"><div class="v">${esc(rec.carpet ?? "—")} m²</div><div class="k">Carpet</div></div>
+      <div class="stat"><div class="v">${esc(rec.built_up ?? "—")} m²</div><div class="k">Built-up</div></div>
+      <div class="stat"><div class="v">${esc(rec.area ?? "—")} m²</div><div class="k">Parcel area</div></div>
+      <div class="stat"><div class="v">${esc(data.unit?.unit_label || units.length || 1)}</div><div class="k">${data.unit ? "This house" : "Houses"}</div></div>
     </div>
     <h3>Registration</h3>
-    <div class="row"><span>Status</span><br/><span class="badge ${statusClass(f.legal_status)}">${esc(f.legal_status)}</span></div>
-    <div class="row"><span>Registered on</span><br/><b>${esc(f.registered_on)}</b></div>
-    <div class="row"><span>Office</span><br/>${esc(f.registration_office)}</div>
-    <div class="row"><span>Deed</span><br/><code>${esc(f.deed_no)}</code></div>
+    <div class="row"><span>Owner</span><br/><b>${esc(data.unit?.owner || f.owner)}</b></div>
+    <div class="row"><span>Status</span><br/><span class="badge ${statusClass(rec.legal_status)}">${esc(rec.legal_status)}</span></div>
+    <div class="row"><span>Registered on</span><br/><b>${esc(rec.registered_on)}</b></div>
+    <div class="row"><span>Office</span><br/>${esc(rec.registration_office)}</div>
+    <div class="row"><span>Deed</span><br/><code>${esc(rec.deed_no)}</code></div>
     <h3>Previous owners</h3>
     <ul class="timeline">${prev || "<li>—</li>"}</ul>
     <h3>Use &amp; assessment</h3>
-    <div class="row"><span>Use</span><br/><b>${esc(f.use)}</b></div>
-    <div class="row"><span>Tax</span><br/>${esc(f.tax_assessment)}</div>
-    <div class="row"><span>Encumbrance</span><br/>${esc(f.encumbrance)}</div>
+    <div class="row"><span>Use</span><br/><b>${esc(rec.use)}</b></div>
+    <div class="row"><span>Tax</span><br/>${esc(rec.tax)}</div>
+    <div class="row"><span>Encumbrance</span><br/>${esc(rec.encumbrance)}</div>
     <h3>Utilities</h3>
     <div class="util">${utils}</div>
-    <h3>Jump floor</h3>
+    <h3>${citizenMode ? "Your floor" : "Jump floor"}</h3>
     <div class="chips" id="floor-chips">${chips}</div>
     ${canInterior ? `
     <h3>Inspect view</h3>
@@ -1641,7 +1853,7 @@ function showPanel(data) {
     <div class="chips" id="room-chips">${roomChips || "<span style='font-size:12px;opacity:.7'>No room metadata</span>"}</div>
     <div class="keys-inline"><kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway · rooms are Blender meshes fitted to this building</div>
     ` : `<div class="banner" style="margin-top:12px">No interior floorplate for this landmark / WIP kind.</div>`}
-    <div class="row" style="margin-top:12px;color:var(--text-dim);font-size:11px">${esc(f.notes || "")}</div>
+    <div class="row" style="margin-top:12px;color:var(--text-dim);font-size:11px">${esc(rec.notes || "")}</div>
   `;
   wirePanel(data);
 }
@@ -1657,7 +1869,7 @@ function wirePanel(data) {
       ? data.building.ulpin
       : data.kind === "underground"
         ? (data.asset?.ulpin || data.asset?.id || data.ulpin)
-        : data.floor?.ulpin || data.ulpin;
+        : data.unit?.ulpin || data.floor?.ulpin || data.ulpin;
     try {
       await navigator.clipboard.writeText(text);
       ulpinEl.style.opacity = "0.55";
@@ -1667,6 +1879,15 @@ function wirePanel(data) {
   panelEl.querySelectorAll("#floor-chips .chip").forEach((btn) => {
     btn.addEventListener("click", () => {
       selectFloorOnBuilding(data.buildingId || data.building.id, btn.dataset.floor);
+    });
+  });
+  panelEl.querySelectorAll(".house-card[data-unit]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      selectFloorOnBuilding(
+        data.buildingId || data.building.id,
+        data.floorLabel || data.floor?.floor_label,
+        btn.dataset.unit,
+      );
     });
   });
   panelEl.querySelectorAll(".view-btn[data-view]").forEach((btn) => {
@@ -1762,8 +1983,8 @@ async function loadCity() {
   frameCity(computeCoreBounds(cityRoot));
 
   const params = new URLSearchParams(location.search);
-  // Default: solid city. ?ug=1 opens cutaway with pipes under the base.
-  if (params.get("ug") === "1") setUgVisible(true);
+  const wantCitizen = params.get("mode") === "citizen" || params.get("lock") === "1";
+  if (params.get("ug") === "1" && !wantCitizen) setUgVisible(true);
   else setUgVisible(false);
 
   document.getElementById("loading").style.display = "none";
@@ -1776,7 +1997,6 @@ async function loadCity() {
   }
   setHint("Click a building floor — inspect in the <b>right panel</b>");
 
-  const wantCitizen = params.get("mode") === "citizen" || params.get("lock") === "1";
   focusUlpinFromQuery();
   if (wantCitizen) {
     const ulpin = params.get("ulpin");
@@ -1785,14 +2005,12 @@ async function loadCity() {
       resolveBuildingIdFromUlpin(ulpin);
     if (bid) {
       applyCitizenLock(bid);
-      if (!selectedData) focusUlpinFromQuery();
     } else {
       setHint("Citizen twin requires your property ULPIN — open from the portal <b>My Property</b> page.");
       document.getElementById("badge").innerHTML = `<b>Citizen twin</b> · ULPIN required`;
     }
   }
-  if (params.get("interior") === "1") {
-    // After ULPIN focus, open cutaway when possible
+  if (params.get("interior") === "1" && !wantCitizen) {
     setTimeout(() => {
       if (selectedData?.kind === "floor") setInteriorView("cutaway");
     }, 600);
@@ -1805,9 +2023,11 @@ function focusUlpinFromQuery() {
   const params = new URLSearchParams(location.search);
   const ulpin = params.get("ulpin");
   if (!ulpin) return;
+  const wantCitizen = params.get("mode") === "citizen" || params.get("lock") === "1";
   for (const [, rt] of buildingRuntime) {
     const b = rt.building;
     if (b.ulpin === ulpin) {
+      if (wantCitizen) lockedFloorLabel = b.floors?.[0]?.floor_label || lockedFloorLabel;
       selectPick({
         kind: b.kind === "stadium" || !b.floors?.length ? "stadium" : "floor",
         building: b,
@@ -1821,15 +2041,19 @@ function focusUlpinFromQuery() {
       });
       return;
     }
-    const floor =
-      (b.floors || []).find((f) => f.ulpin === ulpin) ||
-      (b.floors || []).find((f) => (f.units || []).some((u) => u.ulpin === ulpin));
+    const unitFloor = (b.floors || []).find((f) => (f.units || []).some((u) => u.ulpin === ulpin));
+    const floor = unitFloor || (b.floors || []).find((f) => f.ulpin === ulpin);
     if (floor) {
+      const unit = (floor.units || []).find((u) => u.ulpin === ulpin);
+      if (wantCitizen) {
+        lockedFloorLabel = floor.floor_label;
+        if (unit) lockedUnitUlpin = unit.ulpin;
+      }
       selectFloorOnBuilding(b.id, floor.floor_label);
       return;
     }
   }
-  if (citizenMode) return; // don't roam underground city-wide in citizen mode
+  if (wantCitizen || citizenMode) return;
   for (const mesh of ugPickable) {
     const a = mesh.userData.asset;
     if (a && (a.ulpin === ulpin || a.id === ulpin)) {
