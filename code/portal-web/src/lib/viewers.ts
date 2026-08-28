@@ -11,13 +11,18 @@ export const VIEWERS = {
 
 export type CitizenTwinOpts = {
   interior?: boolean
-  ug?: boolean
 }
 
 export type AdminTwinOpts = {
   ulpin?: string | null
   ug?: boolean
   qa?: 'society' | 'chennai'
+}
+
+/** In-portal 3D Atlas (no new tab / no full-page scroll). */
+export function citizenTwinPage(ulpin?: string | null): string {
+  if (!ulpin) return '/app/twin'
+  return `/app/twin?ulpin=${encodeURIComponent(ulpin)}`
 }
 
 /**
@@ -29,7 +34,6 @@ export function citizenTwinHref(ulpin?: string | null, opts?: CitizenTwinOpts): 
   params.set('mode', 'citizen')
   if (ulpin) params.set('ulpin', ulpin)
   if (opts?.interior) params.set('interior', '1')
-  if (opts?.ug) params.set('ug', '1')
   return `${VIEWERS.intelCity}?${params.toString()}`
 }
 

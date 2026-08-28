@@ -131,7 +131,7 @@ export function LoginPage() {
 
           <p className="mt-5 text-center text-[11px] leading-relaxed text-white/35">
             {role === 'citizen'
-              ? 'Citizen · paste a ULPIN below as username · Operator never preloads a house'
+              ? 'Citizen · Horizon Tower, Meridian Peak, or Cedar Walk ULPIN only'
               : 'Operator · full City Atlas · no ULPIN focus on login'}
           </p>
         </form>
@@ -139,7 +139,7 @@ export function LoginPage() {
         {role === 'citizen' && (
           <div className="mt-6 max-h-56 overflow-y-auto rounded-2xl border border-white/10 bg-black/25 p-4">
             <div className="mb-3 text-[11px] uppercase tracking-[0.14em] text-white/40">
-              Valid citizen usernames (ULPIN)
+              Citizen ULPINs (3D-ready houses)
             </div>
             <ul className="space-y-1.5">
               {DEMO_CITIZEN_ACCOUNTS.map((a) => (

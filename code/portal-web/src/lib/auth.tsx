@@ -30,7 +30,12 @@ const AuthCtx = createContext<Ctx | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [auth, setAuthState] = useState<AuthState | null>(() => getAuth())
-  const [selectedUlpin, setUlpinState] = useState<string | null>(() => getSelectedUlpin())
+  const [selectedUlpin, setUlpinState] = useState<string | null>(() => {
+    const stored = getSelectedUlpin()
+    const session = getAuth()
+    if (session?.role === 'citizen') return resolveCitizenUlpin(stored || session.username)
+    return stored
+  })
 
   const login = useCallback((username: string, role: Role) => {
     const next = { username, role }
@@ -55,8 +60,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const selectUlpin = useCallback((ulpin: string) => {
-    setSelectedUlpin(ulpin)
-    setUlpinState(ulpin)
+    const next = getAuth()?.role === 'citizen' ? resolveCitizenUlpin(ulpin) : ulpin
+    setSelectedUlpin(next)
+    setUlpinState(next)
   }, [])
 
   const value = useMemo(
