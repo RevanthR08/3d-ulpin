@@ -42,7 +42,7 @@ export function TwinViewerPage() {
               {isAdmin
                 ? 'Intel City twin — full roam, floors, interiors, underground'
                 : holdings.length > 0
-                  ? 'Focused on your house — orbit and zoom; neighbouring buildings stay in view'
+                  ? 'Close view of your house — ownership and rooms in the right panel'
                   : 'Set your ULPIN on My Property first'}
             </p>
           </div>

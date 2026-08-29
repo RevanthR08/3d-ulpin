@@ -1205,31 +1205,50 @@ function citizenVisualBox(rt) {
   };
 }
 
-/** Start distance so the house fills ~60% of the view (screenshot framing). */
+/** Street-level 3/4 frame of the locked floor — outside the facade, not the whole tower. */
 function citizenFitDistance(size) {
-  const height = Math.max(size.y, 28);
-  const slim = Math.min(size.x, size.z);
+  const halfW = 0.5 * Math.max(size.x, size.z, 28);
   const fov = THREE.MathUtils.degToRad(camera?.fov || 42);
-  const isTower = height > 180;
-  if (isTower) {
-    const fill = 0.68;
-    return (height * 0.5) / Math.tan(fov * 0.5) / fill;
-  }
-  // Midrise / mall AABBs are often inflated — keep the close 3/4 street frame
-  return THREE.MathUtils.clamp(height * 0.58 + slim * 0.04, 56, 78);
+  const outside = halfW + 38;
+  const fewStoreys = (44 * 0.5) / Math.tan(fov * 0.5) / 0.55;
+  return THREE.MathUtils.clamp(Math.max(outside, fewStoreys), 52, 175);
 }
 
-/** Exterior stays outside the facade; cutaway may move in for rooms. */
+/** Aim at the citizen's floor, not the building mid-height. */
+function citizenFloorLook(rt) {
+  const vis = citizenVisualBox(rt);
+  const look = vis.center.clone();
+  const floor =
+    selectedData?.floor ||
+    (lockedFloorLabel
+      ? rt.building?.floors?.find((f) => String(f.floor_label) === String(lockedFloorLabel))
+      : rt.building?.floors?.[0]);
+  const y0 = vis.box.min.y;
+  const ySpan = Math.max(vis.size.y, 8);
+  if (floor) {
+    const idx = floor.floor_index ?? 0;
+    const n = Math.max(rt.building?.floors?.length || 1, 1);
+    look.y = y0 + ((idx + 0.5) / n) * ySpan;
+  }
+  const pt = selectedData?.point;
+  if (pt) {
+    look.x = pt.x;
+    look.z = pt.z;
+  }
+  return look;
+}
+
+/** Exterior stays outside the facade; cutaway may move in for rooms. Tight zoom-out. */
 function applyCitizenZoomLimits(cutaway) {
   if (!citizenMode || !controls) return;
   const start = citizenStartDist || 70;
-  controls.minDistance = cutaway ? start * 0.55 : start * 0.92;
-  controls.maxDistance = start * 2.5;
+  controls.minDistance = cutaway ? start * 0.4 : start * 0.7;
+  controls.maxDistance = cutaway ? start * 1.28 : start * 1.1;
 }
 
 /**
- * Citizen portal mode: frame their property. Neighbours stay visible.
- * Default zoom matches a 3/4 street view — house fills most of the frame.
+ * Citizen portal mode: frame their floor/house. Neighbours stay visible.
+ * Camera stays close — no city-scale zoom-out.
  */
 function applyCitizenLock(buildingId) {
   const rt = buildingRuntime.get(buildingId);
@@ -1240,16 +1259,10 @@ function applyCitizenLock(buildingId) {
   citizenMode = true;
   lockedBuildingId = buildingId;
   const vis = citizenVisualBox(rt);
-  const floorPt = selectedData?.point;
-  lockCenter.copy(vis.center);
-  if (floorPt) {
-    lockCenter.x = floorPt.x;
-    lockCenter.z = floorPt.z;
-  }
-  const height = Math.max(vis.size.y, 28);
+  lockCenter.copy(citizenFloorLook(rt));
   const dist = citizenFitDistance(vis.size);
   citizenStartDist = dist;
-  lockRadius = Math.max(dist * 0.55, 48);
+  lockRadius = Math.max(dist * 0.45, 36);
 
   for (const [, other] of buildingRuntime) {
     for (const m of other.meshes || []) {
@@ -1263,9 +1276,9 @@ function applyCitizenLock(buildingId) {
   controls.enablePan = false;
   applyCitizenZoomLimits(false);
   homeTarget.copy(lockCenter);
-  const dir = new THREE.Vector3(1.0, 0.9, 1.08).normalize();
+  const dir = new THREE.Vector3(1.08, 0.34, 1.14).normalize();
   homeCam.copy(lockCenter).addScaledVector(dir, dist);
-  homeCam.y = Math.max(homeCam.y, lockCenter.y + height * 0.12);
+  homeCam.y = Math.max(homeCam.y, lockCenter.y + 10);
   flyTarget = null;
   camera.position.copy(homeCam);
   controls.target.copy(homeTarget);
@@ -1277,6 +1290,8 @@ function applyCitizenLock(buildingId) {
   if (topBtn) topBtn.style.display = "none";
   const satBtn = document.getElementById("btn-sat-compare");
   if (satBtn) satBtn.style.display = "none";
+  const zoomOutBtn = document.getElementById("btn-zoom-out");
+  if (zoomOutBtn) zoomOutBtn.style.display = "none";
   setSatCompare(false);
   const chips = document.getElementById("ug-chips");
   if (chips) chips.style.display = "none";
@@ -1293,7 +1308,13 @@ function applyCitizenLock(buildingId) {
     sub.innerHTML =
       `<b>Citizen view</b> — focused on your house. Neighbours stay in view. Exterior or Cutaway in the right panel.<br/>Keys: <kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway`;
   }
-  setHint("Your house · orbit / zoom freely · <kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway");
+  if (selectedData?.kind === "floor") {
+    attachHouse(selectedData, lockedUnitUlpin);
+    showPanel(selectedData);
+  } else if (selectedData) {
+    showPanel(selectedData);
+  }
+  setHint("Your house · orbit around your floor · <kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway");
   return true;
 }
 
@@ -1607,11 +1628,18 @@ function flyToPick(pick) {
     const n = pick.building.floors.length;
     look.y = y0 + ((idx + 0.5) / Math.max(n, 1)) * ySpan;
   }
+  if (citizenMode) {
+    lockCenter.copy(look);
+    const dist = Math.min(citizenFitDistance(vis.size), (controls?.maxDistance || 82) * 0.98);
+    const dir = new THREE.Vector3(1.08, 0.34, 1.14).normalize();
+    flyTarget = {
+      pos: look.clone().add(dir.multiplyScalar(dist)),
+      look,
+    };
+    return;
+  }
   const dir = new THREE.Vector3(1.0, 0.9, 1.08).normalize();
-  let dist = citizenMode
-    ? citizenFitDistance(vis.size)
-    : Math.max(70, radius * 1.45);
-  if (citizenMode && controls) dist = Math.min(dist, controls.maxDistance * 0.95);
+  const dist = Math.max(70, radius * 1.45);
   flyTarget = {
     pos: look.clone().add(dir.multiplyScalar(dist)),
     look,
@@ -1706,7 +1734,7 @@ function closePanel() {
         floor,
         unit: unit || undefined,
         meshes: rt.meshes,
-        point: rt.center.clone(),
+        point: citizenFloorLook(rt),
         buildingId: lockedBuildingId,
         floorLabel: floor?.floor_label,
         owner: unit?.owner || floor?.owner,
@@ -1777,10 +1805,7 @@ function showPanel(data) {
   const prev = (rec.previous_owners || []).map((p) =>
     `<li><b>${esc(p.name)}</b><br/><span>${esc(p.from)} → ${esc(p.to)}</span></li>`
   ).join("");
-  const chips = (citizenMode && lockedFloorLabel
-    ? (b.floors || []).filter((fl) => String(fl.floor_label) === String(lockedFloorLabel))
-    : (b.floors || [])
-  ).map((fl) =>
+  const chips = (b.floors || []).map((fl) =>
     `<button type="button" class="chip ${fl.floor_label === f.floor_label ? "active" : ""}" data-floor="${esc(fl.floor_label)}">F${esc(fl.floor_label)}</button>`
   ).join("");
   const utils = (rec.utilities || []).map((u) => `<i>${esc(u)}</i>`).join("");
@@ -1792,12 +1817,13 @@ function showPanel(data) {
   const roomChips = rooms.map((r) =>
     `<button type="button" class="chip" data-room="${esc(r.id)}">${esc(r.label || r.type)}</button>`
   ).join("");
-  const units = citizenMode && lockedUnitUlpin
-    ? (f.units || []).filter((u) => u.ulpin === lockedUnitUlpin)
-    : (f.units || []);
+  const units = f.units || [];
   const activeUlpin = data.unit?.ulpin;
-  const housesHtml = units.length
-    ? `<h3>${citizenMode ? "Your house" : "Houses on this floor"}</h3>
+  // Citizen: this house only. Admin: keep the 2/3-house picker unchanged.
+  const housesHtml = citizenMode
+    ? ""
+    : units.length
+    ? `<h3>Houses on this floor</h3>
     <div class="house-list">
       ${units.map((u) => {
         const on = u.ulpin === activeUlpin;
@@ -1815,7 +1841,7 @@ function showPanel(data) {
   const houseCrumb = data.unit?.unit_label ? ` → House ${esc(data.unit.unit_label)}` : "";
 
   panelEl.innerHTML = `
-    <a class="close" id="panel-close">Close</a>
+    ${citizenMode ? "" : `<a class="close" id="panel-close">Close</a>`}
     <h2>${esc(b.name)} · Floor ${esc(f.floor_label)}${houseBit}</h2>
     <div class="breadcrumb"><b>${citizenMode ? "My house" : "City"}</b> → ${esc(b.name)} → Floor ${esc(f.floor_label)}${houseCrumb}</div>
     <div class="ulpin" id="ulpin-copy" title="Click to copy">${esc(data.unit?.ulpin || f.ulpin)}</div>
@@ -1841,8 +1867,8 @@ function showPanel(data) {
     <div class="row"><span>Encumbrance</span><br/>${esc(rec.encumbrance)}</div>
     <h3>Utilities</h3>
     <div class="util">${utils}</div>
-    <h3>${citizenMode ? "Your floor" : "Jump floor"}</h3>
-    <div class="chips" id="floor-chips">${chips}</div>
+    ${citizenMode ? "" : `<h3>Jump floor</h3>
+    <div class="chips" id="floor-chips">${chips}</div>`}
     ${canInterior ? `
     <h3>Inspect view</h3>
     <div class="view-controls">
@@ -1984,6 +2010,7 @@ async function loadCity() {
 
   const params = new URLSearchParams(location.search);
   const wantCitizen = params.get("mode") === "citizen" || params.get("lock") === "1";
+  if (wantCitizen) citizenMode = true;
   if (params.get("ug") === "1" && !wantCitizen) setUgVisible(true);
   else setUgVisible(false);
 
@@ -2049,7 +2076,7 @@ function focusUlpinFromQuery() {
         lockedFloorLabel = floor.floor_label;
         if (unit) lockedUnitUlpin = unit.ulpin;
       }
-      selectFloorOnBuilding(b.id, floor.floor_label);
+      selectFloorOnBuilding(b.id, floor.floor_label, unit?.ulpin);
       return;
     }
   }
