@@ -4,7 +4,6 @@ import cityCore from '../../assets/input_city_core.png'
 import cityWide from '../../assets/input_city_wide.png'
 
 type SourceId = 'drone' | 'lidar' | 'gis' | 'floorplans' | 'gnss' | 'elevation' | 'archive' | 'other'
-type UploadState = 'ready' | 'uploading' | 'complete'
 
 type SourceGroup = {
   id: SourceId
@@ -117,19 +116,6 @@ function packageName(files: File[]) {
   if (folder) return folder
   if (files.length === 1) return files[0].name.replace(/\.[^.]+$/, '')
   return `Survey_Package_${new Date().toISOString().slice(0, 10)}`
-}
-
-function uniqueFiles(prev: File[], incoming: File[]) {
-  const seen = new Set(prev.map((f) => `${cleanPath(f)}:${f.size}:${f.lastModified}`))
-  const next = [...prev]
-  for (const file of incoming) {
-    const key = `${cleanPath(file)}:${file.size}:${file.lastModified}`
-    if (!seen.has(key)) {
-      seen.add(key)
-      next.push(file)
-    }
-  }
-  return next
 }
 
 function makeDemoFile(path: string, size: number, type: string) {
@@ -245,7 +231,6 @@ function SourcePreview({
 export function IngestPage() {
   const [files, setFiles] = useState<File[]>([])
   const [dragging, setDragging] = useState(false)
-  const [uploadState, setUploadState] = useState<UploadState>('ready')
   const [selectedSource, setSelectedSource] = useState<SourceId | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const folderInputRef = useRef<HTMLInputElement | null>(null)
@@ -263,12 +248,14 @@ export function IngestPage() {
   const surveyName = files.length ? packageName(files) : 'No package selected'
   const previewGroup = SOURCE_GROUPS.find((group) => group.id === selectedSource)
 
+  function loadSamplePackage() {
+    setFiles(DEMO_FILES.map(([path, size, type]) => makeDemoFile(path, size, type)))
+    setSelectedSource('floorplans')
+  }
+
   function addFiles(incoming: FileList | File[]) {
-    const list = Array.from(incoming)
-    if (!list.length) return
-    setUploadState('ready')
-    setFiles((prev) => uniqueFiles(prev, list))
-    setSelectedSource((prev) => prev || classifyFile(list[0]))
+    if (!Array.from(incoming).length) return
+    loadSamplePackage()
   }
 
   function onInput(e: ChangeEvent<HTMLInputElement>) {
@@ -284,20 +271,11 @@ export function IngestPage() {
 
   function clearPackage() {
     setFiles([])
-    setUploadState('ready')
     setSelectedSource(null)
   }
 
-  function uploadPackage() {
-    if (!files.length || uploadState === 'uploading') return
-    setUploadState('uploading')
-    window.setTimeout(() => setUploadState('complete'), 700)
-  }
-
   function loadDemoPackage() {
-    setUploadState('ready')
-    setFiles(DEMO_FILES.map(([path, size, type]) => makeDemoFile(path, size, type)))
-    setSelectedSource('drone')
+    loadSamplePackage()
   }
 
   return (
@@ -305,9 +283,7 @@ export function IngestPage() {
       <div>
         <h1 className="font-display text-[32px] font-semibold text-ink">Data Ingestion</h1>
         <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-mute">
-          Upload one survey package containing mixed property data. The system automatically
-          identifies and groups drone imagery, LiDAR, GIS layers, floor plans, GNSS/CORS records,
-          and DEM/DSM elevation files.
+          Drop any file — the demo loads the sample survey (100 floor plans plus drone, LiDAR, GIS, GNSS, DEM).
         </p>
       </div>
 
@@ -340,7 +316,7 @@ export function IngestPage() {
         </div>
         <h2 className="font-display mt-5 text-[26px] font-semibold text-ink">Upload Survey / Property Data</h2>
         <p className="mx-auto mt-2 max-w-md text-[14px] leading-relaxed text-mute">
-          Drag and drop files or a folder. Use one upload for the full survey package.
+          Drag and drop any file or folder. The demo loads the sample survey package (100 floor plans).
         </p>
 
         <div className="mt-7 flex flex-wrap justify-center gap-3">
@@ -388,7 +364,7 @@ export function IngestPage() {
               </div>
             </div>
             <div className="rounded-full border border-signal/30 bg-signal-soft px-4 py-2 text-[12px] font-semibold text-signal-deep">
-              {uploadState === 'complete' ? 'Upload complete' : `${files.length} files ready`}
+              Sample package loaded
             </div>
           </div>
 
@@ -450,14 +426,10 @@ export function IngestPage() {
           <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line px-6 py-5">
             <div>
               <div className="text-[14px] font-semibold text-ink">
-                {uploadState === 'complete'
-                  ? `${files.length} files · ${detectedSourceCount || detectedGroups.length} data sources · ${formatBytes(totalSize)}`
-                  : `${files.length} files selected · ${formatBytes(totalSize)}`}
+                {files.length} files · {detectedSourceCount || detectedGroups.length} data sources · {formatBytes(totalSize)}
               </div>
               <div className="mt-1 text-[12px] text-mute">
-                {uploadState === 'complete'
-                  ? 'Package is staged for AI processing and validation.'
-                  : 'Ready to upload as one mixed-source survey package.'}
+                Sample survey staged — 100 floor plans indexed. Ready for AI processing.
               </div>
             </div>
             <div className="flex gap-3">
@@ -468,33 +440,20 @@ export function IngestPage() {
               >
                 Clear
               </button>
-              {uploadState === 'complete' ? (
-                <>
-                  <Link
-                    to="/app/processing"
-                    className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white"
-                  >
-                    Start AI Pipeline
-                  </Link>
-                  <a
-                    href="/extract/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-semibold text-ink"
-                  >
-                    Review Package
-                  </a>
-                </>
-              ) : (
-                <button
-                  type="button"
-                  onClick={uploadPackage}
-                  disabled={uploadState === 'uploading'}
-                  className="rounded-xl bg-signal px-4 py-2.5 text-[13px] font-semibold text-white disabled:opacity-60"
-                >
-                  {uploadState === 'uploading' ? 'Uploading...' : 'Upload Package'}
-                </button>
-              )}
+              <Link
+                to="/app/processing"
+                className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white"
+              >
+                Start AI Pipeline
+              </Link>
+              <a
+                href="/extract/"
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-xl border border-line bg-white px-4 py-2.5 text-[13px] font-semibold text-ink"
+              >
+                Review Package
+              </a>
             </div>
           </div>
         </div>

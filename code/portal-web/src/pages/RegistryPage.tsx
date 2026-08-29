@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { api, type IntelCityBuilding, type IntelCityFloor, type IntelCityUnit } from '../lib/api'
 import { useAuth } from '../lib/auth'
 
-type Tab = 'buildings' | 'floors' | 'ulpin'
+type Tab = 'buildings' | 'floors'
 
 type HousePick = {
   building: IntelCityBuilding
@@ -232,10 +232,9 @@ function HouseDetailModal({
 }
 
 export function RegistryPage() {
-  const { auth, selectUlpin } = useAuth()
-  const isAdmin = auth?.role === 'admin'
+  const { selectUlpin } = useAuth()
   const [params, setParams] = useSearchParams()
-  const tab = (params.get('tab') as Tab) || 'buildings'
+  const tab: Tab = params.get('tab') === 'floors' ? 'floors' : 'buildings'
   const [buildings, setBuildings] = useState<IntelCityBuilding[]>([])
   const [q, setQ] = useState(() => params.get('q') || '')
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -287,8 +286,7 @@ export function RegistryPage() {
         <div>
           <h1 className="font-display text-[28px] font-semibold text-ink">Registry</h1>
           <p className="mt-1 max-w-xl text-[13px] text-mute">
-            Buildings, floor houses, and ULPIN identities — skyscraper floors hold up to 3 units
-            with different owners.
+            Buildings and floor houses — skyscraper floors hold up to 3 units with different owners.
           </p>
         </div>
         <div className="flex overflow-hidden rounded-xl border border-line bg-white">
@@ -296,7 +294,6 @@ export function RegistryPage() {
             [
               ['buildings', 'Buildings'],
               ['floors', 'Floors & units'],
-              ...(isAdmin ? ([['ulpin', 'ULPIN pattern']] as const) : []),
             ] as const
           ).map(([id, label]) => (
             <button
@@ -501,37 +498,6 @@ export function RegistryPage() {
                 <div className="py-16 text-center text-[13px] text-mute">Loading…</div>
               )}
             </div>
-          </div>
-        )}
-
-        {tab === 'ulpin' && isAdmin && (
-          <div className="min-h-0 flex-1 space-y-6 overflow-y-auto">
-            <div className="rounded-2xl border border-line bg-ink p-6 text-white">
-              <div className="text-[11px] uppercase tracking-[0.16em] text-white/45">Pattern</div>
-              <div className="font-mono mt-3 break-all text-[18px] text-signal-soft">
-                3D-IND-&lt;pincode&gt;-&lt;body&gt;-L&lt;floor&gt;-U&lt;unit&gt;
-              </div>
-              <p className="mt-3 max-w-xl text-[13px] text-white/55">
-                Example house identity:{' '}
-                <span className="font-mono text-signal-soft">3D-IND-600001-I1-L1-U2</span> — Glass
-                Spire, floor 1, house B.
-              </p>
-            </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              {[
-                ['Bodies', buildings.length],
-                ['Floor slices', floorCount],
-                ['House units', unitCount],
-              ].map(([k, v]) => (
-                <div key={k} className="rounded-2xl border border-line bg-white px-5 py-4">
-                  <div className="font-display text-[28px] font-semibold text-ink">{v}</div>
-                  <div className="mt-1 text-[11px] uppercase tracking-[0.14em] text-mute">{k}</div>
-                </div>
-              ))}
-            </div>
-            <Link to="/app/twin" className="inline-block text-[13px] font-semibold text-signal">
-              Inspect in 3D Atlas →
-            </Link>
           </div>
         )}
       </div>

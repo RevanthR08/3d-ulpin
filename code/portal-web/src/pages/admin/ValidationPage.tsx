@@ -53,10 +53,10 @@ export function ValidationPage() {
 
       <div className="flex flex-wrap gap-3">
         <Link
-          to="/app/registry?tab=ulpin"
+          to="/app/registry"
           className="rounded-xl bg-ink px-4 py-2.5 text-[13px] font-semibold text-white"
         >
-          Open ULPIN pattern
+          Open Registry
         </Link>
         <Link
           to="/app/reports"

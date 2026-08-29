@@ -251,10 +251,10 @@ export function UndergroundPropertiesPage() {
             3D Atlas · UG
           </Link>
           <Link
-            to="/app/registry?tab=ulpin"
+            to="/app/registry"
             className="rounded-lg border border-line bg-white px-3 py-1.5 text-[11px] font-semibold text-ink"
           >
-            ULPIN pattern
+            Open Registry
           </Link>
         </div>
       </div>
