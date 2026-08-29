@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { RequireAuth } from './components/RequireAuth'
 import { Shell } from './components/Shell'
 import { AuthProvider, useAuth } from './lib/auth'
+import { CitizenTicketsProvider } from './lib/tickets'
 import { IngestPage } from './pages/admin/IngestPage'
 import { PolygonLabelsPage } from './pages/admin/PolygonLabelsPage'
 import { ProcessingPage } from './pages/admin/ProcessingPage'
@@ -9,7 +10,6 @@ import { ReportsIssuesPage } from './pages/admin/ReportsIssuesPage'
 import { UndergroundPropertiesPage } from './pages/admin/UndergroundPropertiesPage'
 import { CitizenHome } from './pages/citizen/CitizenHome'
 import { OwnershipPage } from './pages/citizen/OwnershipPage'
-import { PropertyRecordPage } from './pages/citizen/PropertyRecordPage'
 import { PropertyPage } from './pages/citizen/PropertyPage'
 import { ReportIssuePage } from './pages/citizen/ReportIssuePage'
 import { UndergroundPage } from './pages/citizen/UndergroundPage'
@@ -29,6 +29,7 @@ function HomeRedirect() {
 export default function App() {
   return (
     <AuthProvider>
+      <CitizenTicketsProvider>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<HomeRedirect />} />
@@ -44,10 +45,10 @@ export default function App() {
               <Route path="/app/floors" element={<Navigate to="/app/registry?tab=floors" replace />} />
               <Route path="/app/underground-properties" element={<UndergroundPropertiesPage />} />
               <Route path="/app/validation" element={<Navigate to="/app/registry" replace />} />
-              <Route path="/app/ulpin-generation" element={<Navigate to="/app/registry?tab=ulpin" replace />} />
+              <Route path="/app/ulpin-generation" element={<Navigate to="/app/registry" replace />} />
               <Route path="/app/reports" element={<ReportsIssuesPage />} />
+              <Route path="/app/registry" element={<RegistryPage />} />
             </Route>
-            <Route path="/app/registry" element={<RegistryPage />} />
             <Route path="/app/polygons" element={<PolygonViewerPage />} />
             <Route path="/app/twin" element={<TwinViewerPage />} />
             <Route path="/app/map" element={<Navigate to="/app/polygons" replace />} />
@@ -56,7 +57,7 @@ export default function App() {
               <Route path="/citizen" element={<CitizenHome />} />
               <Route path="/citizen/property" element={<PropertyPage />} />
               <Route path="/citizen/ownership" element={<OwnershipPage />} />
-              <Route path="/citizen/record" element={<PropertyRecordPage />} />
+              <Route path="/citizen/record" element={<Navigate to="/citizen/ownership" replace />} />
               <Route path="/citizen/underground" element={<UndergroundPage />} />
               <Route path="/citizen/report" element={<ReportIssuePage />} />
             </Route>
@@ -65,6 +66,7 @@ export default function App() {
 
         <Route path="*" element={<HomeRedirect />} />
       </Routes>
+      </CitizenTicketsProvider>
     </AuthProvider>
   )
 }

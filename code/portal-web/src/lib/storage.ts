@@ -422,20 +422,28 @@ export function getIssueReports(): CitizenIssue[] {
   return ensureSeedIssueReports()
 }
 
+export function getCitizenTickets(ulpins: string[], owner?: string): CitizenIssue[] {
+  const set = new Set(ulpins)
+  return getIssueReports().filter(
+    (r) => set.has(r.ulpin) || (owner && r.citizenName === owner),
+  )
+}
+
 export function saveIssueReports(reports: CitizenIssue[]) {
   localStorage.setItem(REPORTS_KEY, JSON.stringify(reports))
 }
 
 export function addIssueReport(report: Omit<CitizenIssue, 'id' | 'createdAt' | 'status'>) {
   ensureSeedIssueReports()
+  const year = new Date().getFullYear()
+  const stamp = String(Date.now()).slice(-4)
   const next: CitizenIssue = {
     ...report,
-    id:
-      typeof crypto !== 'undefined' && 'randomUUID' in crypto
-        ? crypto.randomUUID()
-        : `ISS-${Date.now()}`,
+    id: `DSP-${year}-${stamp}`,
     createdAt: new Date().toISOString(),
     status: 'new',
+    priority: report.priority || 'medium',
+    assignedTo: report.assignedTo || 'Unassigned',
     messages: [
       {
         id: `m-${Date.now()}`,

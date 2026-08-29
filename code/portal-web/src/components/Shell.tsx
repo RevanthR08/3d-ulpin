@@ -1,6 +1,8 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { ownedProperties } from '../lib/demoAccounts'
+import { useCitizenTickets } from '../lib/tickets'
+import { CitizenTicketsPanel } from './CitizenTicketsPanel'
 
 type NavItem = { to: string; label: string; end?: boolean }
 
@@ -19,10 +21,8 @@ const CITIZEN_NAV: NavItem[] = [
   { to: '/citizen', label: 'Home', end: true },
   { to: '/citizen/property', label: 'My Property' },
   { to: '/citizen/ownership', label: 'Ownership' },
-  { to: '/citizen/record', label: 'Property Record' },
   { to: '/app/twin', label: '3D Atlas' },
   { to: '/citizen/underground', label: 'Underground' },
-  { to: '/app/registry', label: 'Registry' },
   { to: '/citizen/report', label: 'Report an Issue' },
 ]
 
@@ -84,14 +84,37 @@ export function Shell() {
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <header className="flex h-14 flex-none items-center justify-between border-b border-line bg-paper/90 px-7 backdrop-blur">
           <div className="text-[12px] text-mute">Ministry of Rural Development · DoLR</div>
-          <div className="rounded-full border border-line bg-white px-3 py-1 text-[11px] font-medium tracking-wide text-ink">
-            {contextLabel}
+          <div className="flex items-center gap-2">
+            {auth.role === 'citizen' && <CitizenTicketButton />}
+            <div className="rounded-full border border-line bg-white px-3 py-1 text-[11px] font-medium tracking-wide text-ink">
+              {contextLabel}
+            </div>
           </div>
         </header>
         <main id="vertica-main" className="relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
           <Outlet />
         </main>
       </div>
+      {auth.role === 'citizen' && <CitizenTicketsPanel />}
     </div>
+  )
+}
+
+function CitizenTicketButton() {
+  const { openPanel, tickets } = useCitizenTickets()
+  const openCount = tickets.filter((t) => t.status !== 'closed').length
+  return (
+    <button
+      type="button"
+      onClick={() => openPanel()}
+      className="rounded-full border border-line bg-white px-3 py-1 text-[11px] font-medium tracking-wide text-ink hover:border-signal"
+    >
+      Tickets
+      {openCount > 0 ? (
+        <span className="ml-1.5 rounded-full bg-amber/20 px-1.5 py-0.5 text-[10px] font-semibold text-amber">
+          {openCount}
+        </span>
+      ) : null}
+    </button>
   )
 }
