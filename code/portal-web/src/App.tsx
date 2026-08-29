@@ -3,22 +3,18 @@ import { RequireAuth } from './components/RequireAuth'
 import { Shell } from './components/Shell'
 import { AuthProvider, useAuth } from './lib/auth'
 import { CitizenTicketsProvider } from './lib/tickets'
-import { IngestPage } from './pages/admin/IngestPage'
-import { PolygonLabelsPage } from './pages/admin/PolygonLabelsPage'
-import { ProcessingPage } from './pages/admin/ProcessingPage'
+import { DataPipelinePage } from './pages/admin/DataPipelinePage'
 import { ReportsIssuesPage } from './pages/admin/ReportsIssuesPage'
 import { UndergroundPropertiesPage } from './pages/admin/UndergroundPropertiesPage'
 import { CitizenHome } from './pages/citizen/CitizenHome'
-import { OwnershipPage } from './pages/citizen/OwnershipPage'
-import { PropertyPage } from './pages/citizen/PropertyPage'
+import { MyPropertyPage } from './pages/citizen/MyPropertyPage'
 import { ReportIssuePage } from './pages/citizen/ReportIssuePage'
-import { UndergroundPage } from './pages/citizen/UndergroundPage'
+import { AtlasPage } from './pages/AtlasPage'
 import { LoginPage } from './pages/LoginPage'
-import { PolygonViewerPage } from './pages/PolygonViewerPage'
 import { RegistryPage } from './pages/RegistryPage'
 import { TwinViewerPage } from './pages/TwinViewerPage'
 
-const ADMIN_HOME = '/app/ingest'
+const ADMIN_HOME = '/app/pipeline'
 
 function HomeRedirect() {
   const { auth } = useAuth()
@@ -38,9 +34,10 @@ export default function App() {
           <Route element={<Shell />}>
             <Route element={<RequireAuth roles={['admin']} />}>
               <Route path="/app" element={<Navigate to={ADMIN_HOME} replace />} />
-              <Route path="/app/ingest" element={<IngestPage />} />
-              <Route path="/app/processing" element={<ProcessingPage />} />
-              <Route path="/app/polygon-labels" element={<PolygonLabelsPage />} />
+              <Route path="/app/pipeline" element={<DataPipelinePage />} />
+              <Route path="/app/ingest" element={<Navigate to="/app/pipeline" replace />} />
+              <Route path="/app/processing" element={<Navigate to="/app/pipeline?tab=processing" replace />} />
+              <Route path="/app/polygon-labels" element={<Navigate to="/app/pipeline?tab=labels" replace />} />
               <Route path="/app/parcelization" element={<Navigate to="/app/registry?tab=floors" replace />} />
               <Route path="/app/floors" element={<Navigate to="/app/registry?tab=floors" replace />} />
               <Route path="/app/underground-properties" element={<UndergroundPropertiesPage />} />
@@ -49,16 +46,17 @@ export default function App() {
               <Route path="/app/reports" element={<ReportsIssuesPage />} />
               <Route path="/app/registry" element={<RegistryPage />} />
             </Route>
-            <Route path="/app/polygons" element={<PolygonViewerPage />} />
+            <Route path="/app/atlas" element={<AtlasPage />} />
+            <Route path="/app/polygons" element={<Navigate to="/app/atlas" replace />} />
             <Route path="/app/twin" element={<TwinViewerPage />} />
-            <Route path="/app/map" element={<Navigate to="/app/polygons" replace />} />
+            <Route path="/app/map" element={<Navigate to="/app/atlas" replace />} />
 
             <Route element={<RequireAuth roles={['citizen']} />}>
               <Route path="/citizen" element={<CitizenHome />} />
-              <Route path="/citizen/property" element={<PropertyPage />} />
-              <Route path="/citizen/ownership" element={<OwnershipPage />} />
-              <Route path="/citizen/record" element={<Navigate to="/citizen/ownership" replace />} />
-              <Route path="/citizen/underground" element={<UndergroundPage />} />
+              <Route path="/citizen/property" element={<MyPropertyPage />} />
+              <Route path="/citizen/ownership" element={<Navigate to="/citizen/property?tab=ownership" replace />} />
+              <Route path="/citizen/record" element={<Navigate to="/citizen/property?tab=ownership" replace />} />
+              <Route path="/citizen/underground" element={<Navigate to="/citizen/property?tab=connections" replace />} />
               <Route path="/citizen/report" element={<ReportIssuePage />} />
             </Route>
           </Route>
