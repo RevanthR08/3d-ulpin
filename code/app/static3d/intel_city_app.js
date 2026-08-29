@@ -1808,7 +1808,9 @@ function showPanel(data) {
   const chips = (b.floors || []).map((fl) =>
     `<button type="button" class="chip ${fl.floor_label === f.floor_label ? "active" : ""}" data-floor="${esc(fl.floor_label)}">F${esc(fl.floor_label)}</button>`
   ).join("");
-  const utils = (rec.utilities || []).map((u) => `<i>${esc(u)}</i>`).join("");
+  const utils = (rec.utilities || [])
+    .map((u) => `<i style="font-style:normal;font-size:11px;padding:4px 10px;border-radius:999px;background:#eef5fa;border:1px solid #cadff0">${esc(u)}</i>`)
+    .join("");
   const banner = b.kind === "construction"
     ? `<div class="banner">WIP structure — vertical parcel <b>pre-assigned</b> for cadastral continuity.</div>`
     : "";
@@ -1839,47 +1841,97 @@ function showPanel(data) {
     <div class="owner-id">${esc(f.owner_id || "")}</div>`;
   const houseBit = data.unit?.unit_label ? ` · House ${esc(data.unit.unit_label)}` : "";
   const houseCrumb = data.unit?.unit_label ? ` → House ${esc(data.unit.unit_label)}` : "";
+  const useShort = rec.use ? String(rec.use).split("—").pop().trim() : "";
+  const title = citizenMode
+    ? `House ${esc(data.unit?.unit_label || f.floor_label)}`
+    : `${esc(b.name)} · Floor ${esc(f.floor_label)}${houseBit}`;
+  const sub = citizenMode
+    ? `${esc(b.name)} · Floor ${esc(f.floor_label)}`
+    : `<b>City</b> → ${esc(b.name)} → Floor ${esc(f.floor_label)}${houseCrumb}`;
+
+  // Layout is inlined so the inspector stays aligned even when the stylesheet is cached.
+  const CARD =
+    "background:#f7fafc;border:1px solid var(--border);border-radius:12px;padding:11px 13px;margin-bottom:10px";
+  const H3 =
+    "margin:0 0 8px;font-size:10.5px;text-transform:uppercase;letter-spacing:.55px;color:var(--text-dim)";
+  const kv = (rows) =>
+    `<dl class="kv" style="display:grid;grid-template-columns:84px 1fr;gap:7px 12px;font-size:12.5px;line-height:1.5;margin:0">` +
+    rows
+      .filter(([, v]) => v != null && v !== "")
+      .map(
+        ([k, v]) =>
+          `<dt style="color:var(--text-dim)">${k}</dt><dd style="margin:0;min-width:0;word-break:break-word">${v}</dd>`,
+      )
+      .join("") +
+    `</dl>`;
 
   panelEl.innerHTML = `
     ${citizenMode ? "" : `<a class="close" id="panel-close">Close</a>`}
-    <h2>${esc(b.name)} · Floor ${esc(f.floor_label)}${houseBit}</h2>
-    <div class="breadcrumb"><b>${citizenMode ? "My house" : "City"}</b> → ${esc(b.name)} → Floor ${esc(f.floor_label)}${houseCrumb}</div>
-    <div class="ulpin" id="ulpin-copy" title="Click to copy">${esc(data.unit?.ulpin || f.ulpin)}</div>
+    <div class="p-head">
+      <h2>${title}</h2>
+      <div class="p-sub">${sub}</div>
+      <button type="button" class="ulpin-pill" id="ulpin-copy" title="Copy ULPIN">
+        <span>${esc(data.unit?.ulpin || f.ulpin)}</span><span class="copy-ic">⧉</span>
+      </button>
+    </div>
     ${banner}
     ${housesHtml}
     <div class="grid">
-      <div class="stat"><div class="v">${esc(rec.carpet ?? "—")} m²</div><div class="k">Carpet</div></div>
-      <div class="stat"><div class="v">${esc(rec.built_up ?? "—")} m²</div><div class="k">Built-up</div></div>
-      <div class="stat"><div class="v">${esc(rec.area ?? "—")} m²</div><div class="k">Parcel area</div></div>
-      <div class="stat"><div class="v">${esc(data.unit?.unit_label || units.length || 1)}</div><div class="k">${data.unit ? "This house" : "Houses"}</div></div>
+      <div class="stat"><div class="v">${esc(rec.carpet ?? "—")}<small>m²</small></div><div class="k">Carpet</div></div>
+      <div class="stat"><div class="v">${esc(rec.built_up ?? "—")}<small>m²</small></div><div class="k">Built-up</div></div>
+      <div class="stat"><div class="v">${esc(rec.area ?? "—")}<small>m²</small></div><div class="k">Parcel area</div></div>
+      <div class="stat"><div class="v">${esc(useShort || data.unit?.unit_label || units.length || 1)}</div><div class="k">${useShort ? "Type" : data.unit ? "House" : "Houses"}</div></div>
     </div>
-    <h3>Registration</h3>
-    <div class="row"><span>Owner</span><br/><b>${esc(data.unit?.owner || f.owner)}</b></div>
-    <div class="row"><span>Status</span><br/><span class="badge ${statusClass(rec.legal_status)}">${esc(rec.legal_status)}</span></div>
-    <div class="row"><span>Registered on</span><br/><b>${esc(rec.registered_on)}</b></div>
-    <div class="row"><span>Office</span><br/>${esc(rec.registration_office)}</div>
-    <div class="row"><span>Deed</span><br/><code>${esc(rec.deed_no)}</code></div>
-    <h3>Previous owners</h3>
-    <ul class="timeline">${prev || "<li>—</li>"}</ul>
-    <h3>Use &amp; assessment</h3>
-    <div class="row"><span>Use</span><br/><b>${esc(rec.use)}</b></div>
-    <div class="row"><span>Tax</span><br/>${esc(rec.tax)}</div>
-    <div class="row"><span>Encumbrance</span><br/>${esc(rec.encumbrance)}</div>
-    <h3>Utilities</h3>
-    <div class="util">${utils}</div>
-    ${citizenMode ? "" : `<h3>Jump floor</h3>
-    <div class="chips" id="floor-chips">${chips}</div>`}
+
+    <section class="card" style="${CARD}">
+      <h3 style="${H3}">Registration</h3>
+      ${kv([
+        ["Owner", `<b>${esc(data.unit?.owner || f.owner)}</b>`],
+        ["Status", `<span class="badge ${statusClass(rec.legal_status)}">${esc(rec.legal_status)}</span>`],
+        ["Registered", esc(rec.registered_on)],
+        ["Office", esc(rec.registration_office)],
+        ["Deed", rec.deed_no ? `<code>${esc(rec.deed_no)}</code>` : ""],
+      ])}
+    </section>
+
+    <section class="card" style="${CARD}">
+      <h3 style="${H3}">Ownership history</h3>
+      <ul class="timeline" style="margin:0;padding-left:16px;font-size:12px;line-height:1.5">${
+        prev || `<li style="list-style:none;margin-left:-16px;color:var(--text-dim)">No prior owners on record</li>`
+      }</ul>
+    </section>
+
+    <section class="card" style="${CARD}">
+      <h3 style="${H3}">Use &amp; assessment</h3>
+      ${kv([
+        ["Use", rec.use ? `<b>${esc(rec.use)}</b>` : ""],
+        ["Tax", esc(rec.tax)],
+        ["Encumbrance", esc(rec.encumbrance)],
+      ])}
+    </section>
+
+    <section class="card" style="${CARD}">
+      <h3 style="${H3}">Utilities</h3>
+      <div class="util" style="display:flex;flex-wrap:wrap;gap:6px">${
+        utils || `<i style="font-style:normal;font-size:11px;padding:4px 10px;border-radius:999px;border:1px dashed var(--border);color:var(--text-dim)">None recorded</i>`
+      }</div>
+    </section>
+
+    ${citizenMode ? "" : `<section class="card" style="${CARD}"><h3 style="${H3}">Jump floor</h3><div class="chips" id="floor-chips">${chips}</div></section>`}
+
     ${canInterior ? `
-    <h3>Inspect view</h3>
-    <div class="view-controls">
-      <button type="button" class="view-btn ${interiorView === "exterior" ? "active" : ""}" data-view="exterior">Exterior</button>
-      <button type="button" class="view-btn ${interiorView === "cutaway" ? "active" : ""}" data-view="cutaway">Cutaway</button>
-    </div>
-    <h3>Rooms — click to zoom</h3>
-    <div class="chips" id="room-chips">${roomChips || "<span style='font-size:12px;opacity:.7'>No room metadata</span>"}</div>
-    <div class="keys-inline"><kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway · rooms are Blender meshes fitted to this building</div>
+    <section class="card" style="${CARD}">
+      <h3 style="${H3}">Inspect view</h3>
+      <div class="view-controls">
+        <button type="button" class="view-btn ${interiorView === "exterior" ? "active" : ""}" data-view="exterior">Exterior</button>
+        <button type="button" class="view-btn ${interiorView === "cutaway" ? "active" : ""}" data-view="cutaway">Cutaway</button>
+      </div>
+      <h3 style="${H3};margin-top:14px">Rooms <span style="text-transform:none;letter-spacing:0;font-weight:400;opacity:.8">· click to zoom</span></h3>
+      <div class="chips" id="room-chips">${roomChips || `<span style="color:var(--text-dim);font-size:11px">No room metadata</span>`}</div>
+      <p class="keys-inline"><kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway — rooms are Blender meshes fitted to this building</p>
+    </section>
     ` : `<div class="banner" style="margin-top:12px">No interior floorplate for this landmark / WIP kind.</div>`}
-    <div class="row" style="margin-top:12px;color:var(--text-dim);font-size:11px">${esc(rec.notes || "")}</div>
+    ${rec.notes ? `<p class="p-note" style="font-size:11px;color:var(--text-dim);line-height:1.55;margin:4px 0 0;padding-top:10px;border-top:1px dashed var(--border)">${esc(rec.notes)}</p>` : ""}
   `;
   wirePanel(data);
 }

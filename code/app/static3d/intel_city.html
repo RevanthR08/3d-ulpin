@@ -14,7 +14,7 @@
       --ok: #0d7a4f;
       --warn: #9a6b00;
       --bad: #a33a3a;
-      --side: 380px;
+      --side: 404px;
     }
     * { box-sizing: border-box; }
     html, body {
@@ -99,13 +99,47 @@
     }
     #panel .placeholder { color: var(--text-dim); font-size: 13px; line-height: 1.65; margin: 0; }
     #panel .placeholder p { margin: 0 0 10px; }
-    #panel h2 { font-size: 15px; margin: 0 0 4px; }
+    #panel h2 { font-size: 16px; font-weight: 700; margin: 0 0 3px; line-height: 1.3; }
     #panel .close { float: right; color: var(--text-dim); cursor: pointer; font-size: 12px; text-decoration: none; }
     #panel .breadcrumb { font-size: 11px; color: var(--text-dim); margin: 0 0 10px; line-height: 1.55; clear: both; }
     #panel .breadcrumb b { color: var(--text); }
     #panel .ulpin {
       font-family: ui-monospace, monospace; color: var(--accent); font-size: 11.5px;
       margin-bottom: 12px; word-break: break-all; cursor: pointer;
+    }
+    /* Redesigned inspector: header block + grouped cards + compact key/value grid */
+    #panel .p-head { margin-bottom: 12px; }
+    #panel .p-sub { font-size: 11px; color: var(--text-dim); margin: 2px 0 8px; line-height: 1.5; }
+    #panel .p-sub b { color: var(--text); }
+    #panel .ulpin-pill {
+      display: inline-flex; align-items: center; gap: 7px; max-width: 100%;
+      font-family: ui-monospace, monospace; font-size: 11px; color: var(--accent);
+      background: #eef6f8; border: 1px solid #bcd9df; border-radius: 999px;
+      padding: 4px 11px; cursor: pointer; word-break: break-all; text-align: left;
+    }
+    #panel .ulpin-pill:hover { border-color: var(--accent); }
+    #panel .ulpin-pill .copy-ic { opacity: 0.5; font-family: system-ui, sans-serif; flex: none; }
+    #panel .card {
+      background: #f7fafc; border: 1px solid var(--border); border-radius: 12px;
+      padding: 11px 13px; margin-bottom: 10px;
+    }
+    #panel .card > h3 { margin-top: 0; }
+    #panel .card > h3 + h3, #panel .card > * + h3 { margin-top: 13px; }
+    #panel .kv {
+      display: grid; grid-template-columns: 82px 1fr; gap: 6px 12px;
+      font-size: 12.5px; line-height: 1.5; margin: 0;
+    }
+    #panel .kv dt { color: var(--text-dim); }
+    #panel .kv dd { margin: 0; min-width: 0; word-break: break-word; }
+    #panel .kv dd code {
+      font-family: ui-monospace, monospace; font-size: 11.5px;
+      background: #eef2f5; border-radius: 4px; padding: 1px 5px;
+    }
+    #panel .h3-hint { text-transform: none; letter-spacing: 0; font-weight: 400; opacity: 0.8; }
+    #panel .muted { color: var(--text-dim); font-size: 11px; }
+    #panel .p-note {
+      font-size: 11px; color: var(--text-dim); line-height: 1.55;
+      margin: 4px 0 0; padding-top: 10px; border-top: 1px dashed var(--border);
     }
     #panel .owner { font-size: 15px; font-weight: 650; margin-bottom: 4px; }
     #panel .owner-id { font-size: 11px; color: var(--text-dim); margin-bottom: 10px; }
@@ -114,28 +148,30 @@
       border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; line-height: 1.45;
     }
     #panel .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-    #panel .stat { background: #eef5fa; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
-    #panel .stat .v { font-size: 14px; font-weight: 700; }
+    #panel .stat { background: #eef5fa; border: 1px solid #cadff0; border-radius: 10px; padding: 9px 11px; }
+    #panel .stat .v { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+    #panel .stat .v small { font-size: 10px; font-weight: 500; color: var(--text-dim); margin-left: 2px; }
     #panel .stat .k { font-size: 10.5px; color: var(--text-dim); margin-top: 2px; }
     #panel h3 {
       font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.55px;
-      color: var(--text-dim); margin: 14px 0 6px;
+      color: var(--text-dim); margin: 14px 0 7px;
     }
     #panel .row { font-size: 12.5px; line-height: 1.55; margin-bottom: 6px; }
     #panel .row span { color: var(--text-dim); }
     #panel .badge {
-      display: inline-block; font-size: 10.5px; padding: 2px 8px; border-radius: 999px;
+      display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
       border: 1px solid var(--border); background: #f3f7fb; text-transform: capitalize;
     }
     #panel .badge.ok { background: #e5f7ee; border-color: #9ed4b6; color: var(--ok); }
     #panel .badge.warn { background: #fff6e5; border-color: #e6c98a; color: var(--warn); }
     #panel .badge.bad { background: #fdeeee; border-color: #e3a8a8; color: var(--bad); }
-    #panel .timeline { font-size: 12px; line-height: 1.55; }
+    #panel .timeline { font-size: 12px; line-height: 1.5; margin: 0; padding-left: 16px; }
     #panel .timeline li { margin-bottom: 6px; }
-    #panel .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    #panel .timeline li span { color: var(--text-dim); font-size: 11px; }
+    #panel .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 6px; }
     #panel .chip {
-      font-size: 11px; padding: 5px 9px; border-radius: 999px; border: 1px solid var(--border);
-      background: #f7fafc; cursor: pointer;
+      font-size: 11.5px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border);
+      background: #fff; cursor: pointer; color: var(--text); line-height: 1.3;
     }
     #panel .chip.active { background: #d9eef3; border-color: var(--accent); color: var(--accent); font-weight: 650; }
     #panel .chip:hover { border-color: var(--accent); }
@@ -149,14 +185,18 @@
     #panel .house-card.active {
       background: #d9eef3; border-color: var(--accent);
     }
-    #panel .view-controls { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 12px; }
-    #panel .view-btn {
-      font-size: 11px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border);
-      background: #fff; cursor: pointer; color: var(--text);
+    #panel .view-controls {
+      display: inline-flex; margin: 4px 0 4px; border: 1px solid var(--border);
+      border-radius: 9px; overflow: hidden; background: #fff;
     }
-    #panel .view-btn:hover { border-color: var(--accent); }
+    #panel .view-btn {
+      font-size: 11.5px; padding: 7px 16px; border: 0; border-radius: 0;
+      background: transparent; cursor: pointer; color: var(--text);
+    }
+    #panel .view-btn + .view-btn { border-left: 1px solid var(--border); }
+    #panel .view-btn:hover:not(.active) { background: #eef5fa; }
     #panel .view-btn.active {
-      background: #d9eef3; border-color: var(--accent); color: var(--accent); font-weight: 650;
+      background: var(--accent); color: #fff; font-weight: 650;
     }
     #panel .nav-mini { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 4px; }
     #panel .nav-mini button {
@@ -173,9 +213,10 @@
     #hud .chip:not(.active) { opacity: 0.55; }
     #panel .util { display: flex; flex-wrap: wrap; gap: 6px; }
     #panel .util i {
-      font-style: normal; font-size: 11px; padding: 3px 8px; border-radius: 6px;
-      background: #eef5fa; border: 1px solid var(--border);
+      font-style: normal; font-size: 11px; padding: 4px 10px; border-radius: 999px;
+      background: #eef5fa; border: 1px solid #cadff0; color: var(--text);
     }
+    #panel .util i.muted, #panel .util > .muted { border-style: dashed; color: var(--text-dim); }
     #hint {
       position: absolute; left: 12px; bottom: 52px; z-index: 10; max-width: min(360px, calc(100% - 24px));
       background: rgba(255,255,255,0.94); padding: 8px 10px; border-radius: 8px;
@@ -259,6 +300,6 @@
     "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
   } }
   </script>
-  <script type="module" src="./intel_city_app.js?v=42"></script>
+  <script type="module" src="./intel_city_app.js?v=44"></script>
 </body>
 </html>

@@ -131,8 +131,15 @@ export function Shell() {
     <div className="flex h-screen overflow-hidden bg-paper">
       <aside className="flex h-full w-24 flex-none flex-col border-r border-line bg-paper">
         <div className="flex flex-none items-center justify-center py-4">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink font-display text-[15px] font-semibold text-white">
-            V
+          <div
+            title="VERTICA"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink text-white shadow-sm"
+          >
+            <svg viewBox="0 0 24 24" fill="none" className="h-[22px] w-[22px]" role="img" aria-label="VERTICA">
+              <path d="M12 2.75 21 7.25 12 11.75 3 7.25Z" fill="#0c8f7c" />
+              <path d="M3 12 12 16.5 21 12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M3 16.5 12 21 21 16.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.6" />
+            </svg>
           </div>
         </div>
         <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto px-2 py-1">
