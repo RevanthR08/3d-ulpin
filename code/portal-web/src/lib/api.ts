@@ -30,10 +30,23 @@ export type UnitDetail = {
   ulpin: string
   unit?: string | number
   owner?: string
+  owner_id?: string
   building_id?: string
   building_name?: string
+  building_kind?: string
   floor_label?: string | number
   area_sq_m?: number
+  carpet_sq_m?: number
+  built_up_sq_m?: number
+  use?: string
+  registered_on?: string
+  deed_no?: string
+  registration_office?: string
+  tax_assessment?: string
+  encumbrance?: string
+  utilities?: string[]
+  notes?: string
+  previous_owners?: Array<{ name: string; from: string; to: string }>
   rooms?: Array<{ id?: string; name?: string; type?: string; area_sq_m?: number }>
   legal_status?: string
   elevations?: { base_m?: number; top_m?: number }
@@ -133,55 +146,82 @@ async function getJson<T>(path: string): Promise<T> {
 
 const INTEL_CITY_JSON = '/viewer3d/intel_city/intel_city_buildings.json?v=10'
 
+function parcelFrom(b: IntelCityBuilding, f?: IntelCityFloor, u?: IntelCityUnit, ulpin?: string): UnitDetail {
+  return {
+    ulpin: ulpin || u?.ulpin || f?.ulpin || b.ulpin,
+    unit: u ? `F${f?.floor_label || '1'}-${u.unit_label || 'A'}` : f?.floor_label,
+    owner: u?.owner || f?.owner,
+    owner_id: u?.owner_id || f?.owner_id,
+    building_id: b.id,
+    building_name: b.name,
+    building_kind: b.kind,
+    floor_label: f?.floor_label,
+    area_sq_m: u?.area_sq_m ?? f?.area_sq_m,
+    carpet_sq_m: f?.carpet_sq_m,
+    built_up_sq_m: f?.built_up_sq_m,
+    use: u?.use || f?.use,
+    registered_on: u?.registered_on || f?.registered_on,
+    deed_no: u?.deed_no || f?.deed_no,
+    registration_office: f?.registration_office,
+    tax_assessment: f?.tax_assessment,
+    encumbrance: f?.encumbrance,
+    utilities: f?.utilities,
+    notes: f?.notes,
+    previous_owners: f?.previous_owners,
+    legal_status: u?.legal_status || f?.legal_status || 'registered',
+    rooms: [],
+  }
+}
+
 /** Resolve building, floor, or house-unit ULPIN from Intel City registry. */
 export function resolveIntelCityUnit(reg: IntelCityRegistry, ulpin: string): UnitDetail | null {
   const needle = ulpin.trim()
   if (!needle) return null
   for (const b of reg.buildings || []) {
-    if (b.ulpin === needle) {
-      const f = b.floors?.[0]
-      const u = f?.units?.[0]
-      return {
-        ulpin: b.ulpin,
-        unit: b.kind === 'stadium' ? 'landmark' : 'building',
-        owner: u?.owner || f?.owner || (b.kind === 'stadium' ? 'Public assembly' : '—'),
-        building_id: b.id,
-        building_name: b.name,
-        floor_label: f?.floor_label ?? (b.kind === 'stadium' ? '—' : '1'),
-        area_sq_m: u?.area_sq_m ?? f?.area_sq_m,
-        legal_status: u?.legal_status || f?.legal_status || (b.kind === 'stadium' ? 'surface parcel' : 'registered'),
-        rooms: [],
-      }
-    }
+    if (b.ulpin === needle) return parcelFrom(b, b.floors?.[0], b.floors?.[0]?.units?.[0], b.ulpin)
     for (const f of b.floors || []) {
       for (const u of f.units || []) {
-        if (u.ulpin === needle) {
-          return {
-            ulpin: u.ulpin,
-            unit: `F${f.floor_label}-${u.unit_label || 'A'}`,
-            owner: u.owner,
-            building_id: b.id,
-            building_name: b.name,
-            floor_label: f.floor_label,
-            area_sq_m: u.area_sq_m ?? f.carpet_sq_m ?? f.area_sq_m,
-            legal_status: u.legal_status || 'registered',
-            rooms: [],
-          }
-        }
+        if (u.ulpin === needle) return parcelFrom(b, f, u, u.ulpin)
       }
-      if (f.ulpin === needle) {
-        return {
-          ulpin: f.ulpin,
-          unit: f.floor_label,
-          owner: f.owner,
-          building_id: b.id,
-          building_name: b.name,
-          floor_label: f.floor_label,
-          area_sq_m: f.carpet_sq_m ?? f.area_sq_m,
-          legal_status: f.legal_status || 'registered',
-          rooms: [],
-        }
+      if (f.ulpin === needle) return parcelFrom(b, f, f.units?.[0], f.ulpin)
+    }
+  }
+  return null
+}
+
+export type IntelCityHouse = {
+  building: IntelCityBuilding
+  floor: IntelCityFloor
+  unit: IntelCityUnit
+}
+
+export function findIntelCityHouse(reg: IntelCityRegistry, ulpin: string): IntelCityHouse | null {
+  const needle = ulpin.trim()
+  if (!needle) return null
+  for (const building of reg.buildings || []) {
+    for (const floor of building.floors || []) {
+      for (const unit of floor.units || []) {
+        if (unit.ulpin === needle) return { building, floor, unit }
       }
+      if (floor.ulpin === needle) {
+        const unit = floor.units?.[0] || {
+          ulpin: floor.ulpin,
+          owner: floor.owner,
+          owner_id: floor.owner_id,
+          legal_status: floor.legal_status,
+          area_sq_m: floor.area_sq_m,
+          use: floor.use,
+          registered_on: floor.registered_on,
+          deed_no: floor.deed_no,
+          unit_label: 'A',
+        }
+        return { building, floor, unit }
+      }
+    }
+    if (building.ulpin === needle && building.floors?.[0]) {
+      const floor = building.floors[0]
+      const unit = floor.units?.[0]
+      if (unit) return { building, floor, unit }
     }
   }
   return null

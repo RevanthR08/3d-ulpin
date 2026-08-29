@@ -59,7 +59,7 @@ export function CitizenHome() {
               </Link>
             </div>
           </div>
-          <CitizenPropertyList holdings={holdings} variant="summary" />
+          <CitizenPropertyList holdings={holdings} />
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
