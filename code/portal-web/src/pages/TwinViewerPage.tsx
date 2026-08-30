@@ -1,28 +1,24 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
-import { isCitizenDemoUlpin, ownedProperties, resolveCitizenUlpin } from '../lib/demoAccounts'
+import { ownedProperties } from '../lib/demoAccounts'
 import { adminTwinHref, citizenTwinHref, VIEWERS } from '../lib/viewers'
 
 /** Full-bleed Intel City 3D twin — admin: full city; citizen: locked house. */
 export function TwinViewerPage() {
-  const { auth, selectedUlpin, selectUlpin } = useAuth()
+  const { auth, selectedUlpin } = useAuth()
   const [params] = useSearchParams()
   const isAdmin = auth?.role === 'admin'
   const holdings = !isAdmin && selectedUlpin ? ownedProperties(selectedUlpin) : []
   const qUlpin = params.get('ulpin')
-  const [viewUlpin, setViewUlpin] = useState(
-    qUlpin && isCitizenDemoUlpin(qUlpin) ? qUlpin : selectedUlpin,
-  )
+  const [viewUlpin, setViewUlpin] = useState(selectedUlpin)
 
   useEffect(() => {
     if (isAdmin) return
-    const next = qUlpin && isCitizenDemoUlpin(qUlpin) ? qUlpin : selectedUlpin
-    if (!next) return
-    const locked = resolveCitizenUlpin(next)
-    setViewUlpin(locked)
-    if (locked !== selectedUlpin) selectUlpin(locked)
-  }, [isAdmin, qUlpin, selectedUlpin, selectUlpin])
+    const mine = selectedUlpin ? ownedProperties(selectedUlpin) : []
+    const ok = qUlpin && mine.some((h) => h.ulpin === qUlpin)
+    setViewUlpin(ok ? qUlpin : selectedUlpin)
+  }, [isAdmin, qUlpin, selectedUlpin])
 
   const qAir = params.get('air') === '1'
   const qUg = params.get('ug') === '1'
@@ -44,7 +40,7 @@ export function TwinViewerPage() {
               {isAdmin
                 ? 'Intel City twin — floors, interiors, underground, air rights'
                 : holdings.length > 0
-                  ? 'Close view of your house — ownership and rooms in the right panel'
+                  ? 'Camera on your floor — the rest of the city sits in fog'
                   : 'Set your ULPIN on My Property first'}
             </p>
           </div>

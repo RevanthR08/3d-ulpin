@@ -1,7 +1,7 @@
 /** Canonical 3D twin URLs for the VERTICA portal. */
 
 /** Bump when the twin's HTML/CSS/JS changes so cached iframes re-fetch. */
-export const TWIN_VER = '20260830click'
+export const TWIN_VER = '20260830priv'
 
 export const VIEWERS = {
   /** Primary city twin — Intel City (Blender DBSCAN registry). */
@@ -30,8 +30,8 @@ export function citizenTwinPage(ulpin?: string | null): string {
 }
 
 /**
- * Citizen POV: locked to one ULPIN — orbit/zoom on their house only,
- * other buildings hidden (`mode=citizen` in the twin).
+ * Citizen POV: locked to one ULPIN — orbit/zoom on their house,
+ * city stays visible (`mode=citizen` in the twin).
  */
 export function citizenTwinHref(ulpin?: string | null, opts?: CitizenTwinOpts): string {
   const params = new URLSearchParams()

@@ -206,13 +206,15 @@ function attachHouse(pick, preferredUlpin, preferredLabel) {
   if (!units.length) return pick;
   let unit = null;
   if (citizenMode && lockedUnitUlpin) {
-    unit = units.find((u) => u.ulpin === lockedUnitUlpin) || units[0];
+    unit = units.find((u) => u.ulpin === lockedUnitUlpin) || null;
+    if (!unit) return pick;
   } else if (preferredUlpin) {
     unit = units.find((u) => u.ulpin === preferredUlpin) || null;
   }
-  if (!unit && preferredLabel) {
+  if (!unit && preferredLabel && !citizenMode) {
     unit = units.find((u) => String(u.unit_label) === String(preferredLabel)) || null;
   }
+  if (!unit && citizenMode) return pick;
   if (!unit) unit = units[0];
   pick.unit = unit;
   pick.owner = unit.owner;
@@ -230,7 +232,7 @@ function houseRecord(floor, unit) {
       registered_on: floor.registered_on,
       registration_office: floor.registration_office,
       deed_no: floor.deed_no,
-      previous_owners: floor.previous_owners || [],
+      previous_owners: citizenMode ? [] : (floor.previous_owners || []),
       use: floor.use,
       tax: floor.tax_assessment,
       encumbrance: floor.encumbrance,
@@ -246,7 +248,9 @@ function houseRecord(floor, unit) {
     registered_on: unit.registered_on || floor.registered_on,
     registration_office: unit.registration_office || floor.registration_office,
     deed_no: unit.deed_no || floor.deed_no,
-    previous_owners: unit.previous_owners || floor.previous_owners || [],
+    previous_owners: citizenMode
+      ? (unit.previous_owners || [])
+      : (unit.previous_owners || floor.previous_owners || []),
     use: unit.use || floor.use,
     tax: unit.tax_assessment || shareTax(floor.tax_assessment, share),
     encumbrance: houseEncumbrance(unit, floor),
@@ -862,9 +866,10 @@ async function setInteriorView(mode) {
   if (interiorRoot) interiorRoot.visible = true;
 
   const rt = buildingRuntime.get(buildingId);
-  const look = rt?.center.clone() || new THREE.Vector3();
-  look.y = (ent.group?.position.y || 0) + 14;
-  let dist = citizenMode ? Math.max(48, (citizenStartDist || 70) * 0.72) : 90;
+  const look = (citizenMode && rt ? citizenFloorLook(rt) : rt?.center.clone()) || new THREE.Vector3();
+  if (!citizenMode) look.y = (ent.group?.position.y || 0) + 14;
+  else look.y = floorWorldY(rt, pick.floor || resolveCitizenFloor(rt)) + 8;
+  let dist = citizenMode ? Math.max(40, (citizenStartDist || 70) * 0.85) : 90;
   flyTarget = {
     pos: new THREE.Vector3(look.x + dist * 0.7, look.y + dist * 0.55, look.z + dist * 0.62),
     look,
@@ -1402,50 +1407,141 @@ function citizenVisualBox(rt) {
   };
 }
 
-/** Street-level 3/4 frame of the locked floor — outside the facade, not the whole tower. */
-function citizenFitDistance(size) {
-  const halfW = 0.5 * Math.max(size.x, size.z, 28);
-  const fov = THREE.MathUtils.degToRad(camera?.fov || 42);
-  const outside = halfW + 38;
-  const fewStoreys = (44 * 0.5) / Math.tan(fov * 0.5) / 0.55;
-  return THREE.MathUtils.clamp(Math.max(outside, fewStoreys), 52, 175);
+function citizenQueryUlpin() {
+  return (
+    lockedUnitUlpin ||
+    selectedData?.unit?.ulpin ||
+    selectedData?.ulpin ||
+    new URLSearchParams(location.search).get("ulpin") ||
+    ""
+  );
 }
 
-/** Aim at the citizen's floor, not the building mid-height. */
+function resolveCitizenFloor(rt) {
+  const floors = rt?.building?.floors || [];
+  const ulpin = citizenQueryUlpin();
+  const m = String(ulpin).match(/-L(\d+)/i);
+  if (m) {
+    const lab = String(Number(m[1]));
+    const hit = floors.find((f) => String(f.floor_label) === lab || String(f.floor_label) === m[1]);
+    if (hit) return hit;
+  }
+  if (lockedFloorLabel) {
+    const hit = floors.find((f) => String(f.floor_label) === String(lockedFloorLabel));
+    if (hit) return hit;
+  }
+  if (selectedData?.floor) return selectedData.floor;
+  return floors[0] || null;
+}
+
+/** Mid-height of a storey in Three Y (Blender Z elevations from the registry). */
+function floorWorldY(rt, floor) {
+  const fl = floor || resolveCitizenFloor(rt);
+  if (fl && Number.isFinite(Number(fl.elevation_base)) && Number.isFinite(Number(fl.elevation_top))) {
+    return (Number(fl.elevation_base) + Number(fl.elevation_top)) / 2;
+  }
+  const y0 = rt?.box?.min?.y ?? 0;
+  const span = Math.max(rt?.size?.y ?? 8, 8);
+  if (fl && Number.isFinite(Number(fl.floor_t0))) {
+    const t0 = Number(fl.floor_t0);
+    const t1 = Number.isFinite(Number(fl.floor_t1)) ? Number(fl.floor_t1) : t0;
+    return y0 + ((t0 + t1) / 2) * span;
+  }
+  const n = Math.max(rt?.building?.floors?.length || 1, 1);
+  const idx = THREE.MathUtils.clamp(Number(fl?.floor_index) || 0, 0, n - 1);
+  return y0 + ((idx + 0.5) / n) * span;
+}
+
+/** Aim at the citizen's floor band, not the tower base or mid-height. */
 function citizenFloorLook(rt) {
   const vis = citizenVisualBox(rt);
-  const look = vis.center.clone();
-  const floor =
-    selectedData?.floor ||
-    (lockedFloorLabel
-      ? rt.building?.floors?.find((f) => String(f.floor_label) === String(lockedFloorLabel))
-      : rt.building?.floors?.[0]);
-  const y0 = vis.box.min.y;
-  const ySpan = Math.max(vis.size.y, 8);
-  if (floor) {
-    const idx = floor.floor_index ?? 0;
-    const n = Math.max(rt.building?.floors?.length || 1, 1);
-    look.y = y0 + ((idx + 0.5) / n) * ySpan;
-  }
-  const pt = selectedData?.point;
-  if (pt) {
-    look.x = pt.x;
-    look.z = pt.z;
-  }
+  const look = (rt.center || vis.center).clone();
+  look.x = vis.center.x;
+  look.z = vis.center.z;
+  look.y = floorWorldY(rt, resolveCitizenFloor(rt));
   return look;
+}
+
+/** Camera must sit outside the footprint — never inside the mesh. */
+function citizenCameraDir() {
+  return new THREE.Vector3(1.25, 0.12, 1.1).normalize();
+}
+
+/** Camera at this storey's height, standing outside the facade. */
+function citizenCameraPose(rt) {
+  const vis = citizenVisualBox(rt);
+  const floor = resolveCitizenFloor(rt);
+  const y = floorWorldY(rt, floor);
+  const dir = citizenCameraDir();
+  const halfX = 0.5 * Math.max(vis.size.x || 0, rt.size?.x || 0, 24);
+  const halfZ = 0.5 * Math.max(vis.size.z || 0, rt.size?.z || 0, 24);
+  const look = vis.center.clone();
+  look.y = y;
+  const toWall = Math.max(halfX / Math.max(Math.abs(dir.x), 0.2), halfZ / Math.max(Math.abs(dir.z), 0.2));
+  const dist = toWall + 56;
+  const pos = look.clone().addScaledVector(dir, dist);
+  pos.y = y + 10;
+  return { look, pos, dist, floor };
+}
+
+const FOG_SKY = 0xb7d2ea;
+
+function setMeshFogEnabled(mesh, on) {
+  if (!mesh) return;
+  ensureUniqueMaterials(mesh);
+  const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+  for (const m of mats) {
+    if (!m) continue;
+    m.fog = on;
+    m.needsUpdate = true;
+  }
+}
+
+/** Fog the city; keep the locked house unfogged. */
+function applyCitizenFog(buildingId) {
+  const dist = citizenStartDist || 140;
+  scene.fog = new THREE.Fog(FOG_SKY, Math.max(48, dist * 0.55), Math.max(220, dist * 2.4));
+  scene.background = new THREE.Color(FOG_SKY);
+  cityRoot?.traverse((o) => {
+    if (!o.isMesh) return;
+    const mine = o.userData.buildingId === buildingId;
+    setMeshFogEnabled(o, !mine);
+  });
+  for (const [bid, rt] of buildingRuntime) {
+    const mine = bid === buildingId;
+    for (const m of rt.meshes || []) setMeshFogEnabled(m, !mine);
+  }
+}
+
+/** Citizen view keeps the city visible — do not hide neighbouring buildings. */
+function showAllCityBuildings() {
+  cityRoot?.traverse((o) => {
+    if (!o.isMesh) return;
+    if (o.userData.isUnderground) {
+      o.visible = false;
+      return;
+    }
+    o.visible = true;
+    o.userData.citizenHidden = false;
+  });
+  for (const [, rt] of buildingRuntime) {
+    for (const m of rt.meshes || []) {
+      m.visible = true;
+      if (m.userData) m.userData.citizenHidden = false;
+    }
+  }
 }
 
 /** Exterior stays outside the facade; cutaway may move in for rooms. Tight zoom-out. */
 function applyCitizenZoomLimits(cutaway) {
   if (!citizenMode || !controls) return;
   const start = citizenStartDist || 70;
-  controls.minDistance = cutaway ? start * 0.4 : start * 0.7;
-  controls.maxDistance = cutaway ? start * 1.28 : start * 1.1;
+  controls.minDistance = cutaway ? Math.max(24, start * 0.35) : start * 0.96;
+  controls.maxDistance = cutaway ? start * 1.5 : start * 1.8;
 }
 
 /**
- * Citizen portal mode: frame their floor/house. Neighbours stay visible.
- * Camera stays close — no city-scale zoom-out.
+ * Citizen portal: only their building, camera on their floor (not the ground lobby).
  */
 function applyCitizenLock(buildingId) {
   const rt = buildingRuntime.get(buildingId);
@@ -1455,27 +1551,40 @@ function applyCitizenLock(buildingId) {
   }
   citizenMode = true;
   lockedBuildingId = buildingId;
-  const vis = citizenVisualBox(rt);
-  lockCenter.copy(citizenFloorLook(rt));
-  const dist = citizenFitDistance(vis.size);
-  citizenStartDist = dist;
-  lockRadius = Math.max(dist * 0.45, 36);
-
-  for (const [, other] of buildingRuntime) {
-    for (const m of other.meshes || []) {
-      m.visible = true;
-      if (m.userData) m.userData.citizenHidden = false;
-    }
-    if (other.outline) other.outline.visible = true;
+  setAirVisible(false);
+  showAllCityBuildings();
+  const floor = resolveCitizenFloor(rt);
+  if (floor) {
+    lockedFloorLabel = floor.floor_label;
+    const unit = lockedUnitUlpin
+      ? (floor.units || []).find((u) => u.ulpin === lockedUnitUlpin)
+      : (floor.units || []).find((u) => u.ulpin === citizenQueryUlpin())
+        || selectedData?.unit;
+    if (unit?.ulpin) lockedUnitUlpin = unit.ulpin;
+    selectedData = {
+      ...(selectedData || {}),
+      kind: "floor",
+      building: rt.building,
+      floor,
+      unit: unit || selectedData?.unit,
+      meshes: rt.meshes,
+      buildingId,
+      floorLabel: floor.floor_label,
+      owner: unit?.owner || floor.owner,
+      ulpin: unit?.ulpin || floor.ulpin,
+    };
   }
+  const pose = citizenCameraPose(rt);
+  lockCenter.copy(pose.look);
+  citizenStartDist = pose.dist;
+  lockRadius = Math.max(pose.dist * 0.45, 40);
+  applyCitizenFog(buildingId);
   showOutline(buildingId);
 
   controls.enablePan = false;
   applyCitizenZoomLimits(false);
-  homeTarget.copy(lockCenter);
-  const dir = new THREE.Vector3(1.08, 0.34, 1.14).normalize();
-  homeCam.copy(lockCenter).addScaledVector(dir, dist);
-  homeCam.y = Math.max(homeCam.y, lockCenter.y + 10);
+  homeTarget.copy(pose.look);
+  homeCam.copy(pose.pos);
   flyTarget = null;
   camera.position.copy(homeCam);
   controls.target.copy(homeTarget);
@@ -1506,7 +1615,7 @@ function applyCitizenLock(buildingId) {
   const sub = document.querySelector("#hud .sub");
   if (sub) {
     sub.innerHTML =
-      `<b>Citizen view</b> — focused on your house. Neighbours stay in view. Exterior or Cutaway in the right panel.<br/>Keys: <kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway`;
+      `<b>Citizen view</b> — camera on floor ${esc(lockedFloorLabel || pose.floor?.floor_label || "")}. Neighbours fade in fog. Exterior or Cutaway in the right panel.<br/>Keys: <kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway`;
   }
   if (selectedData?.kind === "floor") {
     attachHouse(selectedData, lockedUnitUlpin);
@@ -1514,7 +1623,7 @@ function applyCitizenLock(buildingId) {
   } else if (selectedData) {
     showPanel(selectedData);
   }
-  setHint("Your house · orbit around your floor · <kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway");
+  setHint(`Your house · floor ${esc(lockedFloorLabel || "")} · neighbours in fog · <kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway`);
   return true;
 }
 
@@ -1612,6 +1721,28 @@ function prepareMaterials(root) {
   });
 }
 
+function citizenLockedPick(rt, point) {
+  if (!rt?.building) return null;
+  const floor = resolveCitizenFloor(rt);
+  const units = floor?.units || [];
+  const unit =
+    (lockedUnitUlpin && units.find((u) => u.ulpin === lockedUnitUlpin)) ||
+    units.find((u) => u.ulpin === citizenQueryUlpin()) ||
+    null;
+  return {
+    kind: floor ? "floor" : "stadium",
+    building: rt.building,
+    floor,
+    unit: unit || undefined,
+    meshes: rt.meshes,
+    point: point || citizenFloorLook(rt),
+    buildingId: rt.building.id,
+    floorLabel: floor?.floor_label,
+    owner: unit?.owner,
+    ulpin: unit?.ulpin || floor?.ulpin,
+  };
+}
+
 function resolvePick(evt) {
   const rect = renderer.domElement.getBoundingClientRect();
   const cx = evt.clientX ?? evt.touches?.[0]?.clientX;
@@ -1691,10 +1822,13 @@ function resolvePick(evt) {
   const hit = hits[0];
   const mesh = hit.object;
   const bid = mesh.userData.buildingId;
-  if (citizenMode && lockedBuildingId && bid !== lockedBuildingId) return null;
   const rt = buildingRuntime.get(bid);
   if (!rt) return null;
   const b = rt.building;
+  if (citizenMode && lockedBuildingId) {
+    if (bid !== lockedBuildingId) return null;
+    return citizenLockedPick(rt, hit.point);
+  }
   if (b.kind === "stadium" || !b.floors?.length) {
     return { kind: "stadium", building: b, meshes: rt.meshes, point: hit.point, buildingId: bid };
   }
@@ -1767,6 +1901,12 @@ function onHover(evt) {
     tip.innerHTML = `<div><b>${esc(pick.building.name)}</b> · Landmark</div>
       <div class="t-owner">No vertical floor parcels</div>
       <div class="t-ulpin">${esc(pick.building.ulpin)}</div>`;
+  } else if (citizenMode) {
+    const floorBit = lockedFloorLabel ? ` · Floor ${esc(lockedFloorLabel)}` : "";
+    const houseBit = pick.unit?.unit_label ? ` · House ${esc(pick.unit.unit_label)}` : "";
+    tip.innerHTML = `<div><b>Your house</b>${houseBit}</div>
+      <div class="t-owner">${esc(pick.building?.name || "")}${floorBit}</div>
+      <div class="t-ulpin">${esc(pick.unit?.ulpin || pick.ulpin || "")}</div>`;
   } else {
     tip.innerHTML = `<div><b>${esc(pick.building.name)}</b> · F${esc(pick.floorLabel)}</div>
       <div class="t-owner">${esc(pick.owner || "—")}</div>
@@ -1795,6 +1935,10 @@ function selectPick(pick) {
   if (citizenMode && lockedBuildingId && pick.buildingId && pick.buildingId !== lockedBuildingId) {
     setHint("Citizen twin is locked to <b>your</b> property only.");
     return;
+  }
+  if (citizenMode && lockedBuildingId && pick.kind === "floor") {
+    const rt = buildingRuntime.get(lockedBuildingId);
+    pick = citizenLockedPick(rt, pick.point) || pick;
   }
   if (pick.kind === "room") {
     // Keep floor selection context; zoom into room
@@ -1857,23 +2001,15 @@ function flyToPick(pick) {
   if (!rt) return;
   const vis = citizenVisualBox(rt);
   const radius = 0.55 * Math.max(vis.size.x, vis.size.z, 80);
+  if (citizenMode) {
+    const pose = citizenCameraPose(rt);
+    lockCenter.copy(pose.look);
+    flyTarget = { pos: pose.pos.clone(), look: pose.look.clone() };
+    return;
+  }
   const look = pick.point ? pick.point.clone() : vis.center.clone();
   if (pick.floor) {
-    const y0 = vis.box.min.y;
-    const ySpan = Math.max(vis.size.y, 8);
-    const idx = pick.floor.floor_index ?? 0;
-    const n = pick.building.floors.length;
-    look.y = y0 + ((idx + 0.5) / Math.max(n, 1)) * ySpan;
-  }
-  if (citizenMode) {
-    lockCenter.copy(look);
-    const dist = Math.min(citizenFitDistance(vis.size), (controls?.maxDistance || 82) * 0.98);
-    const dir = new THREE.Vector3(1.08, 0.34, 1.14).normalize();
-    flyTarget = {
-      pos: look.clone().add(dir.multiplyScalar(dist)),
-      look,
-    };
-    return;
+    look.y = floorWorldY(rt, pick.floor);
   }
   const dir = new THREE.Vector3(1.0, 0.9, 1.08).normalize();
   const dist = Math.max(70, radius * 1.45);
@@ -1894,17 +2030,13 @@ function selectFloorOnBuilding(buildingId, floorLabel, unitUlpin) {
   }
   const rt = buildingRuntime.get(buildingId);
   if (!rt) return;
-  const floor = rt.building.floors.find((f) => f.floor_label === floorLabel);
+  const floor = rt.building.floors.find((f) => String(f.floor_label) === String(floorLabel));
   if (!floor) return;
   const sameFloor =
     selectedData?.buildingId === buildingId &&
     String(selectedData?.floorLabel) === String(floor.floor_label);
-  const y0 = rt.box.min.y;
-  const ySpan = Math.max(rt.size.y, 8);
-  const idx = floor.floor_index ?? 0;
-  const n = rt.building.floors.length;
   const point = rt.center.clone();
-  point.y = y0 + ((idx + 0.5) / Math.max(n, 1)) * ySpan;
+  point.y = floorWorldY(rt, floor);
   const pick = {
     kind: "floor",
     building: rt.building,
@@ -2133,7 +2265,7 @@ function showPanel(data) {
       <h2>${title}</h2>
       <div class="p-sub">${sub}</div>
       <button type="button" class="ulpin-pill" id="ulpin-copy" title="Copy ULPIN">
-        <span>${esc(data.unit?.ulpin || f.ulpin)}</span><span class="copy-ic">⧉</span>
+        <span>${esc(citizenMode ? (data.unit?.ulpin || "") : (data.unit?.ulpin || f.ulpin))}</span><span class="copy-ic">⧉</span>
       </button>
     </div>
     ${banner}
@@ -2142,13 +2274,13 @@ function showPanel(data) {
       <div class="stat"><div class="v">${esc(rec.carpet ?? "—")}<small>m²</small></div><div class="k">Carpet</div></div>
       <div class="stat"><div class="v">${esc(rec.built_up ?? "—")}<small>m²</small></div><div class="k">Built-up</div></div>
       <div class="stat"><div class="v">${esc(rec.area ?? "—")}<small>m²</small></div><div class="k">Parcel area</div></div>
-      <div class="stat"><div class="v">${esc(useShort || data.unit?.unit_label || units.length || 1)}</div><div class="k">${useShort ? "Type" : data.unit ? "House" : "Houses"}</div></div>
+      <div class="stat"><div class="v">${esc(useShort || data.unit?.unit_label || "—")}</div><div class="k">${useShort ? "Type" : "House"}</div></div>
     </div>
 
     <section class="card" style="${CARD}">
       <h3 style="${H3}">Registration</h3>
       ${kv([
-        ["Owner", `<b>${esc(data.unit?.owner || f.owner)}</b>`],
+        ["Owner", `<b>${esc(citizenMode ? (data.unit?.owner || "You") : (data.unit?.owner || f.owner))}</b>`],
         ["Status", `<span class="badge ${statusClass(rec.legal_status)}">${esc(rec.legal_status)}</span>`],
         ["Registered", esc(rec.registered_on)],
         ["Office", esc(rec.registration_office)],
