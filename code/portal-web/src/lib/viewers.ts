@@ -1,7 +1,7 @@
 /** Canonical 3D twin URLs for the VERTICA portal. */
 
 /** Bump when the twin's HTML/CSS/JS changes so cached iframes re-fetch. */
-export const TWIN_VER = '20260830air3'
+export const TWIN_VER = '20260830gnss'
 
 export const VIEWERS = {
   /** Primary city twin — Intel City (Blender DBSCAN registry). */

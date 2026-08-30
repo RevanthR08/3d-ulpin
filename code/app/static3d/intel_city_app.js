@@ -1974,6 +1974,7 @@ function showPanel(data) {
       <h2>${esc(a.label || typeLabel)}</h2>
       <div class="breadcrumb"><b>City</b> → Underground → ${esc(typeLabel)}</div>
       <div class="ulpin" id="ulpin-copy" title="Click to copy">${esc(a.ulpin || a.id || "")}</div>
+      ${coordsNearUlpin(a.ulpin || a.id, { floorIndex: 0 })}
       <div class="banner">Subsurface asset — conflict-aware planning layer for DoLR 3D twin.</div>
       <div class="grid">
         <div class="stat"><div class="v">${esc(a.depth_m ?? "—")} m</div><div class="k">Depth</div></div>
@@ -1996,6 +1997,7 @@ function showPanel(data) {
       <h2>${esc(a.label || "Air rights")}</h2>
       <div class="breadcrumb"><b>City</b> → Air rights → ${esc(a.building_name || b.name || "")}</div>
       <div class="ulpin" id="ulpin-copy" title="Click to copy">${esc(a.ulpin || "")}</div>
+      ${coordsNearUlpin(a.ulpin || a.parent_ulpin, { floorIndex: 24 })}
       <div class="banner">Unbuilt sky volume above the roof — transferable FSI / elevated rights under DoLR 3D ULPIN. Not an apartment floor.</div>
       <div class="grid">
         <div class="stat"><div class="v">+${esc(a.height_m ?? "—")} m</div><div class="k">Column height</div></div>
@@ -2018,6 +2020,7 @@ function showPanel(data) {
       <h2>${esc(b.name)}</h2>
       <div class="breadcrumb"><b>City</b> → Landmark → Stadium</div>
       <div class="ulpin" title="Click to copy">${esc(b.ulpin)}</div>
+      ${coordsNearUlpin(b.ulpin, { floorIndex: 0 })}
       <div class="banner">Arena / tribune landmark — <b>no vertical floor parcels</b> under DoLR 3D ULPIN mapping. Surface parcel only.</div>
       <h3>Classification</h3>
       <div class="row"><span>Kind</span><br/><b>Stadium</b></div>
@@ -2101,6 +2104,7 @@ function showPanel(data) {
       <button type="button" class="ulpin-pill" id="ulpin-copy" title="Copy ULPIN">
         <span>${esc(data.unit?.ulpin || f.ulpin)}</span><span class="copy-ic">⧉</span>
       </button>
+      ${coordsNearUlpin(data.unit?.ulpin || f.ulpin || b.ulpin, { floorIndex: f.floor_index })}
     </div>
     ${banner}
     ${housesHtml}
