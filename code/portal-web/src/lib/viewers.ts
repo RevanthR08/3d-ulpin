@@ -1,7 +1,7 @@
 /** Canonical 3D twin URLs for the VERTICA portal. */
 
 /** Bump when the twin's HTML/CSS/JS changes so cached iframes re-fetch. */
-export const TWIN_VER = '20260830'
+export const TWIN_VER = '20260830air3'
 
 export const VIEWERS = {
   /** Primary city twin — Intel City (Blender DBSCAN registry). */
@@ -19,6 +19,7 @@ export type CitizenTwinOpts = {
 export type AdminTwinOpts = {
   ulpin?: string | null
   ug?: boolean
+  air?: boolean
   qa?: 'society' | 'chennai'
 }
 
@@ -50,6 +51,7 @@ export function adminTwinHref(opts?: AdminTwinOpts): string {
   const params = new URLSearchParams()
   if (opts?.ulpin) params.set('ulpin', opts.ulpin)
   if (opts?.ug) params.set('ug', '1')
+  if (opts?.air) params.set('air', '1')
   params.set('v', TWIN_VER)
   return `${VIEWERS.intelCity}?${params.toString()}`
 }

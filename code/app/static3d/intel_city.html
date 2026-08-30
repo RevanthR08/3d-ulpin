@@ -119,6 +119,14 @@
     }
     #panel .ulpin-pill:hover { border-color: var(--accent); }
     #panel .ulpin-pill .copy-ic { opacity: 0.5; font-family: system-ui, sans-serif; flex: none; }
+    #panel .coords-line {
+      margin: 6px 0 0; font-family: ui-monospace, monospace; font-size: 10.5px;
+      color: var(--text-dim); line-height: 1.45;
+    }
+    #panel .coords-line .coords-k {
+      display: inline-block; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--accent); margin-right: 6px; font-family: "Segoe UI", system-ui, sans-serif;
+    }
     #panel .card {
       background: #f7fafc; border: 1px solid var(--border); border-radius: 12px;
       padding: 11px 13px; margin-bottom: 10px;
@@ -256,6 +264,7 @@
               Compare satellite
             </button>
             <button id="btn-ug" type="button" title="Lift city — base stays visible; look underneath for pipes">Underground</button>
+            <button id="btn-air" type="button" title="Dashed volumes above roofs — unused airspace / transferable FSI">Air rights</button>
           </div>
           <div id="ug-chips" class="chips" style="display:none;margin-top:8px">
             <button type="button" class="chip active" data-ug="fiber_optic">Fiber</button>
@@ -289,7 +298,7 @@
       <div class="placeholder">
         <p><b>Right inspector</b> — click a building floor in the 3D view to open ownership, deeds, and rooms.</p>
         <p>Then use <b>Exterior</b> / <b>Cutaway</b> here to inspect Blender rooms (kitchen, living, …).</p>
-        <p style="margin:0;font-size:11px">Keys: <kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway · <kbd>U</kbd> Underground</p>
+        <p style="margin:0;font-size:11px">Keys: <kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway · <kbd>U</kbd> Underground · <kbd>A</kbd> Air rights</p>
       </div>
     </aside>
   </div>
@@ -300,6 +309,6 @@
     "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
   } }
   </script>
-  <script type="module" src="./intel_city_app.js?v=44"></script>
+  <script type="module" src="./intel_city_app.js?v=47"></script>
 </body>
 </html>

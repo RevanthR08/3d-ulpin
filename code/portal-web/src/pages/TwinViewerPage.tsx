@@ -24,8 +24,10 @@ export function TwinViewerPage() {
     if (locked !== selectedUlpin) selectUlpin(locked)
   }, [isAdmin, qUlpin, selectedUlpin, selectUlpin])
 
+  const qAir = params.get('air') === '1'
+  const qUg = params.get('ug') === '1'
   const twinHref = isAdmin
-    ? adminTwinHref()
+    ? adminTwinHref({ air: qAir, ug: qUg })
     : viewUlpin
       ? citizenTwinHref(viewUlpin)
       : null
@@ -40,13 +42,25 @@ export function TwinViewerPage() {
             </h1>
             <p className="mt-0.5 text-[12px] text-mute">
               {isAdmin
-                ? 'Intel City twin — full roam, floors, interiors, underground'
+                ? 'Intel City twin — floors, interiors, underground, air rights'
                 : holdings.length > 0
                   ? 'Close view of your house — ownership and rooms in the right panel'
                   : 'Set your ULPIN on My Property first'}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            {isAdmin && (
+              <Link
+                to={qAir ? '/app/twin' : '/app/twin?air=1'}
+                className={`rounded-lg px-3.5 py-2 text-[12px] font-semibold ${
+                  qAir
+                    ? 'border border-signal bg-signal-soft text-signal-deep'
+                    : 'border border-line bg-white text-ink hover:border-signal'
+                }`}
+              >
+                Air rights
+              </Link>
+            )}
             {isAdmin && twinHref && (
               <a
                 href={twinHref}

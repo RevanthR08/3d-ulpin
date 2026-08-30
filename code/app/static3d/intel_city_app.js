@@ -32,6 +32,18 @@ let ugTypeEnabled = {
 let ugLiftY = 0;
 let cityBaseMeshes = [];
 
+/** Demo parcels where the air column sits cleanly on the roof (jury screenshots). */
+const AIR_RIGHTS_BUILDING_IDS = new Set([
+  "INTEL-BLDG-014", // Cedar Walk — larger midrise
+  "INTEL-BLDG-013", // Indigo Quarters — 4-level brick
+  "INTEL-BLDG-009", // Harbour Block — taller slim midrise
+  "INTEL-BLDG-022", // Bazaar Lane — nearby lowrise (unused FSI)
+]);
+let airRoot = null;
+let airPickable = [];
+let airVisible = false;
+let airByBuilding = new Map();
+
 /** Portal citizen twin: lock orbit + picks to one building (mode=citizen&ulpin=…). */
 let citizenMode = false;
 let lockedBuildingId = null;
@@ -93,6 +105,40 @@ function esc(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[c]));
+}
+
+/** Stable mock WGS84 around T. Nagar (PIN 600001) — demo GNSS/CORS, not survey. */
+function mockGnss(id, extra = {}) {
+  const s = String(id || "parcel");
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  h >>>= 0;
+  let h2 = 2166136261;
+  const s2 = `${s}:lon`;
+  for (let i = 0; i < s2.length; i++) {
+    h2 ^= s2.charCodeAt(i);
+    h2 = Math.imul(h2, 16777619);
+  }
+  h2 >>>= 0;
+  const lat = 13.0418 + ((h % 1800) - 900) * 1e-5;
+  const lon = 80.2339 + ((h2 % 1800) - 900) * 1e-5;
+  const elev = 6.4 + (h % 320) / 10 + (Number(extra.floorIndex) || 0) * 3.2;
+  return {
+    lat: lat.toFixed(6),
+    lon: lon.toFixed(6),
+    elev: elev.toFixed(1),
+  };
+}
+
+function coordsNearUlpin(id, extra) {
+  const g = mockGnss(id, extra);
+  return `<div class="coords-line" title="Mock GNSS/CORS — demo coordinates">
+    <span class="coords-k">GNSS</span>
+    ${esc(g.lat)}° N · ${esc(g.lon)}° E · +${esc(g.elev)} m
+  </div>`;
 }
 
 function statusClass(st) {
@@ -364,6 +410,122 @@ function setUgVisible(on) {
   flyTarget = null;
 }
 
+function airUlpin(b) {
+  const base = String(b?.ulpin || b?.id || "AIR").replace(/-AIR$/i, "");
+  return `${base}-AIR`;
+}
+
+/** Scene-unit column above the roof. Lowrise keeps more unused FSI than towers. */
+function airColumnHeight(b, size) {
+  const kind = b?.kind || "";
+  if (kind === "lowrise") return THREE.MathUtils.clamp(size.y * 2.4, 64, 140);
+  if (kind === "midrise") return THREE.MathUtils.clamp(size.y * 0.7, 48, 110);
+  if (kind === "skyscraper") return THREE.MathUtils.clamp(size.y * 0.14, 56, 110);
+  if (kind === "construction") return THREE.MathUtils.clamp(size.y * 1.1, 48, 100);
+  return 48;
+}
+
+function buildAirRightsLayer() {
+  if (airRoot) {
+    scene.remove(airRoot);
+    airRoot.traverse((o) => {
+      o.geometry?.dispose?.();
+      if (o.material) {
+        if (Array.isArray(o.material)) o.material.forEach((m) => m.dispose?.());
+        else o.material.dispose?.();
+      }
+    });
+  }
+  airRoot = new THREE.Group();
+  airRoot.name = "air_rights";
+  airPickable = [];
+  airByBuilding.clear();
+
+  for (const [bid, rt] of buildingRuntime) {
+    const b = rt.building;
+    if (!b || b.kind === "stadium") continue;
+    if (!AIR_RIGHTS_BUILDING_IDS.has(bid)) continue;
+    const h = airColumnHeight(b, rt.size);
+    const w = Math.max(10, rt.size.x * 0.92);
+    const d = Math.max(10, rt.size.z * 0.92);
+    const geo = new THREE.BoxGeometry(w, h, d);
+    const fill = new THREE.MeshLambertMaterial({
+      color: 0x5ec8d6,
+      transparent: true,
+      opacity: 0.2,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+    });
+    const mesh = new THREE.Mesh(geo, fill);
+    mesh.position.set(rt.center.x, rt.box.max.y + h * 0.5 + 1.2, rt.center.z);
+    mesh.renderOrder = 6;
+    mesh.userData.isAirRights = true;
+    mesh.userData.buildingId = bid;
+    mesh.userData.asset = {
+      ulpin: airUlpin(b),
+      building_id: bid,
+      building_name: b.name,
+      building_kind: b.kind,
+      parent_ulpin: b.ulpin,
+      height_m: Math.round(h),
+      roof_m: Math.round(rt.size.y),
+      status: "unbuilt",
+      label: `Air rights · ${b.name}`,
+    };
+    const edges = new THREE.LineSegments(
+      new THREE.EdgesGeometry(geo),
+      new THREE.LineDashedMaterial({
+        color: 0x1f7a8c,
+        dashSize: 8,
+        gapSize: 5,
+        transparent: true,
+        opacity: 0.92,
+      }),
+    );
+    edges.computeLineDistances();
+    edges.renderOrder = 7;
+    mesh.add(edges);
+    airRoot.add(mesh);
+    airPickable.push(mesh);
+    airByBuilding.set(bid, mesh);
+  }
+  airRoot.visible = false;
+  scene.add(airRoot);
+}
+
+function airPickFromMesh(mesh, point) {
+  const asset = mesh.userData.asset || {};
+  return {
+    kind: "air_rights",
+    building: buildingRuntime.get(mesh.userData.buildingId)?.building,
+    buildingId: mesh.userData.buildingId,
+    asset,
+    meshes: [mesh],
+    point: point || mesh.getWorldPosition(new THREE.Vector3()),
+    ulpin: asset.ulpin,
+  };
+}
+
+function setAirVisible(on) {
+  if (citizenMode) on = false;
+  airVisible = !!on;
+  if (airRoot) airRoot.visible = airVisible;
+  document.getElementById("btn-air")?.classList.toggle("primary", airVisible);
+  if (airVisible) {
+    setHint("Air rights · dashed columns above selected roofs are <b>unbuilt sky parcels</b> — click one");
+  }
+}
+
+function selectAirOnBuilding(buildingId) {
+  const mesh = airByBuilding.get(buildingId);
+  if (!mesh) {
+    setHint("No air-rights volume for this landmark.");
+    return;
+  }
+  setAirVisible(true);
+  selectPick(airPickFromMesh(mesh));
+}
+
 function roomsForBuilding(buildingId) {
   const entry = (interiorReg.buildings || []).find(
     (b) => b.building_id === buildingId || b.id === buildingId
@@ -592,7 +754,7 @@ function showPlaceholderPanel() {
     <div class="placeholder">
       <p><b>Right inspector</b> — click a building floor in the 3D view to open ownership, deeds, and rooms.</p>
       <p>Then use <b>Exterior</b> / <b>Cutaway</b> here to inspect Blender rooms (kitchen, living, …).</p>
-      <p style="margin:0;font-size:11px">Keys: <kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway · <kbd>U</kbd> Underground</p>
+      <p style="margin:0;font-size:11px">Keys: <kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway · <kbd>U</kbd> Underground · <kbd>A</kbd> Air rights</p>
     </div>`;
 }
 
@@ -1019,6 +1181,7 @@ function setup() {
   document.getElementById("btn-sat-compare")?.addEventListener("click", () => setSatCompare(!satCompareOn));
   document.getElementById("btn-sat-close")?.addEventListener("click", () => setSatCompare(false));
   document.getElementById("btn-ug")?.addEventListener("click", () => setUgVisible(!ugVisible));
+  document.getElementById("btn-air")?.addEventListener("click", () => setAirVisible(!airVisible));
   // Interior modes live only in the right panel (society-style) — not in left HUD
   document.querySelectorAll("#ug-chips .chip").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -1039,6 +1202,9 @@ function setup() {
     if (e.key === "-" || e.key === "_") zoomBy(1.25);
     if (e.key === "u" || e.key === "U") {
       if (!citizenMode) setUgVisible(!ugVisible);
+    }
+    if (e.key === "a" || e.key === "A") {
+      if (!citizenMode) setAirVisible(!airVisible);
     }
     if (e.key === "1") setInteriorView("exterior");
     if (e.key === "2") setInteriorView("cutaway");
@@ -1286,6 +1452,9 @@ function applyCitizenLock(buildingId) {
 
   const ugBtn = document.getElementById("btn-ug");
   if (ugBtn) ugBtn.style.display = "none";
+  const airBtn = document.getElementById("btn-air");
+  if (airBtn) airBtn.style.display = "none";
+  setAirVisible(false);
   const topBtn = document.getElementById("btn-top");
   if (topBtn) topBtn.style.display = "none";
   const satBtn = document.getElementById("btn-sat-compare");
@@ -1374,6 +1543,10 @@ function clampToCity() {
       cityCenter.y - cityRadius * 3.2,
       cityCenter.y + ugLiftY + cityRadius * 4
     );
+  } else if (airVisible) {
+    t.y = THREE.MathUtils.clamp(t.y, cityCenter.y - cityRadius * 0.25, cityCenter.y + cityRadius * 2.4);
+    const minY = cityCenter.y + cityRadius * 0.02;
+    if (camera.position.y < minY) camera.position.y = minY;
   } else {
     t.y = THREE.MathUtils.clamp(t.y, cityCenter.y - cityRadius * 0.25, cityCenter.y + cityRadius * 0.85);
     const minY = cityCenter.y + cityRadius * 0.02;
@@ -1416,6 +1589,17 @@ function resolvePick(evt) {
   pointer.x = ((cx - rect.left) / rect.width) * 2 - 1;
   pointer.y = -((cy - rect.top) / rect.height) * 2 + 1;
   raycaster.setFromCamera(pointer, camera);
+
+  if (airVisible && airPickable.length) {
+    const airHits = raycaster.intersectObjects(airPickable.filter((m) => m.visible), false);
+    if (airHits.length) {
+      const hit = airHits[0];
+      const bid = hit.object.userData.buildingId;
+      if (!(citizenMode && lockedBuildingId && bid !== lockedBuildingId)) {
+        return airPickFromMesh(hit.object, hit.point);
+      }
+    }
+  }
 
   if (ugVisible && ugPickable.length) {
     const ugHits = raycaster.intersectObjects(ugPickable.filter((m) => m.visible), false);
@@ -1526,6 +1710,7 @@ function onHover(evt) {
     if (!isSel) {
       const glow =
         pick.kind === "underground" ? 0xf59e0b
+          : pick.kind === "air_rights" ? 0x22d3c8
           : pick.kind === "room" ? 0x0ea5a8
             : 0x2a9bb0;
       setMeshGlow(hoverMeshes, true, glow);
@@ -1538,6 +1723,11 @@ function onHover(evt) {
     tip.innerHTML = `<div><b>${esc(a.label || a.type || "Underground")}</b></div>
       <div class="t-owner">${esc((a.type || "").replace(/_/g, " "))} · ${esc(a.depth_m ?? "—")} m depth</div>
       <div class="t-ulpin">${esc(a.ulpin || a.id || "")}</div>`;
+  } else if (pick.kind === "air_rights") {
+    const a = pick.asset || {};
+    tip.innerHTML = `<div><b>Air rights</b> · ${esc(a.building_name || "")}</div>
+      <div class="t-owner">Unbuilt volume · +${esc(a.height_m ?? "—")} m above roof</div>
+      <div class="t-ulpin">${esc(a.ulpin || "")}</div>`;
   } else if (pick.kind === "room") {
     tip.innerHTML = `<div><b>${esc(pick.roomLabel || pick.roomType || "Room")}</b></div>
       <div class="t-owner">${esc(pick.building?.name || "")} · interior</div>
@@ -1590,7 +1780,7 @@ function selectPick(pick) {
   if (selectedMeshes.length) setMeshGlow(selectedMeshes, false);
   selectedMeshes = pick.meshes;
   selectedData = pick;
-  setMeshGlow(selectedMeshes, true, pick.kind === "underground" ? 0xf59e0b : 0x0ea5a8);
+  setMeshGlow(selectedMeshes, true, pick.kind === "underground" ? 0xf59e0b : pick.kind === "air_rights" ? 0x22d3c8 : 0x0ea5a8);
   if (pick.buildingId) showOutline(pick.buildingId);
   else hideOutline();
   if (interiorView !== "exterior" && pick.kind === "floor") {
@@ -1603,6 +1793,20 @@ function selectPick(pick) {
 }
 
 function flyToPick(pick) {
+  if (pick.kind === "air_rights") {
+    const look = pick.point ? pick.point.clone() : new THREE.Vector3();
+    const h = Number(pick.asset?.height_m) || 60;
+    look.y += h * 0.05;
+    flyTarget = {
+      pos: new THREE.Vector3(
+        look.x + Math.max(90, h * 1.15),
+        look.y + h * 0.28,
+        look.z + Math.max(80, h * 1.0),
+      ),
+      look,
+    };
+    return;
+  }
   if (pick.kind === "underground") {
     const look = pick.point ? pick.point.clone() : new THREE.Vector3();
     // Side angle in the open gap — avoid staring into the slab underside
@@ -1783,6 +1987,30 @@ function showPanel(data) {
     wirePanel(data);
     return;
   }
+  if (data.kind === "air_rights") {
+    const a = data.asset || {};
+    const b = data.building || {};
+    const kind = (a.building_kind || b.kind || "").replace(/_/g, " ");
+    panelEl.innerHTML = `
+      <a class="close" id="panel-close">Close</a>
+      <h2>${esc(a.label || "Air rights")}</h2>
+      <div class="breadcrumb"><b>City</b> → Air rights → ${esc(a.building_name || b.name || "")}</div>
+      <div class="ulpin" id="ulpin-copy" title="Click to copy">${esc(a.ulpin || "")}</div>
+      <div class="banner">Unbuilt sky volume above the roof — transferable FSI / elevated rights under DoLR 3D ULPIN. Not an apartment floor.</div>
+      <div class="grid">
+        <div class="stat"><div class="v">+${esc(a.height_m ?? "—")} m</div><div class="k">Column height</div></div>
+        <div class="stat"><div class="v">${esc(a.roof_m ?? "—")} m</div><div class="k">Built height</div></div>
+      </div>
+      <h3>Classification</h3>
+      <div class="row"><span>Type</span><br/><b>Air rights · unused development volume</b></div>
+      <div class="row"><span>Status</span><br/><span class="badge warn">${esc(a.status || "unbuilt")}</span></div>
+      <div class="row"><span>Parent body</span><br/><b>${esc(a.building_name || b.name || "")}</b> · ${esc(kind)}</div>
+      <div class="row"><span>Parent ULPIN</span><br/><code>${esc(a.parent_ulpin || b.ulpin || "")}</code></div>
+      <div class="row"><span>Rights</span><br/>Occupy, lease or transfer the column above the terrace up to the legal height — metro viaducts, extra storeys, rooftop plant, ads.</div>
+    `;
+    wirePanel(data);
+    return;
+  }
   if (data.kind === "stadium") {
     const b = data.building;
     panelEl.innerHTML = `
@@ -1919,6 +2147,12 @@ function showPanel(data) {
 
     ${citizenMode ? "" : `<section class="card" style="${CARD}"><h3 style="${H3}">Jump floor</h3><div class="chips" id="floor-chips">${chips}</div></section>`}
 
+    ${!citizenMode && AIR_RIGHTS_BUILDING_IDS.has(b.id) ? `<section class="card" style="${CARD}">
+      <h3 style="${H3}">Air rights</h3>
+      <p style="margin:0 0 8px;font-size:12px;color:var(--text-dim);line-height:1.5">Unused volume above this roof — not a house. Click to show the dashed sky column.</p>
+      <button type="button" class="view-btn" id="btn-show-air">Show air column</button>
+    </section>` : ""}
+
     ${canInterior ? `
     <section class="card" style="${CARD}">
       <h3 style="${H3}">Inspect view</h3>
@@ -1947,7 +2181,9 @@ function wirePanel(data) {
       ? data.building.ulpin
       : data.kind === "underground"
         ? (data.asset?.ulpin || data.asset?.id || data.ulpin)
-        : data.unit?.ulpin || data.floor?.ulpin || data.ulpin;
+        : data.kind === "air_rights"
+          ? (data.asset?.ulpin || data.ulpin)
+          : data.unit?.ulpin || data.floor?.ulpin || data.ulpin;
     try {
       await navigator.clipboard.writeText(text);
       ulpinEl.style.opacity = "0.55";
@@ -1982,6 +2218,9 @@ function wirePanel(data) {
     btn.addEventListener("click", () => {
       window.__highlightRoom(btn.dataset.room);
     });
+  });
+  document.getElementById("btn-show-air")?.addEventListener("click", () => {
+    selectAirOnBuilding(data.buildingId || data.building?.id);
   });
 }
 
@@ -2035,6 +2274,7 @@ async function loadCity() {
   setProgress(93, "Tagging buildings from Blender map…");
   const { buildings: n, tagged } = applyBuildingRegistry(cityRoot);
   console.info("[intel_city] registry", registry.meta, "tagged meshes", tagged);
+  buildAirRightsLayer();
 
   setProgress(95, "Loading underground…");
   let ugCounts = { utilities: 0, structures: 0, meshes: 0 };
@@ -2065,6 +2305,8 @@ async function loadCity() {
   if (wantCitizen) citizenMode = true;
   if (params.get("ug") === "1" && !wantCitizen) setUgVisible(true);
   else setUgVisible(false);
+  if (params.get("air") === "1" && !wantCitizen) setAirVisible(true);
+  else setAirVisible(false);
 
   document.getElementById("loading").style.display = "none";
   document.getElementById("badge").innerHTML =
@@ -2072,7 +2314,7 @@ async function loadCity() {
   const sub = document.querySelector("#hud .sub");
   if (sub) {
     sub.innerHTML =
-      `Left = camera tools · <b>Right panel</b> = ownership + Exterior/Cutaway.<br/>Keys: <kbd>1</kbd>/<kbd>2</kbd> views · <kbd>U</kbd> underground · <kbd>+</kbd>/<kbd>−</kbd> zoom · <kbd>Esc</kbd> clear`;
+      `Left = camera tools · <b>Right panel</b> = ownership + Exterior/Cutaway.<br/>Keys: <kbd>1</kbd>/<kbd>2</kbd> views · <kbd>U</kbd> underground · <kbd>A</kbd> air rights · <kbd>+</kbd>/<kbd>−</kbd> zoom · <kbd>Esc</kbd> clear`;
   }
   setHint("Click a building floor — inspect in the <b>right panel</b>");
 
