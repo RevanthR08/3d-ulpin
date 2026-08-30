@@ -1408,13 +1408,8 @@ function citizenVisualBox(rt) {
 }
 
 function citizenQueryUlpin() {
-  return (
-    lockedUnitUlpin ||
-    selectedData?.unit?.ulpin ||
-    selectedData?.ulpin ||
-    new URLSearchParams(location.search).get("ulpin") ||
-    ""
-  );
+  const q = new URLSearchParams(location.search).get("ulpin") || "";
+  return lockedUnitUlpin || selectedData?.unit?.ulpin || q || selectedData?.ulpin || "";
 }
 
 function resolveCitizenFloor(rt) {
@@ -1464,7 +1459,7 @@ function citizenFloorLook(rt) {
 
 /** Camera must sit outside the footprint — never inside the mesh. */
 function citizenCameraDir() {
-  return new THREE.Vector3(1.25, 0.12, 1.1).normalize();
+  return new THREE.Vector3(1.25, 0.03, 1.1).normalize();
 }
 
 /** Camera at this storey's height, standing outside the facade. */
@@ -1477,10 +1472,13 @@ function citizenCameraPose(rt) {
   const halfZ = 0.5 * Math.max(vis.size.z || 0, rt.size?.z || 0, 24);
   const look = vis.center.clone();
   look.y = y;
-  const toWall = Math.max(halfX / Math.max(Math.abs(dir.x), 0.2), halfZ / Math.max(Math.abs(dir.z), 0.2));
-  const dist = toWall + 56;
+  const toWall = Math.max(
+    halfX / Math.max(Math.abs(dir.x), 0.2),
+    halfZ / Math.max(Math.abs(dir.z), 0.2),
+  );
+  const dist = toWall + 40;
   const pos = look.clone().addScaledVector(dir, dist);
-  pos.y = y + 10;
+  pos.y = y + 4;
   return { look, pos, dist, floor };
 }
 
@@ -1551,6 +1549,8 @@ function applyCitizenLock(buildingId) {
   }
   citizenMode = true;
   lockedBuildingId = buildingId;
+  const qUlpin = new URLSearchParams(location.search).get("ulpin") || "";
+  if (!lockedUnitUlpin && /-L\d+-U\d+/i.test(qUlpin)) lockedUnitUlpin = qUlpin;
   setAirVisible(false);
   showAllCityBuildings();
   const floor = resolveCitizenFloor(rt);
@@ -1656,11 +1656,14 @@ function clampToCity() {
         lockCenter.y + lockRadius * 3 + ugLiftY
       );
     } else {
-      const yLo = lockCenter.y - lockRadius * 0.55;
-      const yHi = lockCenter.y + lockRadius * 1.2;
+      const yLo = lockCenter.y - 14;
+      const yHi = lockCenter.y + 22;
       t.y = THREE.MathUtils.clamp(t.y, yLo, yHi);
-      const minY = lockCenter.y - lockRadius * 0.45;
-      if (camera.position.y < minY) camera.position.y = minY;
+      camera.position.y = THREE.MathUtils.clamp(
+        camera.position.y,
+        lockCenter.y - 10,
+        lockCenter.y + 28,
+      );
     }
     const offset = camera.position.clone().sub(t);
     const minD = controls?.minDistance || citizenStartDist * 0.92;
@@ -2517,17 +2520,23 @@ function focusUlpinFromQuery() {
   for (const [, rt] of buildingRuntime) {
     const b = rt.building;
     if (b.ulpin === ulpin) {
-      if (wantCitizen) lockedFloorLabel = b.floors?.[0]?.floor_label || lockedFloorLabel;
+      const m = String(ulpin).match(/-L(\d+)/i);
+      const floor = m
+        ? (b.floors || []).find((f) => String(f.floor_label) === String(Number(m[1])) || String(f.floor_label) === m[1])
+        : null;
+      const useFloor = floor || (wantCitizen ? null : b.floors?.[0]);
+      if (wantCitizen && !useFloor) continue;
+      if (wantCitizen) lockedFloorLabel = useFloor.floor_label;
       selectPick({
         kind: b.kind === "stadium" || !b.floors?.length ? "stadium" : "floor",
         building: b,
-        floor: b.floors?.[0],
+        floor: useFloor,
         meshes: rt.meshes,
         point: rt.center.clone(),
         buildingId: b.id,
-        floorLabel: b.floors?.[0]?.floor_label,
-        owner: b.floors?.[0]?.owner,
-        ulpin: b.ulpin,
+        floorLabel: useFloor?.floor_label,
+        owner: useFloor?.owner,
+        ulpin: useFloor?.ulpin || b.ulpin,
       });
       return;
     }

@@ -33,7 +33,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [selectedUlpin, setUlpinState] = useState<string | null>(() => {
     const stored = getSelectedUlpin()
     const session = getAuth()
-    if (session?.role === 'citizen') return resolveCitizenUlpin(stored || session.username)
+    if (session?.role === 'citizen') {
+      const resolved = resolveCitizenUlpin(stored || session.username)
+      if (resolved && resolved !== stored) setSelectedUlpin(resolved)
+      return resolved
+    }
     return stored
   })
 

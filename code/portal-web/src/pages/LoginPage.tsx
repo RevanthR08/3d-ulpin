@@ -191,7 +191,7 @@ export function LoginPage() {
                       onClick={() => setUsername(a.ulpin)}
                       className="rounded-lg border border-line bg-paper px-2 py-1 text-[10px] font-semibold text-mute transition hover:border-signal hover:text-signal-deep"
                     >
-                      {a.building}
+                      {a.building} F{a.floor}
                     </button>
                   ))}
                 </div>
@@ -221,7 +221,7 @@ export function LoginPage() {
                   <ul className="mt-2 space-y-1">
                     {previewHoldings.map((h) => (
                       <li key={h.ulpin} className="font-mono text-[11px] text-signal-deep">
-                        {h.building} · {h.ulpin}
+                        {h.building} · floor {h.floor} · {h.ulpin}
                       </li>
                     ))}
                   </ul>

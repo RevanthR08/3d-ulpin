@@ -75,7 +75,7 @@ export const SEED_ISSUE_REPORTS: CitizenIssue[] = [
   {
     id: 'DSP-2026-0818',
     createdAt: '2026-08-18T14:15:00.000Z',
-    ulpin: '3D-IND-600001-I3-L1-U1',
+    ulpin: '3D-IND-600001-I3-L18-U1',
     category: 'Incorrect ownership',
     description:
       'Title shows Harsh Vardhan alone, but sale deed dated 2024 lists joint ownership with spouse. Request correction before mutation.',
@@ -96,7 +96,7 @@ export const SEED_ISSUE_REPORTS: CitizenIssue[] = [
         from: 'citizen',
         channel: 'mail',
         subject: 'Dispute filed · Incorrect ownership',
-        body: 'Meridian Peak L1-U1 should show joint owners. Current portal record is incomplete.',
+        body: 'Meridian Peak L18-U1 should show joint owners. Current portal record is incomplete.',
       },
     ],
     seeded: true,
