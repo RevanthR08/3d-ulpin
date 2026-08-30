@@ -135,10 +135,39 @@ function mockGnss(id, extra = {}) {
 
 function coordsNearUlpin(id, extra) {
   const g = mockGnss(id, extra);
-  return `<div class="coords-line" title="Mock GNSS/CORS — demo coordinates">
-    <span class="coords-k">GNSS</span>
-    ${esc(g.lat)}° N · ${esc(g.lon)}° E · +${esc(g.elev)} m
-  </div>`;
+  return `<span class="k">Coordinates</span>${esc(g.lat)}° N<br>${esc(g.lon)}° E<br>+${esc(g.elev)} m`;
+}
+
+function coordIdFromData(data) {
+  if (!data) return null;
+  if (data.kind === "underground") return data.asset?.ulpin || data.asset?.id || data.ulpin;
+  if (data.kind === "air_rights") return data.asset?.ulpin || data.ulpin;
+  return data.unit?.ulpin || data.ulpin || data.floor?.ulpin || data.building?.ulpin;
+}
+
+let coordHudArmed = false;
+
+function hideCoordHud() {
+  coordHudArmed = false;
+  const el = document.getElementById("coord-hud");
+  if (!el) return;
+  el.classList.remove("show");
+  el.innerHTML = "";
+}
+
+function setCoordHud(data) {
+  const el = document.getElementById("coord-hud");
+  if (!el) return;
+  if (!coordHudArmed || !data) {
+    el.classList.remove("show");
+    el.innerHTML = "";
+    return;
+  }
+  const extra = data.kind === "air_rights"
+    ? { floorIndex: 24 }
+    : { floorIndex: data.floor?.floor_index };
+  el.innerHTML = coordsNearUlpin(coordIdFromData(data), extra);
+  el.classList.add("show");
 }
 
 function statusClass(st) {
@@ -749,6 +778,7 @@ function setHint(msg) {
 }
 
 function showPlaceholderPanel() {
+  hideCoordHud();
   panelEl.classList.remove("open");
   panelEl.innerHTML = `
     <div class="placeholder">
@@ -1296,6 +1326,7 @@ function resetView() {
   camera.position.copy(homeCam);
   controls.target.copy(homeTarget);
   controls.update();
+  hideCoordHud();
 }
 
 /** factor > 1 zooms out; < 1 zooms in. */
@@ -1749,12 +1780,14 @@ function onHover(evt) {
 function onClick(evt) {
   const pick = resolvePick(evt);
   if (!pick) return;
+  coordHudArmed = true;
   selectPick(pick);
 }
 
 function onTouchPick(evt) {
   const pick = resolvePick(evt);
   if (!pick) return;
+  coordHudArmed = true;
   selectPick(pick);
 }
 
@@ -1958,6 +1991,7 @@ function showPanel(data) {
     showPlaceholderPanel();
     return;
   }
+  setCoordHud(coordHudArmed ? data : null);
   panelEl.classList.add("open");
   if (data.kind === "underground") {
     const a = data.asset || {};
@@ -1974,7 +2008,6 @@ function showPanel(data) {
       <h2>${esc(a.label || typeLabel)}</h2>
       <div class="breadcrumb"><b>City</b> → Underground → ${esc(typeLabel)}</div>
       <div class="ulpin" id="ulpin-copy" title="Click to copy">${esc(a.ulpin || a.id || "")}</div>
-      ${coordsNearUlpin(a.ulpin || a.id, { floorIndex: 0 })}
       <div class="banner">Subsurface asset — conflict-aware planning layer for DoLR 3D twin.</div>
       <div class="grid">
         <div class="stat"><div class="v">${esc(a.depth_m ?? "—")} m</div><div class="k">Depth</div></div>
@@ -1997,7 +2030,6 @@ function showPanel(data) {
       <h2>${esc(a.label || "Air rights")}</h2>
       <div class="breadcrumb"><b>City</b> → Air rights → ${esc(a.building_name || b.name || "")}</div>
       <div class="ulpin" id="ulpin-copy" title="Click to copy">${esc(a.ulpin || "")}</div>
-      ${coordsNearUlpin(a.ulpin || a.parent_ulpin, { floorIndex: 24 })}
       <div class="banner">Unbuilt sky volume above the roof — transferable FSI / elevated rights under DoLR 3D ULPIN. Not an apartment floor.</div>
       <div class="grid">
         <div class="stat"><div class="v">+${esc(a.height_m ?? "—")} m</div><div class="k">Column height</div></div>
@@ -2020,7 +2052,6 @@ function showPanel(data) {
       <h2>${esc(b.name)}</h2>
       <div class="breadcrumb"><b>City</b> → Landmark → Stadium</div>
       <div class="ulpin" title="Click to copy">${esc(b.ulpin)}</div>
-      ${coordsNearUlpin(b.ulpin, { floorIndex: 0 })}
       <div class="banner">Arena / tribune landmark — <b>no vertical floor parcels</b> under DoLR 3D ULPIN mapping. Surface parcel only.</div>
       <h3>Classification</h3>
       <div class="row"><span>Kind</span><br/><b>Stadium</b></div>
@@ -2104,7 +2135,6 @@ function showPanel(data) {
       <button type="button" class="ulpin-pill" id="ulpin-copy" title="Copy ULPIN">
         <span>${esc(data.unit?.ulpin || f.ulpin)}</span><span class="copy-ic">⧉</span>
       </button>
-      ${coordsNearUlpin(data.unit?.ulpin || f.ulpin || b.ulpin, { floorIndex: f.floor_index })}
     </div>
     ${banner}
     ${housesHtml}
@@ -2196,11 +2226,13 @@ function wirePanel(data) {
   });
   panelEl.querySelectorAll("#floor-chips .chip").forEach((btn) => {
     btn.addEventListener("click", () => {
+      coordHudArmed = true;
       selectFloorOnBuilding(data.buildingId || data.building.id, btn.dataset.floor);
     });
   });
   panelEl.querySelectorAll(".house-card[data-unit]").forEach((btn) => {
     btn.addEventListener("click", () => {
+      coordHudArmed = true;
       selectFloorOnBuilding(
         data.buildingId || data.building.id,
         data.floorLabel || data.floor?.floor_label,
@@ -2224,6 +2256,7 @@ function wirePanel(data) {
     });
   });
   document.getElementById("btn-show-air")?.addEventListener("click", () => {
+    coordHudArmed = true;
     selectAirOnBuilding(data.buildingId || data.building?.id);
   });
 }
