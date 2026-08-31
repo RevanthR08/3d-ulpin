@@ -65,6 +65,13 @@ const FlagIcon = (p: IconProps) => (
   </Glyph>
 )
 
+const ClashIcon = (p: IconProps) => (
+  <Glyph {...p}>
+    <rect x="3.5" y="6" width="11" height="12" rx="1.4" />
+    <rect x="9.5" y="3.5" width="11" height="12" rx="1.4" />
+  </Glyph>
+)
+
 const HomeIcon = (p: IconProps) => (
   <Glyph {...p}>
     <path d="M4 11 12 4l8 7" />
@@ -112,6 +119,7 @@ const ADMIN_NAV: NavItem[] = [
   { to: '/app/underground-properties', label: 'Underground Properties', Icon: LayersIcon },
   { to: '/app/registry', label: 'Registry', Icon: RegistryIcon },
   { to: '/app/atlas', label: 'Atlas', Icon: GlobeIcon },
+  { to: '/app/dispute-zones', label: 'Dispute Zones', Icon: ClashIcon },
   { to: '/app/ar', label: 'AR Scanner', Icon: ScanIcon },
   { to: '/app/reports', label: 'Reports / Issues', Icon: FlagIcon },
 ]

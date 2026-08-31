@@ -1,0 +1,146 @@
+{
+  "meta": {
+    "city": "Intel City",
+    "pincode": "600001",
+    "note": "Mock enforcement docket — plot encroachment and unsanctioned extra storeys. Not live CMBDA filings.",
+    "agency": "Greater Chennai Corporation · Building Regularisation Cell"
+  },
+  "encroachments": [
+    {
+      "id": "DZ-ENC-001",
+      "status": "open",
+      "severity": "high",
+      "title": "Cedar Walk wing into Indigo Quarters plot",
+      "ward": "T. Nagar · Ward 117",
+      "notice": "GCC/BRC/ENC/2026/0441",
+      "filed_on": "2026-06-12",
+      "area_sq_m": 186,
+      "setback_shortfall_m": 4.2,
+      "encroacher_id": "INTEL-BLDG-014",
+      "victim_id": "INTEL-BLDG-013",
+      "encroacher": {
+        "id": "INTEL-BLDG-014",
+        "name": "Cedar Walk",
+        "ulpin": "3D-IND-600001-I14",
+        "kind": "midrise"
+      },
+      "victim": {
+        "id": "INTEL-BLDG-013",
+        "name": "Indigo Quarters",
+        "ulpin": "3D-IND-600001-I13",
+        "kind": "midrise"
+      },
+      "summary": "Cedar Walk’s east podium was built across the sanctioned plot line into Indigo Quarters. Twin shows the illegal wing as a red volume sitting inside the neighbour’s cadastral box.",
+      "action": "Stop-work notice served. Joint survey with DoLR pending before mutation."
+    },
+    {
+      "id": "DZ-ENC-002",
+      "status": "in_review",
+      "severity": "medium",
+      "title": "Harbour Block service bay over Indigo setback",
+      "ward": "T. Nagar · Ward 117",
+      "notice": "GCC/BRC/ENC/2026/0518",
+      "filed_on": "2026-07-03",
+      "area_sq_m": 94,
+      "setback_shortfall_m": 2.8,
+      "encroacher_id": "INTEL-BLDG-009",
+      "victim_id": "INTEL-BLDG-013",
+      "encroacher": {
+        "id": "INTEL-BLDG-009",
+        "name": "Harbour Block",
+        "ulpin": "3D-IND-600001-I9",
+        "kind": "midrise"
+      },
+      "victim": {
+        "id": "INTEL-BLDG-013",
+        "name": "Indigo Quarters",
+        "ulpin": "3D-IND-600001-I13",
+        "kind": "midrise"
+      },
+      "summary": "Harbour Block’s west service bay occupies Indigo Quarters’ rear setback. Overlap is a ground-level slab, not a full-height clash.",
+      "action": "Owner affidavit received. Regularisation vs demolition under review."
+    }
+  ],
+  "excess_floors": [
+    {
+      "id": "DZ-FSI-001",
+      "status": "open",
+      "severity": "critical",
+      "title": "Horizon Tower — four storeys above sanctioned plan",
+      "ward": "T. Nagar · Ward 117",
+      "notice": "CMDA/FSI/2026/1102",
+      "filed_on": "2026-05-19",
+      "building_id": "INTEL-BLDG-002",
+      "name": "Horizon Tower",
+      "ulpin": "3D-IND-600001-I2",
+      "kind": "skyscraper",
+      "approved_floors": 36,
+      "built_floors": 40,
+      "extra_floors": 4,
+      "approved_height_m": 535,
+      "built_height_m": 595,
+      "summary": "Occupation certificate lists 36 floors. Twin registry and mesh show 40. The red hat is the unsanctioned crown (F37–F40).",
+      "action": "Lock new ULPIN issue on F37–F40 until demolition or compounding."
+    },
+    {
+      "id": "DZ-FSI-002",
+      "status": "open",
+      "severity": "critical",
+      "title": "Meridian Peak — four unsanctioned storeys",
+      "ward": "T. Nagar · Ward 117",
+      "notice": "CMDA/FSI/2026/1108",
+      "filed_on": "2026-05-22",
+      "building_id": "INTEL-BLDG-003",
+      "name": "Meridian Peak",
+      "ulpin": "3D-IND-600001-I3",
+      "kind": "skyscraper",
+      "approved_floors": 36,
+      "built_floors": 40,
+      "extra_floors": 4,
+      "approved_height_m": 455,
+      "built_height_m": 505,
+      "summary": "Plan sanction 36 floors; as-built 40. Red hat marks F37–F40 against the CMDA height cap.",
+      "action": "Hold occupancy for upper four floors. FSI compounding file opened."
+    },
+    {
+      "id": "DZ-FSI-003",
+      "status": "in_review",
+      "severity": "high",
+      "title": "Glass Spire — four floors beyond OC",
+      "ward": "T. Nagar · Ward 110",
+      "notice": "CMDA/FSI/2026/1180",
+      "filed_on": "2026-08-02",
+      "building_id": "INTEL-BLDG-001",
+      "name": "Glass Spire",
+      "ulpin": "3D-IND-600001-I1",
+      "kind": "skyscraper",
+      "approved_floors": 36,
+      "built_floors": 40,
+      "extra_floors": 4,
+      "approved_height_m": 1280,
+      "built_height_m": 1423,
+      "summary": "Tallest twin landmark. Sanctioned envelope stops at F36; mesh continues four floors. Red hat is the illegal crown.",
+      "action": "Skyline committee site visit scheduled."
+    },
+    {
+      "id": "DZ-FSI-004",
+      "status": "open",
+      "severity": "high",
+      "title": "Harbour Block — four extra midrise floors",
+      "ward": "T. Nagar · Ward 117",
+      "notice": "GCC/BRC/FSI/2026/0664",
+      "filed_on": "2026-07-28",
+      "building_id": "INTEL-BLDG-009",
+      "name": "Harbour Block",
+      "ulpin": "3D-IND-600001-I9",
+      "kind": "midrise",
+      "approved_floors": 8,
+      "built_floors": 12,
+      "extra_floors": 4,
+      "approved_height_m": 98,
+      "built_height_m": 147,
+      "summary": "Sanctioned G+7. Built G+11. Red hat is F9–F12, the four floors never approved.",
+      "action": "Neighbour complaint from Indigo Quarters bundled with ENC-002."
+    }
+  ]
+}

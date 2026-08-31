@@ -74,6 +74,8 @@
       background: #fff; cursor: pointer; color: var(--text);
     }
     button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    button.danger { background: var(--bad); border-color: var(--bad); color: #fff; }
+    button.danger:hover { border-color: #7a2222; }
     button:hover { border-color: var(--accent); }
     #badge {
       position: absolute; left: 12px; bottom: 12px; z-index: 10; background: var(--panel);
@@ -271,6 +273,7 @@
             </button>
             <button id="btn-ug" type="button" title="Lift city — base stays visible; look underneath for pipes">Underground</button>
             <button id="btn-air" type="button" title="Dashed volumes above roofs — unused airspace / transferable FSI">Air rights</button>
+            <button id="btn-dispute" type="button" title="Plot overlap and unsanctioned extra floors">Dispute zones</button>
           </div>
           <div id="ug-chips" class="chips" style="display:none;margin-top:8px">
             <button type="button" class="chip active" data-ug="fiber_optic">Fiber</button>
@@ -305,7 +308,7 @@
       <div class="placeholder">
         <p><b>Right inspector</b> — click a building floor in the 3D view to open ownership, deeds, and rooms.</p>
         <p>Then use <b>Exterior</b> / <b>Cutaway</b> here to inspect Blender rooms (kitchen, living, …).</p>
-        <p style="margin:0;font-size:11px">Keys: <kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway · <kbd>U</kbd> Underground · <kbd>A</kbd> Air rights</p>
+        <p style="margin:0;font-size:11px">Keys: <kbd>1</kbd> Exterior · <kbd>2</kbd> Cutaway · <kbd>U</kbd> Underground · <kbd>A</kbd> Air rights · <kbd>D</kbd> Dispute zones</p>
       </div>
     </aside>
   </div>
@@ -316,6 +319,6 @@
     "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
   } }
   </script>
-  <script type="module" src="./intel_city_app.js?v=59"></script>
+  <script type="module" src="./intel_city_app.js?v=60"></script>
 </body>
 </html>
