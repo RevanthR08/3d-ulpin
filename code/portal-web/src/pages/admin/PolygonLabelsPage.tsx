@@ -19,7 +19,7 @@ function ImagePane({
       <div className="flex-none border-b border-white/10 px-4 py-2 text-[11px] uppercase tracking-[0.14em] text-white/55">
         {caption}
       </div>
-      <div className="min-h-0 flex-1 overflow-auto bg-[#0B1210]">
+      <div className="min-h-0 flex-1 overflow-auto bg-ink">
         <img src={src} alt={alt} className="block h-auto w-full object-contain" />
       </div>
     </figure>

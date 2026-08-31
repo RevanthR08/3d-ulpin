@@ -23,7 +23,7 @@ export function CitizenHome() {
         className="absolute inset-x-0 top-0 h-[320px]"
         style={{
           background:
-            'linear-gradient(135deg, #0B1210 0%, #16332b 48%, #0C8F7C 140%)',
+            'linear-gradient(135deg, var(--color-ink) 0%, var(--color-emerald-900) 48%, var(--color-emerald-600) 140%)',
         }}
       />
       <div className="relative mx-auto max-w-5xl px-7 pb-12 pt-10">

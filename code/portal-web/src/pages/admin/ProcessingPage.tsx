@@ -129,7 +129,7 @@ export function ProcessingPage() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-line bg-[#0B1210] shadow-inner">
+      <div className="overflow-hidden rounded-2xl border border-line bg-ink shadow-inner">
         <div className="flex items-center justify-between border-b border-white/10 px-4 py-2">
           <div className="text-[11px] uppercase tracking-[0.14em] text-white/40">Pipeline terminal</div>
           <div className="font-mono text-[10px] text-signal/80">
@@ -138,7 +138,7 @@ export function ProcessingPage() {
         </div>
         <pre
           ref={termRef}
-          className="font-mono max-h-[280px] overflow-y-auto px-4 py-3 text-[12px] leading-relaxed text-[#9AE6B4]"
+          className="font-mono max-h-[280px] overflow-y-auto px-4 py-3 text-[12px] leading-relaxed text-emerald-300"
         >
           {logs.map((line, i) => (
             <div key={`${i}-${line.slice(0, 24)}`} className={line.startsWith('$') ? 'text-white/80' : undefined}>

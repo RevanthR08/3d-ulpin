@@ -138,7 +138,7 @@ export function TwinViewerPage() {
             allow="fullscreen"
           />
         ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-4 bg-[#0B1210] px-8 text-center">
+          <div className="flex h-full flex-col items-center justify-center gap-4 bg-ink px-8 text-center">
             <div className="font-display text-[22px] font-semibold text-white">No property selected</div>
             <p className="max-w-md text-[13px] leading-relaxed text-white/55">
               Open My Property, then return here for your locked 3D house.

@@ -155,7 +155,7 @@ export function Shell() {
             className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-white shadow-sm ring-1 ring-white/15"
           >
             <svg viewBox="0 0 24 24" fill="none" className="h-[22px] w-[22px]" role="img" aria-label="VERTICA">
-              <path d="M12 2.75 21 7.25 12 11.75 3 7.25Z" fill="#d8f3ee" />
+              <path d="M12 2.75 21 7.25 12 11.75 3 7.25Z" fill="var(--color-emerald-100)" />
               <path d="M3 12 12 16.5 21 12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
               <path d="M3 16.5 12 21 21 16.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.6" />
             </svg>
@@ -169,7 +169,7 @@ export function Shell() {
               end={item.end}
               className={({ isActive }) =>
                 `relative flex min-h-[62px] flex-col items-center justify-center gap-1.5 rounded-xl px-1 py-2 text-center transition ${
-                  isActive ? 'text-[#99f6e4]' : 'text-white/80 hover:bg-white/10 hover:text-white'
+                  isActive ? 'text-emerald-200' : 'text-white/80 hover:bg-white/10 hover:text-white'
                 }`
               }
             >
@@ -178,7 +178,7 @@ export function Shell() {
                   {isActive && (
                     <span
                       aria-hidden="true"
-                      className="absolute left-0 top-1/2 h-8 w-[3px] -translate-y-1/2 rounded-r-full bg-[#99f6e4]"
+                      className="absolute left-0 top-1/2 h-8 w-[3px] -translate-y-1/2 rounded-r-full bg-emerald-200"
                     />
                   )}
                   <item.Icon className="h-[22px] w-[22px]" strokeWidth={isActive ? 2.2 : 1.6} />

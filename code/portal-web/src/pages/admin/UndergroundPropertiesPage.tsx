@@ -77,7 +77,7 @@ const TYPE_META: Record<
     agency: 'BSNL / TACTV · Digital corridor',
     blueprint: blueprintFiber,
     blueprintLabel: 'Fiber optic blueprint · green',
-    color: '#1f7a3a',
+    color: 'var(--color-ok)',
   },
   underground_parking: {
     title: 'Underground parking',

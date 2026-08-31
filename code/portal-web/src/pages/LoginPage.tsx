@@ -67,20 +67,21 @@ export function LoginPage() {
             aria-hidden="true"
             className="pointer-events-none absolute -inset-y-24 -left-1/2 right-[5%]"
             style={{
-              background: 'linear-gradient(155deg, #ebe8e0 0%, #d8f3ee 100%)',
+              background:
+                'linear-gradient(155deg, var(--color-paper-dim) 0%, var(--color-emerald-100) 100%)',
               borderRadius: '0 46% 46% 0 / 0 50% 50% 0',
             }}
           />
 
           <div className="relative z-10 flex w-full max-w-[450px] flex-col gap-9 py-14 pl-12 pr-8">
-            <div>
+            <div className="text-center">
               <div className="font-display text-[26px] font-semibold tracking-tight text-ink">VERTICA</div>
               <div className="mt-2 text-[10px] uppercase tracking-[0.22em] text-mute">
                 Volumetric cadastral intelligence
               </div>
             </div>
 
-            <div className="relative">
+            <div className="relative -mx-5">
               <div className="overflow-hidden rounded-[2.5rem] border border-white/60 shadow-[0_36px_90px_-32px_rgba(11,18,16,0.5)]">
                 <img
                   src={loginHero}
@@ -94,7 +95,7 @@ export function LoginPage() {
               </div>
             </div>
 
-            <p className="font-display text-[15px] italic leading-relaxed text-ink/70">
+            <p className="font-display text-center text-[15px] italic leading-relaxed text-ink/70">
               Every floor, unit, air right and underground corridor — mapped as a volume and
               issued its own legal identity.
             </p>
@@ -111,10 +112,10 @@ export function LoginPage() {
               </div>
             </div>
 
-            <h1 className="font-display text-[30px] font-semibold tracking-tight text-ink">
+            <h1 className="font-display text-center text-[30px] font-semibold tracking-tight text-ink">
               Choose a role
             </h1>
-            <p className="mt-2 text-[13px] text-mute">
+            <p className="mt-2 text-center text-[13px] text-mute">
               Select a portal to verify your credentials.
             </p>
 

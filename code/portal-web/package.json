@@ -8,20 +8,24 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "compile:ar-target": "node scripts/compile-mind-target.mjs"
   },
   "dependencies": {
     "maplibre-gl": "^6.6.0",
+    "mind-ar": "1.2.5",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-icons": "^5.7.0",
-    "react-router-dom": "^7.18.2"
+    "react-router-dom": "^7.18.2",
+    "three": "0.160.1"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
+    "@types/three": "0.160.0",
     "@vitejs/plugin-react": "^6.1.0",
     "oxlint": "^1.79.0",
     "tailwindcss": "^4.3.3",

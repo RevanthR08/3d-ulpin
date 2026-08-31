@@ -1,9 +1,9 @@
+import { Suspense, lazy } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { RequireAuth } from './components/RequireAuth'
 import { Shell } from './components/Shell'
 import { AuthProvider, useAuth } from './lib/auth'
 import { CitizenTicketsProvider } from './lib/tickets'
-import { ArView } from './pages/admin/ArView'
 import { DataPipelinePage } from './pages/admin/DataPipelinePage'
 import { ReportsIssuesPage } from './pages/admin/ReportsIssuesPage'
 import { UndergroundPropertiesPage } from './pages/admin/UndergroundPropertiesPage'
@@ -17,6 +17,12 @@ import { RegistryPage } from './pages/RegistryPage'
 import { TwinViewerPage } from './pages/TwinViewerPage'
 
 const ADMIN_HOME = '/app/pipeline'
+
+// The AR Scanner pulls in MindAR (tfjs + three), which is far larger than the
+// rest of the portal combined — keep it off every other route's critical path.
+const ArView = lazy(() =>
+  import('./pages/admin/ArView').then((m) => ({ default: m.ArView })),
+)
 
 function HomeRedirect() {
   const { auth } = useAuth()
@@ -48,7 +54,20 @@ export default function App() {
               <Route path="/app/reports" element={<ReportsIssuesPage />} />
               <Route path="/app/dispute-zones" element={<DisputeZonesPage />} />
               <Route path="/app/registry" element={<RegistryPage />} />
-              <Route path="/app/ar" element={<ArView />} />
+              <Route
+                path="/app/ar"
+                element={
+                  <Suspense
+                    fallback={
+                      <div className="flex h-full items-center justify-center bg-paper text-[13px] text-mute">
+                        Loading AR Scanner…
+                      </div>
+                    }
+                  >
+                    <ArView />
+                  </Suspense>
+                }
+              />
             </Route>
             <Route path="/app/atlas" element={<AtlasPage />} />
             <Route path="/app/polygons" element={<Navigate to="/app/atlas" replace />} />
