@@ -10,7 +10,6 @@ export default defineConfig({
     proxy: {
       '/society': 'http://127.0.0.1:8000',
       '/building': 'http://127.0.0.1:8000',
-      '/registry': 'http://127.0.0.1:8000',
       '/unit': 'http://127.0.0.1:8000',
       '/units': 'http://127.0.0.1:8000',
       '/underground': 'http://127.0.0.1:8000',

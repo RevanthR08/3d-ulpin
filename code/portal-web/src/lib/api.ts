@@ -229,24 +229,6 @@ export function findIntelCityHouse(reg: IntelCityRegistry, ulpin: string): Intel
 
 /* --- Novelty modules (see app/novelty.py) --- */
 
-export type RegistryFlag = {
-  building_id: string
-  building_ulpin: string
-  building_name: string
-  violation_type: 'horizontal_land_grab' | 'cantilever_overhang' | 'unauthorized_extra_floor'
-  violation_label: string
-  severity: 'high' | 'medium' | 'low'
-  description: string
-}
-
-export type RegistryFlags = {
-  generated_at: string
-  seed: number
-  flagged_count: number
-  by_severity: Record<'high' | 'medium' | 'low', number>
-  buildings: RegistryFlag[]
-}
-
 export type ArScan = {
   scan_id: string
   scanned_at: string
@@ -313,7 +295,6 @@ export const api = {
   units: () => getJson<{ units?: UnitDetail[] }>('/units').catch(() => ({ units: [] as UnitDetail[] })),
   intelCity: () => getJson<IntelCityRegistry>(INTEL_CITY_JSON),
 
-  registryFlags: () => getJson<RegistryFlags>('/registry/flags'),
   arScan: () => getJson<ArScan>('/ar/scan'),
   disputes: () => getJson<DisputeList>('/disputes'),
   dispute: (id: string) => getJson<Dispute>(`/dispute/${encodeURIComponent(id)}`),

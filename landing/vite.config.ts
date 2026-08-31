@@ -10,7 +10,7 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 // (portal at /portal/*, everything below is a REST endpoint or a standalone viewer).
 // Proxy them so this dev server is the single origin: open http://localhost:3000/ only.
 const API = "http://127.0.0.1:8000";
-const toApi = ["/portal", "/society", "/building", "/registry", "/unit", "/units", "/underground",
+const toApi = ["/portal", "/society", "/building", "/unit", "/units", "/underground",
   "/site-plan", "/geo-site-plan", "/footprints", "/ulpin", "/ingest", "/processing-status",
   "/blender-export", "/disputes", "/dispute", "/ar", "/viewer3d", "/viewer-map", "/viewer", "/extract"];
 

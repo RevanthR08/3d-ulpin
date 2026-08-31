@@ -164,7 +164,6 @@ def root():
         "endpoints": [
             "/society",
             "/building/{building_id}",
-            "/registry/flags",
             "/ulpin/{ulpin}",
             "/unit/{ulpin}",
             "/units",
@@ -240,15 +239,6 @@ def get_building(building_id: str):
         if b["id"] == building_id or b["ulpin"] == building_id:
             return b
     raise HTTPException(status_code=404, detail=f"Building '{building_id}' not found")
-
-
-@app.get("/registry/flags")
-def registry_flags(seed: int | None = Query(None)):
-    """NOVELTY MODULE 1 — random 'encroachment' flags over the Registry tab's
-    own dataset (static3d/intel_city_buildings.json), for the severity badge +
-    detail panel next to flagged buildings. Fixed default seed for demo
-    stability; pass ?seed=<int> to re-roll. Pure mock — no comparison logic."""
-    return novelty.registry_flags(seed)
 
 
 @app.get("/ulpin/{ulpin}")

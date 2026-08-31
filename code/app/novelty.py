@@ -1,15 +1,12 @@
 """
 Hackathon "novelty feature" modules — all mocked with realistic hardcoded /
 computed data on top of the EXISTING society dataset. No new dataset, no new
-top-level tabs. Three modules:
+top-level tabs. Two modules:
 
-  1. Encroachment    — pure-mock random "encroachment" flags over the Registry
-                       tab's own dataset (static3d/intel_city_buildings.json).
-                       Seeded so a demo is stable. No comparison logic.
-  2. Disputes        — citizen files a one-tap dispute, backend auto-attaches
+  1. Disputes        — citizen files a one-tap dispute, backend auto-attaches
                        geometry/location; admin reviews. Persisted to
                        data/disputes.json.
-  3. AR scan         — /ar/scan returns a random building+unit formatted for an
+  2. AR scan         — /ar/scan returns a random building+unit formatted for an
                        on-screen overlay (no real spatial alignment).
 
 Everything operates on whatever /society currently loads (Indian City Block by
@@ -81,25 +78,6 @@ def _building_footprint(building):
     return [(0.0, 0.0), (10.0, 0.0), (10.0, 10.0), (0.0, 10.0)]
 
 
-# --------------------------------------------------------------------------- #
-# module 1 — "encroachment" flags (pure mock, no comparison logic)
-#   Random flag generator over the dataset the Registry page actually reads
-#   (static3d/intel_city/intel_city_buildings.json — NOT /society), so the
-#   badges line up with the existing Registry with zero dataset-alignment work.
-# --------------------------------------------------------------------------- #
-
-STATIC3D_DIR = os.path.join(os.path.dirname(__file__), "static3d")
-INTEL_CITY_BUILDINGS_PATH = os.path.join(STATIC3D_DIR, "intel_city", "intel_city_buildings.json")
-
-DEFAULT_FLAG_SEED = 8  # picked for a varied demo: all 3 violation types shown
-
-VIOLATIONS = {
-    "horizontal_land_grab": "Horizontal Land Grab",
-    "cantilever_overhang": "Cantilever Overhang",
-    "unauthorized_extra_floor": "Unauthorized Extra Floor",
-}
-
-
 def _find_building(society, ident):
     for b in society["buildings"]:
         if b["id"] == ident or b["ulpin"] == ident:
@@ -107,68 +85,8 @@ def _find_building(society, ident):
     return None
 
 
-def _load_registry_buildings():
-    """The buildings shown on the Registry tab (its own static dataset)."""
-    try:
-        with open(INTEL_CITY_BUILDINGS_PATH, encoding="utf-8") as f:
-            return json.load(f).get("buildings", [])
-    except (OSError, json.JSONDecodeError):
-        return []
-
-
-def _violation_description(rng, vtype):
-    if vtype == "horizontal_land_grab":
-        side = rng.choice(["east", "west", "north", "south"])
-        return (
-            f"Structure extends beyond the registered plot boundary on the {side} "
-            f"side, ~{rng.randint(8, 46)} m² encroachment."
-        )
-    if vtype == "cantilever_overhang":
-        return (
-            "Upper-floor balcony/structure overhangs the public setback area by "
-            f"~{round(rng.uniform(0.6, 2.4), 1)} m."
-        )
-    return f"Floor count exceeds the registered/approved limit by {rng.randint(1, 3)} floor(s)."
-
-
-def registry_flags(seed=None):
-    """Random 'encroachment' flags over the Registry's dataset. Fixed default
-    seed so the same buildings + violations appear across demo runs; pass a
-    seed to re-roll. Believable mock — no comparison against real data."""
-    used_seed = DEFAULT_FLAG_SEED if seed is None else int(seed)
-    rng = random.Random(used_seed)
-    buildings = _load_registry_buildings()
-
-    flagged = []
-    by_severity = {"high": 0, "medium": 0, "low": 0}
-    if buildings:
-        vtypes = list(VIOLATIONS)
-        picks = rng.sample(buildings, min(len(buildings), rng.randint(4, 5)))
-        for b in picks:
-            vtype = rng.choice(vtypes)
-            severity = rng.choice(["high", "medium", "low"])
-            by_severity[severity] += 1
-            flagged.append({
-                "building_id": b.get("id"),
-                "building_ulpin": b.get("ulpin"),
-                "building_name": b.get("name"),
-                "violation_type": vtype,
-                "violation_label": VIOLATIONS[vtype],
-                "severity": severity,
-                "description": _violation_description(rng, vtype),
-            })
-
-    return {
-        "generated_at": _now_iso(),
-        "seed": used_seed,
-        "flagged_count": len(flagged),
-        "by_severity": by_severity,
-        "buildings": flagged,
-    }
-
-
 # --------------------------------------------------------------------------- #
-# module 2 — one-tap disputes
+# module 1 — one-tap disputes
 # --------------------------------------------------------------------------- #
 
 class UlpinNotFound(Exception):
@@ -365,7 +283,7 @@ def load_or_seed_disputes(society, ulpin_index):
 
 
 # --------------------------------------------------------------------------- #
-# module 3 — AR scan (admin Atlas "AR View" only)
+# module 2 — AR scan (admin "AR Scanner" tab)
 # --------------------------------------------------------------------------- #
 
 def ar_scan(society, seed=None):
