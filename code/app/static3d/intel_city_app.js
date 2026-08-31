@@ -50,6 +50,13 @@ let disputeVisible = false;
 let disputeById = new Map();
 let disputeReg = { meta: {}, encroachments: [], excess_floors: [] };
 
+function syncUgChips() {
+  document.querySelectorAll("#ug-chips .chip").forEach((btn) => {
+    const key = btn.dataset.ug;
+    if (key) btn.classList.toggle("active", !!ugTypeEnabled[key]);
+  });
+}
+
 /** Portal citizen twin: lock orbit + picks to one building (mode=citizen&ulpin=…). */
 let citizenMode = false;
 let lockedBuildingId = null;
@@ -111,6 +118,40 @@ function esc(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[c]));
+}
+
+/** DoLR 14-char 3D ULPIN (TN3304 + building + floor + unit). */
+function publicUlpin(raw) {
+  const s = String(raw || "").trim();
+  if (/^[A-Z]{2}\d{12}$/i.test(s)) return s.toUpperCase();
+  const intel = s.match(/^3D-IND-600001-I(\d+)(?:-L(\d+))?(?:-U(\d+))?$/i);
+  if (intel) {
+    const b = String(Number(intel[1])).padStart(4, "0");
+    const f = String(intel[2] ? Number(intel[2]) : 0).padStart(2, "0");
+    const u = String(intel[3] ? Number(intel[3]) : 0).padStart(2, "0");
+    return `TN3304${b}${f}${u}`;
+  }
+  return s;
+}
+
+function legacyUlpin(raw) {
+  const s = String(raw || "").trim().toUpperCase();
+  const m = s.match(/^TN3304(\d{4})(\d{2})(\d{2})$/);
+  if (!m) return String(raw || "").trim();
+  const b = Number(m[1]);
+  const f = Number(m[2]);
+  const u = Number(m[3]);
+  let out = `3D-IND-600001-I${b}`;
+  if (f) out += `-L${f}`;
+  if (u) out += `-U${u}`;
+  return out;
+}
+
+function ulpinMatch(stored, query) {
+  if (!stored || !query) return false;
+  if (stored === query) return true;
+  const q = String(query).trim();
+  return stored === legacyUlpin(q) || publicUlpin(stored) === publicUlpin(q);
 }
 
 /** Stable mock WGS84 around T. Nagar (PIN 600001) — demo GNSS/CORS, not survey. */
@@ -1846,10 +1887,10 @@ function resolveBuildingIdFromUlpin(ulpin) {
   if (!ulpin) return null;
   for (const [bid, rt] of buildingRuntime) {
     const b = rt.building;
-    if (b.ulpin === ulpin) return bid;
+    if (b.ulpin === ulpin || ulpinMatch(b.ulpin, ulpin)) return bid;
     if ((b.floors || []).some((f) => {
-      if (f.ulpin === ulpin) return true;
-      return (f.units || []).some((u) => u.ulpin === ulpin);
+      if (f.ulpin === ulpin || ulpinMatch(f.ulpin, ulpin)) return true;
+      return (f.units || []).some((u) => u.ulpin === ulpin || ulpinMatch(u.ulpin, ulpin));
     })) return bid;
   }
   return null;
@@ -2138,17 +2179,17 @@ function onHover(evt) {
   } else if (pick.kind === "stadium") {
     tip.innerHTML = `<div><b>${esc(pick.building.name)}</b> · Landmark</div>
       <div class="t-owner">No vertical floor parcels</div>
-      <div class="t-ulpin">${esc(pick.building.ulpin)}</div>`;
+      <div class="t-ulpin">${esc(publicUlpin(pick.building.ulpin))}</div>`;
   } else if (citizenMode) {
     const floorBit = lockedFloorLabel ? ` · Floor ${esc(lockedFloorLabel)}` : "";
     const houseBit = pick.unit?.unit_label ? ` · House ${esc(pick.unit.unit_label)}` : "";
     tip.innerHTML = `<div><b>Your house</b>${houseBit}</div>
       <div class="t-owner">${esc(pick.building?.name || "")}${floorBit}</div>
-      <div class="t-ulpin">${esc(pick.unit?.ulpin || pick.ulpin || "")}</div>`;
+      <div class="t-ulpin">${esc(publicUlpin(pick.unit?.ulpin || pick.ulpin || ""))}</div>`;
   } else {
     tip.innerHTML = `<div><b>${esc(pick.building.name)}</b> · F${esc(pick.floorLabel)}</div>
       <div class="t-owner">${esc(pick.owner || "—")}</div>
-      <div class="t-ulpin">${esc(pick.ulpin)}</div>`;
+      <div class="t-ulpin">${esc(publicUlpin(pick.ulpin))}</div>`;
   }
   tip.style.display = "block";
   tip.style.left = `${(evt.clientX ?? 0) + 14}px`;
@@ -2420,7 +2461,7 @@ function showPanel(data) {
       <div class="row"><span>Status</span><br/><span class="badge warn">${esc(a.status || "unbuilt")}</span></div>
       <div class="row"><span>Parent body</span><br/><b>${esc(a.building_name || b.name || "")}</b> · ${esc(kind)}</div>
       <div class="row"><span>Parent ULPIN</span><br/><code>${esc(a.parent_ulpin || b.ulpin || "")}</code></div>
-      <div class="row"><span>Rights</span><br/>Occupy, lease or transfer the column above the terrace up to the legal height — metro viaducts, extra storeys, rooftop plant, ads.</div>
+      <div class="row"><span>Rights</span><br/>Occupy, lease or transfer the column above the terrace up to the legal height — extra storeys, rooftop plant, ads.</div>
     `;
     wirePanel(data);
     return;
@@ -2513,7 +2554,7 @@ function showPanel(data) {
         const on = u.ulpin === activeUlpin;
         return `<button type="button" class="house-card${on ? " active" : ""}" data-unit="${esc(u.ulpin)}">
           <b>House ${esc(u.unit_label || "?")}</b>
-          <div class="ulpin" style="font-size:10px;margin-top:4px">${esc(u.ulpin)}</div>
+          <div class="ulpin" style="font-size:10px;margin-top:4px">${esc(publicUlpin(u.ulpin))}</div>
           <div style="margin-top:4px;font-size:13px">${esc(u.owner || "—")}</div>
           <div style="font-size:11px;opacity:.7">${esc(u.legal_status || "registered")}${u.area_sq_m != null ? ` · ${esc(u.area_sq_m)} m²` : ""}</div>
         </button>`;
@@ -2553,7 +2594,7 @@ function showPanel(data) {
       <h2>${title}</h2>
       <div class="p-sub">${sub}</div>
       <button type="button" class="ulpin-pill" id="ulpin-copy" title="Copy ULPIN">
-        <span>${esc(citizenMode ? (data.unit?.ulpin || "") : (data.unit?.ulpin || f.ulpin))}</span><span class="copy-ic">⧉</span>
+        <span>${esc(publicUlpin(citizenMode ? (data.unit?.ulpin || "") : (data.unit?.ulpin || f.ulpin)))}</span><span class="copy-ic">⧉</span>
       </button>
     </div>
     ${banner}
@@ -2632,7 +2673,7 @@ function wirePanel(data) {
   });
   const ulpinEl = document.getElementById("ulpin-copy") || panelEl.querySelector(".ulpin");
   ulpinEl?.addEventListener("click", async () => {
-    const text = data.kind === "stadium"
+    const textRaw = data.kind === "stadium"
       ? data.building.ulpin
       : data.kind === "underground"
         ? (data.asset?.ulpin || data.asset?.id || data.ulpin)
@@ -2641,6 +2682,7 @@ function wirePanel(data) {
           : data.kind === "dispute"
             ? (data.asset?.notice || data.asset?.ulpin || data.ulpin)
           : data.unit?.ulpin || data.floor?.ulpin || data.ulpin;
+    const text = publicUlpin(textRaw);
     try {
       await navigator.clipboard.writeText(text);
       ulpinEl.style.opacity = "0.55";
@@ -2778,7 +2820,7 @@ async function loadCity() {
   const sub = document.querySelector("#hud .sub");
   if (sub) {
     sub.innerHTML =
-      `Left = camera tools · <b>Right panel</b> = ownership + Exterior/Cutaway.<br/>Keys: <kbd>1</kbd>/<kbd>2</kbd> views · <kbd>U</kbd> underground · <kbd>A</kbd> air rights · <kbd>D</kbd> dispute zones · <kbd>+</kbd>/<kbd>−</kbd> zoom · <kbd>Esc</kbd> clear`;
+      `Left = camera tools · <b>Right panel</b> = ownership + Exterior/Cutaway.<br/>Keys: <kbd>1</kbd>/<kbd>2</kbd> views · <kbd>U</kbd> underground · <kbd>A</kbd> air rights · <kbd>D</kbd> dispute · <kbd>+</kbd>/<kbd>−</kbd> zoom · <kbd>Esc</kbd> clear`;
   }
   setHint("Click a building floor — inspect in the <b>right panel</b>");
 
@@ -2813,10 +2855,12 @@ function focusUlpinFromQuery() {
   const wantCitizen = params.get("mode") === "citizen" || params.get("lock") === "1";
   for (const [, rt] of buildingRuntime) {
     const b = rt.building;
-    if (b.ulpin === ulpin) {
+    if (b.ulpin === ulpin || ulpinMatch(b.ulpin, ulpin)) {
       const m = String(ulpin).match(/-L(\d+)/i);
-      const floor = m
-        ? (b.floors || []).find((f) => String(f.floor_label) === String(Number(m[1])) || String(f.floor_label) === m[1])
+      const pub = publicUlpin(ulpin).match(/^TN3304\d{4}(\d{2})(\d{2})$/);
+      const floorNum = m ? m[1] : (pub && Number(pub[1]) ? String(Number(pub[1])) : null);
+      const floor = floorNum
+        ? (b.floors || []).find((f) => String(f.floor_label) === String(Number(floorNum)) || String(f.floor_label) === floorNum)
         : null;
       const useFloor = floor || (wantCitizen ? null : b.floors?.[0]);
       if (wantCitizen && !useFloor) continue;
@@ -2834,10 +2878,10 @@ function focusUlpinFromQuery() {
       });
       return;
     }
-    const unitFloor = (b.floors || []).find((f) => (f.units || []).some((u) => u.ulpin === ulpin));
-    const floor = unitFloor || (b.floors || []).find((f) => f.ulpin === ulpin);
+    const unitFloor = (b.floors || []).find((f) => (f.units || []).some((u) => u.ulpin === ulpin || ulpinMatch(u.ulpin, ulpin)));
+    const floor = unitFloor || (b.floors || []).find((f) => f.ulpin === ulpin || ulpinMatch(f.ulpin, ulpin));
     if (floor) {
-      const unit = (floor.units || []).find((u) => u.ulpin === ulpin);
+      const unit = (floor.units || []).find((u) => u.ulpin === ulpin || ulpinMatch(u.ulpin, ulpin));
       if (wantCitizen) {
         lockedFloorLabel = floor.floor_label;
         if (unit) lockedUnitUlpin = unit.ulpin;
