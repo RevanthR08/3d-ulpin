@@ -4,6 +4,7 @@ import { useAuth } from '../../lib/auth'
 import { lookupCitizenAccount, ownedProperties } from '../../lib/demoAccounts'
 import { addIssueReport } from '../../lib/storage'
 import { useCitizenTickets } from '../../lib/tickets'
+import { toPublicUlpin } from '../../lib/ulpin'
 
 const CATEGORIES = [
   'Incorrect boundary',
@@ -117,7 +118,7 @@ export function ReportIssuePage() {
                   </select>
                 )}
               </div>
-              <div className="mt-1 font-mono text-[11px] text-signal-deep">{chosen.ulpin}</div>
+              <div className="mt-1 font-mono text-[11px] text-signal-deep">{toPublicUlpin(chosen.ulpin)}</div>
             </div>
           ) : (
             <input

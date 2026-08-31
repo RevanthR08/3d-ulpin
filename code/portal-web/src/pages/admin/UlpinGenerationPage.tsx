@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api, type IntelCityBuilding } from '../../lib/api'
+import { toPublicUlpin } from '../../lib/ulpin'
 
 export function UlpinGenerationPage() {
   const [buildings, setBuildings] = useState<IntelCityBuilding[]>([])
@@ -18,13 +19,17 @@ export function UlpinGenerationPage() {
         <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-mute">
           Assign final PIN/ULPIN identities after geometry creation and validation. A main
           parcel can contain many bodies, and each floor/body can receive its own identity.
+          Public IDs follow DoLR Bhu-Aadhaar: 14 characters, state–district–taluk–building–floor–unit.
         </p>
       </div>
 
       <div className="rounded-2xl border border-line bg-ink p-6 text-white">
         <div className="text-[11px] uppercase tracking-[0.16em] text-white/45">Pattern</div>
         <div className="font-mono mt-3 break-all text-[18px] text-signal-soft">
-          3D-IND-&lt;pincode&gt;-&lt;body&gt;-L&lt;floor&gt;-&lt;unit&gt;
+          TN3304BBBBFFUU
+        </div>
+        <div className="mt-2 text-[12px] text-white/55">
+          TN · Chennai 33 · T. Nagar 04 · building · floor · unit — 14 characters, no spaces.
         </div>
       </div>
 
@@ -51,7 +56,7 @@ export function UlpinGenerationPage() {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <div className="text-[14px] font-semibold text-ink">{b.name}</div>
-                  <div className="font-mono mt-1 text-[11px] text-signal">{b.ulpin}</div>
+                  <div className="font-mono mt-1 text-[11px] text-signal">{toPublicUlpin(b.ulpin)}</div>
                 </div>
                 <div className="text-[12px] text-mute">{b.floors?.length || 0} floor PINs</div>
               </div>

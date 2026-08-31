@@ -1,7 +1,7 @@
 import type { ComponentType, SVGProps } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
-import { ownedProperties } from '../lib/demoAccounts'
+import { lookupCitizenAccount, ownedProperties } from '../lib/demoAccounts'
 import { useCitizenTickets } from '../lib/tickets'
 import { CitizenTicketsPanel } from './CitizenTicketsPanel'
 
@@ -139,6 +139,10 @@ export function Shell() {
   const items = auth.role === 'admin' ? ADMIN_NAV : CITIZEN_NAV
   const roleLabel = auth.role === 'admin' ? 'Operator' : 'Citizen'
   const holdings = auth.role === 'citizen' && selectedUlpin ? ownedProperties(selectedUlpin) : []
+  const ownerLetter =
+    auth.role === 'citizen'
+      ? (lookupCitizenAccount(selectedUlpin || '')?.owner || auth.username).slice(0, 1)
+      : auth.username.slice(0, 1)
   const contextLabel =
     auth.role === 'admin'
       ? 'Operator · full city'
@@ -199,7 +203,7 @@ export function Shell() {
             title={`${auth.username} · ${roleLabel}`}
             className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white text-[12px] font-semibold uppercase text-signal-deep"
           >
-            {auth.username.slice(0, 1)}
+            {ownerLetter}
           </div>
           <button
             type="button"

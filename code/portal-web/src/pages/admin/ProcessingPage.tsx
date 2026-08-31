@@ -59,7 +59,7 @@ const TERMINAL_SCRIPT: Array<{ at: number; lines: string[] }> = [
     lines: [
       '',
       '[5/5] 3D ULPIN generation',
-      '  > pattern 3D-IND-<pin>-<body>-L<floor>-U<unit>',
+      '  > pattern TN3304 + building + floor + unit (14-char DoLR ULPIN)',
       '  > composed 944 unit identities · registry freeze',
       '[done] pipeline complete — ready for footprint review',
     ],
@@ -154,7 +154,7 @@ export function ProcessingPage() {
           ['OpenCV footprint pass', 'Raster → building outlines for staged imagery'],
           ['Shapely topology', 'Overlap / containment checks across floors & units'],
           ['Vertical parcel model', 'Base–top elevation envelopes per apartment volume'],
-          ['ULPIN composer', 'Namespace + building + floor + unit identity string'],
+          ['ULPIN composer', '14-char DoLR ID: TN3304 + building + floor + unit'],
         ].map(([title, body]) => (
           <div key={title} className="rounded-2xl border border-line bg-white px-5 py-4">
             <div className="text-[14px] font-semibold text-ink">{title}</div>

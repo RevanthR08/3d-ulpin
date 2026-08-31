@@ -1,3 +1,5 @@
+import { toPublicUlpin } from './ulpin'
+
 /**
  * Hardcoded cadastral record for the AR Scanner's image target
  * (src/assets/ar-target-building.jpg — "Ground + 5 floors modern apartment").
@@ -113,7 +115,7 @@ export const AR_FLOORS: ArFloor[] = [
     level: 5,
     label: 'Fifth floor',
     short: 'F5',
-    ulpin: '3D-IND-560012-B2-L5-501',
+    ulpin: toPublicUlpin('3D-IND-560012-B2-L5-501'),
     owner: 'Meera Raghavan',
     propertyType: 'Residential · penthouse',
     areaSqM: 146,
@@ -125,7 +127,7 @@ export const AR_FLOORS: ArFloor[] = [
     level: 4,
     label: 'Fourth floor',
     short: 'F4',
-    ulpin: '3D-IND-560012-B2-L4-401',
+    ulpin: toPublicUlpin('3D-IND-560012-B2-L4-401'),
     owner: 'Vikram Iyer',
     propertyType: 'Residential · 3BHK',
     areaSqM: 128,
@@ -137,7 +139,7 @@ export const AR_FLOORS: ArFloor[] = [
     level: 3,
     label: 'Third floor',
     short: 'F3',
-    ulpin: '3D-IND-560012-B2-L3-301',
+    ulpin: toPublicUlpin('3D-IND-560012-B2-L3-301'),
     owner: 'Fatima Sheikh',
     propertyType: 'Residential · 3BHK',
     areaSqM: 128,
@@ -149,7 +151,7 @@ export const AR_FLOORS: ArFloor[] = [
     level: 2,
     label: 'Second floor',
     short: 'F2',
-    ulpin: '3D-IND-560012-B2-L2-201',
+    ulpin: toPublicUlpin('3D-IND-560012-B2-L2-201'),
     owner: 'Rajesh Menon',
     propertyType: 'Residential · 3BHK',
     areaSqM: 128,
@@ -161,7 +163,7 @@ export const AR_FLOORS: ArFloor[] = [
     level: 1,
     label: 'First floor',
     short: 'F1',
-    ulpin: '3D-IND-560012-B2-L1-101',
+    ulpin: toPublicUlpin('3D-IND-560012-B2-L1-101'),
     owner: 'Ananya Krishnan',
     propertyType: 'Residential · 2BHK',
     areaSqM: 112,
@@ -173,7 +175,7 @@ export const AR_FLOORS: ArFloor[] = [
     level: 0,
     label: 'Ground level',
     short: 'G',
-    ulpin: '3D-IND-560012-B2-L0-P01',
+    ulpin: toPublicUlpin('3D-IND-560012-B2-L0-P01'),
     owner: "Residents' Welfare Association",
     propertyType: 'Common area · stilt parking',
     areaSqM: 168,

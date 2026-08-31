@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { ownedProperties } from '../lib/demoAccounts'
+import { ulpinEquals } from '../lib/ulpin'
 import { adminTwinHref, citizenTwinHref, VIEWERS } from '../lib/viewers'
 
 /** Full-bleed Intel City 3D twin — admin: full city; citizen: locked house. */
@@ -16,7 +17,7 @@ export function TwinViewerPage() {
   useEffect(() => {
     if (isAdmin) return
     const mine = selectedUlpin ? ownedProperties(selectedUlpin) : []
-    const ok = qUlpin && mine.some((h) => h.ulpin === qUlpin)
+    const ok = qUlpin && mine.some((h) => ulpinEquals(h.ulpin, qUlpin))
     setViewUlpin(ok ? qUlpin : selectedUlpin)
   }, [isAdmin, qUlpin, selectedUlpin])
 

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { DemoCitizenAccount } from '../lib/demoAccounts'
+import { toPublicUlpin } from '../lib/ulpin'
 
 /** Compact holdings list for citizen home only. */
 export function CitizenPropertyList({ holdings }: { holdings: DemoCitizenAccount[] }) {
@@ -22,7 +23,8 @@ export function CitizenPropertyList({ holdings }: { holdings: DemoCitizenAccount
           <div className="mt-1 text-[13px] text-mute">
             {p.kind} · Floor {p.floor} · House {p.unit}
           </div>
-          <div className="font-mono mt-2 break-all text-[12px] text-signal">{p.ulpin}</div>
+          <div className="font-mono mt-2 break-all text-[12px] text-signal">{toPublicUlpin(p.ulpin)}</div>
+          <div className="mt-1 text-[10px] uppercase tracking-[0.12em] text-mute">3D ULPIN · Bhu-Aadhaar</div>
           <div className="mt-4 flex flex-wrap gap-3">
             <Link to="/citizen/property" className="text-[13px] font-semibold text-signal">
               Occupancy →

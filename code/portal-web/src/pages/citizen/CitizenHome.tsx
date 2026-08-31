@@ -4,6 +4,7 @@ import { CitizenPropertyList } from '../../components/CitizenPropertyList'
 import { api, type IntelCityRegistry } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { lookupCitizenAccount, ownedProperties } from '../../lib/demoAccounts'
+import { maskAadhaar } from '../../lib/ulpin'
 
 export function CitizenHome() {
   const { auth, selectedUlpin } = useAuth()
@@ -32,8 +33,11 @@ export function CitizenHome() {
           Your vertical properties
         </h1>
         <p className="mt-3 max-w-md text-[14px] leading-relaxed text-white/55">
-          Welcome{auth?.username ? `, ${auth.username}` : ''}
-          {owner ? ` · ${owner}` : ''}. Every parcel on this account is listed below.
+          Welcome{owner ? `, ${owner}` : auth?.username ? `, ${auth.username}` : ''}.
+          {auth?.username && auth.username.replace(/\D/g, '').length === 12
+            ? ` Aadhaar ${maskAadhaar(auth.username)}.`
+            : ''}{' '}
+          Every parcel on this account is listed below with its 14-digit ULPIN.
         </p>
 
         <div className="mt-10 space-y-4">

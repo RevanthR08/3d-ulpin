@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { api, resolveIntelCityUnit, type UnitDetail } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { ownedProperties } from '../../lib/demoAccounts'
+import { toPublicUlpin } from '../../lib/ulpin'
 
 export function PropertyPage() {
   const { selectedUlpin } = useAuth()
@@ -50,6 +51,7 @@ export function PropertyPage() {
                 <div className="mt-1 text-[13px] text-white/60">
                   {(u?.building_kind || p.kind).replace(/_/g, ' ')} · Floor {p.floor} · House {p.unit}
                 </div>
+                <div className="font-mono mt-2 text-[12px] text-signal-soft">{toPublicUlpin(p.ulpin)}</div>
               </div>
               <div className="grid gap-3 p-5 sm:grid-cols-3">
                 {[

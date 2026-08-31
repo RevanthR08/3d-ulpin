@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { api, findIntelCityHouse, type IntelCityHouse } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { ownedProperties, type DemoCitizenAccount } from '../../lib/demoAccounts'
+import { toPublicUlpin } from '../../lib/ulpin'
 
 function statusClass(status?: string) {
   const s = (status || '').toLowerCase()
@@ -68,7 +69,7 @@ function TitlePopup({
         <div className="space-y-5 px-5 py-5">
           <div>
             <div className="text-[11px] uppercase tracking-[0.14em] text-mute">ULPIN</div>
-            <div className="font-mono mt-1 break-all text-[13px] text-signal">{unit.ulpin}</div>
+            <div className="font-mono mt-1 break-all text-[13px] text-signal">{toPublicUlpin(unit.ulpin)}</div>
           </div>
 
           <div>

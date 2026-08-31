@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { api, type IntelCityBuilding, type IntelCityFloor, type IntelCityUnit } from '../lib/api'
 import { useAuth } from '../lib/auth'
+import { toPublicUlpin, ulpinMatchesQuery } from '../lib/ulpin'
 
 type Tab = 'buildings' | 'floors'
 
@@ -96,11 +97,11 @@ function HouseDetailModal({
               className="font-mono mt-1 break-all text-left text-[13px] text-signal hover:underline"
               title="Click to copy"
               onClick={() => {
-                void navigator.clipboard.writeText(unit.ulpin)
+                void navigator.clipboard.writeText(toPublicUlpin(unit.ulpin))
                 selectUlpin(unit.ulpin)
               }}
             >
-              {unit.ulpin}
+              {toPublicUlpin(unit.ulpin)}
             </button>
           </div>
 
@@ -262,7 +263,7 @@ export function RegistryPage() {
     return buildings.filter(
       (b) =>
         b.name.toLowerCase().includes(needle) ||
-        b.ulpin.toLowerCase().includes(needle) ||
+        ulpinMatchesQuery(b.ulpin, needle) ||
         b.id.toLowerCase().includes(needle) ||
         b.kind.toLowerCase().includes(needle),
     )
@@ -351,7 +352,7 @@ export function RegistryPage() {
                       <td className="px-5 py-3.5 font-semibold text-ink">{b.name}</td>
                       <td className="px-5 py-3.5 text-mute">{b.kind}</td>
                       <td className="px-5 py-3.5 text-mute">{b.floors?.length ?? 0}</td>
-                      <td className="font-mono px-5 py-3.5 text-[11px] text-signal">{b.ulpin}</td>
+                      <td className="font-mono px-5 py-3.5 text-[11px] text-signal">{toPublicUlpin(b.ulpin)}</td>
                       <td className="px-5 py-3.5 text-right">
                         <button
                           type="button"
@@ -428,7 +429,7 @@ export function RegistryPage() {
                   <div className="flex flex-none flex-wrap items-start justify-between gap-4 border-b border-line px-6 py-4">
                     <div>
                       <div className="font-display text-[24px] font-semibold text-ink">{selected.name}</div>
-                      <div className="font-mono mt-1 text-[12px] text-signal">{selected.ulpin}</div>
+                      <div className="font-mono mt-1 text-[12px] text-signal">{toPublicUlpin(selected.ulpin)}</div>
                     </div>
                     <div className="rounded-full bg-paper px-3 py-1 text-[12px] text-mute">
                       {selected.kind === 'skyscraper'
@@ -451,7 +452,7 @@ export function RegistryPage() {
                               <div className="text-[14px] font-semibold text-ink">
                                 Floor {floor.floor_label}
                               </div>
-                              <div className="font-mono mt-0.5 text-[10px] text-mute">{floor.ulpin}</div>
+                              <div className="font-mono mt-0.5 text-[10px] text-mute">{toPublicUlpin(floor.ulpin)}</div>
                             </div>
                             <div className="text-[11px] text-mute">
                               {units.length} house{units.length === 1 ? '' : 's'}
@@ -472,7 +473,7 @@ export function RegistryPage() {
                                   House {u.unit_label || '?'}
                                 </div>
                                 <div className="font-mono mt-0.5 break-all text-[10px] text-signal">
-                                  {u.ulpin}
+                                  {toPublicUlpin(u.ulpin)}
                                 </div>
                                 <div className="mt-1.5 text-[12px] font-medium text-ink">
                                   {u.owner || '—'}
