@@ -7,7 +7,7 @@ import {
   HiOutlineShieldCheck,
   HiOutlineUserCircle,
 } from 'react-icons/hi2'
-import cityWide from '../assets/input_city_wide.png'
+import loginHero from '../assets/login-hero.png'
 import { useAuth } from '../lib/auth'
 import {
   DEFAULT_CITIZEN_ULPIN,
@@ -83,13 +83,13 @@ export function LoginPage() {
             <div className="relative">
               <div className="overflow-hidden rounded-[2.5rem] border border-white/60 shadow-[0_36px_90px_-32px_rgba(11,18,16,0.5)]">
                 <img
-                  src={cityWide}
-                  alt="Aerial view of the cadastral city"
-                  className="aspect-square w-full object-cover"
+                  src={loginHero}
+                  alt="Aerial city view with 3D volumetric ULPIN parcels"
+                  className="aspect-video w-full object-cover"
                 />
               </div>
               <div className="absolute -bottom-5 -right-3 rounded-2xl border border-line bg-paper/95 px-4 py-3 shadow-lg backdrop-blur">
-                <div className="font-mono text-[11px] text-signal-deep">3D-IND-600001-B03-L12-U02</div>
+                <div className="font-mono text-[11px] text-signal-deep">3D-IND-560012-A1-L7-704</div>
                 <div className="mt-0.5 text-[10px] text-mute">One ULPIN per volume</div>
               </div>
             </div>
