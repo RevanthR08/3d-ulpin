@@ -6,6 +6,7 @@ import { CitizenTicketsProvider } from './lib/tickets'
 import { DataPipelinePage } from './pages/admin/DataPipelinePage'
 import { ReportsIssuesPage } from './pages/admin/ReportsIssuesPage'
 import { UndergroundPropertiesPage } from './pages/admin/UndergroundPropertiesPage'
+import { DisputeZonesPage } from './pages/admin/DisputeZonesPage'
 import { CitizenHome } from './pages/citizen/CitizenHome'
 import { MyPropertyPage } from './pages/citizen/MyPropertyPage'
 import { ReportIssuePage } from './pages/citizen/ReportIssuePage'
@@ -44,6 +45,7 @@ export default function App() {
               <Route path="/app/validation" element={<Navigate to="/app/registry" replace />} />
               <Route path="/app/ulpin-generation" element={<Navigate to="/app/registry" replace />} />
               <Route path="/app/reports" element={<ReportsIssuesPage />} />
+              <Route path="/app/dispute-zones" element={<DisputeZonesPage />} />
               <Route path="/app/registry" element={<RegistryPage />} />
             </Route>
             <Route path="/app/atlas" element={<AtlasPage />} />

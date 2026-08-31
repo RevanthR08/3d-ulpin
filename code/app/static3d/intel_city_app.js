@@ -44,6 +44,12 @@ let airPickable = [];
 let airVisible = false;
 let airByBuilding = new Map();
 
+let disputeRoot = null;
+let disputePickable = [];
+let disputeVisible = false;
+let disputeById = new Map();
+let disputeReg = { meta: {}, encroachments: [], excess_floors: [] };
+
 /** Portal citizen twin: lock orbit + picks to one building (mode=citizen&ulpin=…). */
 let citizenMode = false;
 let lockedBuildingId = null;
@@ -142,6 +148,7 @@ function coordIdFromData(data) {
   if (!data) return null;
   if (data.kind === "underground") return data.asset?.ulpin || data.asset?.id || data.ulpin;
   if (data.kind === "air_rights") return data.asset?.ulpin || data.ulpin;
+  if (data.kind === "dispute") return data.asset?.ulpin || data.ulpin;
   return data.unit?.ulpin || data.ulpin || data.floor?.ulpin || data.building?.ulpin;
 }
 
@@ -163,7 +170,7 @@ function setCoordHud(data) {
     el.innerHTML = "";
     return;
   }
-  const extra = data.kind === "air_rights"
+  const extra = data.kind === "air_rights" || data.kind === "dispute"
     ? { floorIndex: 24 }
     : { floorIndex: data.floor?.floor_index };
   el.innerHTML = coordsNearUlpin(coordIdFromData(data), extra);
@@ -557,6 +564,207 @@ function selectAirOnBuilding(buildingId) {
   }
   setAirVisible(true);
   selectPick(airPickFromMesh(mesh));
+}
+
+function boxIntersect3(a, b) {
+  const min = new THREE.Vector3(
+    Math.max(a.min.x, b.min.x),
+    Math.max(a.min.y, b.min.y),
+    Math.max(a.min.z, b.min.z),
+  );
+  const max = new THREE.Vector3(
+    Math.min(a.max.x, b.max.x),
+    Math.min(a.max.y, b.max.y),
+    Math.min(a.max.z, b.max.z),
+  );
+  if (max.x <= min.x || max.y <= min.y || max.z <= min.z) return null;
+  return new THREE.Box3(min, max);
+}
+
+function inflateRtToward(srcRt, dstRt, meters) {
+  const box = srcRt.box.clone();
+  const dx = dstRt.center.x - srcRt.center.x;
+  const dz = dstRt.center.z - srcRt.center.z;
+  if (Math.abs(dx) >= Math.abs(dz)) {
+    if (dx > 0) box.max.x += meters;
+    else box.min.x -= meters;
+  } else if (dz > 0) {
+    box.max.z += meters;
+  } else {
+    box.min.z -= meters;
+  }
+  return box;
+}
+
+function encroachmentVolumeBox(srcRt, dstRt) {
+  const inflated = inflateRtToward(srcRt, dstRt, 78);
+  let hit = boxIntersect3(inflated, dstRt.box);
+  if (!hit) {
+    const mid = srcRt.center.clone().lerp(dstRt.center, 0.42);
+    const y0 = Math.min(srcRt.box.min.y, dstRt.box.min.y);
+    hit = new THREE.Box3(
+      new THREE.Vector3(mid.x - 14, y0, mid.z - 18),
+      new THREE.Vector3(mid.x + 14, y0 + 22, mid.z + 18),
+    );
+  }
+  const y0 = Math.min(srcRt.box.min.y, dstRt.box.min.y);
+  hit.min.y = y0;
+  hit.max.y = y0 + 24;
+  return hit;
+}
+
+function addDisputeMesh(box, asset) {
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+  const geo = new THREE.BoxGeometry(
+    Math.max(size.x, 6),
+    Math.max(size.y, 8),
+    Math.max(size.z, 6),
+  );
+  const fill = new THREE.MeshLambertMaterial({
+    color: asset.dispute_kind === "excess_floors" ? 0xd97706 : 0xc23b32,
+    transparent: true,
+    opacity: 0.34,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  });
+  const mesh = new THREE.Mesh(geo, fill);
+  mesh.position.copy(center);
+  mesh.renderOrder = 8;
+  mesh.userData.isDispute = true;
+  mesh.userData.buildingId = asset.building_id;
+  mesh.userData.asset = asset;
+  const edgeColor = asset.dispute_kind === "excess_floors" ? 0x9a6b00 : 0x8b1e18;
+  const edges = new THREE.LineSegments(
+    new THREE.EdgesGeometry(geo),
+    new THREE.LineBasicMaterial({ color: edgeColor, transparent: true, opacity: 0.95 }),
+  );
+  edges.renderOrder = 9;
+  mesh.add(edges);
+  disputeRoot.add(mesh);
+  disputePickable.push(mesh);
+  disputeById.set(asset.id, mesh);
+  return mesh;
+}
+
+function disputePickFromMesh(mesh, point) {
+  const asset = mesh.userData.asset || {};
+  return {
+    kind: "dispute",
+    building: buildingRuntime.get(mesh.userData.buildingId)?.building,
+    buildingId: mesh.userData.buildingId,
+    asset,
+    meshes: [mesh],
+    point: point || mesh.getWorldPosition(new THREE.Vector3()),
+    ulpin: asset.ulpin,
+  };
+}
+
+function buildDisputeLayer() {
+  if (disputeRoot) {
+    scene.remove(disputeRoot);
+    disputeRoot.traverse((o) => {
+      o.geometry?.dispose?.();
+      if (o.material) {
+        if (Array.isArray(o.material)) o.material.forEach((m) => m.dispose?.());
+        else o.material.dispose?.();
+      }
+    });
+  }
+  disputeRoot = new THREE.Group();
+  disputeRoot.name = "dispute_zones";
+  disputePickable = [];
+  disputeById.clear();
+
+  for (const rec of disputeReg.encroachments || []) {
+    const src = buildingRuntime.get(rec.encroacher_id || rec.encroacher?.id);
+    const dst = buildingRuntime.get(rec.victim_id || rec.victim?.id);
+    if (!src || !dst) continue;
+    const box = encroachmentVolumeBox(src, dst);
+    addDisputeMesh(box, {
+      id: rec.id,
+      dispute_kind: "encroachment",
+      ulpin: rec.encroacher?.ulpin || rec.notice,
+      building_id: rec.encroacher_id,
+      building_name: rec.encroacher?.name,
+      victim_name: rec.victim?.name,
+      victim_ulpin: rec.victim?.ulpin,
+      area_sq_m: rec.area_sq_m,
+      setback_m: rec.setback_shortfall_m,
+      notice: rec.notice,
+      status: rec.status,
+      severity: rec.severity,
+      title: rec.title,
+      summary: rec.summary,
+      action: rec.action,
+      label: rec.title,
+    });
+  }
+
+  for (const rec of disputeReg.excess_floors || []) {
+    const rt = buildingRuntime.get(rec.building_id);
+    if (!rt) continue;
+    const extra = Number(rec.extra_floors) || 4;
+    const built = Number(rec.built_floors) || Math.max((rt.building?.floors || []).length, 1);
+    const h = Math.max(14, rt.size.y * (extra / built));
+    const w = Math.max(12, rt.size.x * 1.06);
+    const d = Math.max(12, rt.size.z * 1.06);
+    const box = new THREE.Box3(
+      new THREE.Vector3(rt.center.x - w * 0.5, rt.box.max.y - h, rt.center.z - d * 0.5),
+      new THREE.Vector3(rt.center.x + w * 0.5, rt.box.max.y + 1.2, rt.center.z + d * 0.5),
+    );
+    addDisputeMesh(box, {
+      id: rec.id,
+      dispute_kind: "excess_floors",
+      ulpin: rec.ulpin,
+      building_id: rec.building_id,
+      building_name: rec.name,
+      approved_floors: rec.approved_floors,
+      built_floors: rec.built_floors,
+      extra_floors: extra,
+      approved_height_m: rec.approved_height_m,
+      built_height_m: rec.built_height_m,
+      notice: rec.notice,
+      status: rec.status,
+      severity: rec.severity,
+      title: rec.title,
+      summary: rec.summary,
+      action: rec.action,
+      label: rec.title,
+    });
+  }
+
+  disputeRoot.visible = false;
+  scene.add(disputeRoot);
+}
+
+function setDisputeVisible(on) {
+  if (citizenMode) on = false;
+  disputeVisible = !!on;
+  if (disputeRoot) disputeRoot.visible = disputeVisible;
+  document.getElementById("btn-dispute")?.classList.toggle("danger", disputeVisible);
+  if (disputeVisible) {
+    setHint("Dispute zones · <b>red</b> = plot overlap · <b>amber</b> = four extra floors vs sanctioned plan — click a volume");
+  }
+}
+
+function selectDisputeById(id) {
+  if (!id) return false;
+  const mesh = disputeById.get(id);
+  if (!mesh) return false;
+  setDisputeVisible(true);
+  selectPick(disputePickFromMesh(mesh));
+  return true;
+}
+
+async function loadDisputeDocket() {
+  try {
+    const res = await fetch("./intel_city/intel_city_disputes.json?v=1");
+    if (!res.ok) return;
+    disputeReg = await res.json();
+  } catch (e) {
+    console.warn("[intel_city] dispute docket failed", e);
+  }
 }
 
 function roomsForBuilding(buildingId) {
@@ -1217,6 +1425,7 @@ function setup() {
   document.getElementById("btn-sat-close")?.addEventListener("click", () => setSatCompare(false));
   document.getElementById("btn-ug")?.addEventListener("click", () => setUgVisible(!ugVisible));
   document.getElementById("btn-air")?.addEventListener("click", () => setAirVisible(!airVisible));
+  document.getElementById("btn-dispute")?.addEventListener("click", () => setDisputeVisible(!disputeVisible));
   // Interior modes live only in the right panel (society-style) — not in left HUD
   document.querySelectorAll("#ug-chips .chip").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -1240,6 +1449,9 @@ function setup() {
     }
     if (e.key === "a" || e.key === "A") {
       if (!citizenMode) setAirVisible(!airVisible);
+    }
+    if (e.key === "d" || e.key === "D") {
+      if (!citizenMode) setDisputeVisible(!disputeVisible);
     }
     if (e.key === "1") setInteriorView("exterior");
     if (e.key === "2") setInteriorView("cutaway");
@@ -1595,6 +1807,9 @@ function applyCitizenLock(buildingId) {
   const airBtn = document.getElementById("btn-air");
   if (airBtn) airBtn.style.display = "none";
   setAirVisible(false);
+  const dzBtn = document.getElementById("btn-dispute");
+  if (dzBtn) dzBtn.style.display = "none";
+  setDisputeVisible(false);
   const topBtn = document.getElementById("btn-top");
   if (topBtn) topBtn.style.display = "none";
   const satBtn = document.getElementById("btn-sat-compare");
@@ -1755,6 +1970,17 @@ function resolvePick(evt) {
   pointer.y = -((cy - rect.top) / rect.height) * 2 + 1;
   raycaster.setFromCamera(pointer, camera);
 
+  if (disputeVisible && disputePickable.length) {
+    const dzHits = raycaster.intersectObjects(disputePickable.filter((m) => m.visible), false);
+    if (dzHits.length) {
+      const hit = dzHits[0];
+      const bid = hit.object.userData.buildingId;
+      if (!(citizenMode && lockedBuildingId && bid !== lockedBuildingId)) {
+        return disputePickFromMesh(hit.object, hit.point);
+      }
+    }
+  }
+
   if (airVisible && airPickable.length) {
     const airHits = raycaster.intersectObjects(airPickable.filter((m) => m.visible), false);
     if (airHits.length) {
@@ -1879,6 +2105,7 @@ function onHover(evt) {
       const glow =
         pick.kind === "underground" ? 0xf59e0b
           : pick.kind === "air_rights" ? 0x22d3c8
+          : pick.kind === "dispute" ? 0xc23b32
           : pick.kind === "room" ? 0x0ea5a8
             : 0x2a9bb0;
       setMeshGlow(hoverMeshes, true, glow);
@@ -1896,6 +2123,14 @@ function onHover(evt) {
     tip.innerHTML = `<div><b>Air rights</b> · ${esc(a.building_name || "")}</div>
       <div class="t-owner">Unbuilt volume · +${esc(a.height_m ?? "—")} m above roof</div>
       <div class="t-ulpin">${esc(a.ulpin || "")}</div>`;
+  } else if (pick.kind === "dispute") {
+    const a = pick.asset || {};
+    const kindBit = a.dispute_kind === "excess_floors"
+      ? `+${esc(a.extra_floors ?? 4)} floors above OC`
+      : `Overlap into ${esc(a.victim_name || "neighbour")}`;
+    tip.innerHTML = `<div><b>Dispute zone</b> · ${esc(a.building_name || "")}</div>
+      <div class="t-owner">${esc(kindBit)}</div>
+      <div class="t-ulpin">${esc(a.id || a.ulpin || "")}</div>`;
   } else if (pick.kind === "room") {
     tip.innerHTML = `<div><b>${esc(pick.roomLabel || pick.roomType || "Room")}</b></div>
       <div class="t-owner">${esc(pick.building?.name || "")} · interior</div>
@@ -1960,7 +2195,7 @@ function selectPick(pick) {
   if (selectedMeshes.length) setMeshGlow(selectedMeshes, false);
   selectedMeshes = pick.meshes;
   selectedData = pick;
-  setMeshGlow(selectedMeshes, true, pick.kind === "underground" ? 0xf59e0b : pick.kind === "air_rights" ? 0x22d3c8 : 0x0ea5a8);
+  setMeshGlow(selectedMeshes, true, pick.kind === "underground" ? 0xf59e0b : pick.kind === "air_rights" ? 0x22d3c8 : pick.kind === "dispute" ? 0xc23b32 : 0x0ea5a8);
   if (pick.buildingId) showOutline(pick.buildingId);
   else hideOutline();
   if (interiorView !== "exterior" && pick.kind === "floor") {
@@ -1983,6 +2218,16 @@ function flyToPick(pick) {
         look.y + h * 0.28,
         look.z + Math.max(80, h * 1.0),
       ),
+      look,
+    };
+    return;
+  }
+  if (pick.kind === "dispute") {
+    const look = pick.point ? pick.point.clone() : new THREE.Vector3();
+    const extra = pick.asset?.dispute_kind === "excess_floors";
+    const pull = extra ? 220 : 140;
+    flyTarget = {
+      pos: new THREE.Vector3(look.x + pull, look.y + (extra ? 90 : 48), look.z + pull * 0.85),
       look,
     };
     return;
@@ -2180,6 +2425,34 @@ function showPanel(data) {
     wirePanel(data);
     return;
   }
+  if (data.kind === "dispute") {
+    const a = data.asset || {};
+    const extra = a.dispute_kind === "excess_floors";
+    panelEl.innerHTML = `
+      <a class="close" id="panel-close">Close</a>
+      <h2>${esc(a.title || a.label || "Dispute zone")}</h2>
+      <div class="breadcrumb"><b>City</b> → Enforcement → ${esc(extra ? "Extra floors" : "Plot overlap")}</div>
+      <div class="ulpin" id="ulpin-copy" title="Click to copy">${esc(a.notice || a.id || "")}</div>
+      <div class="banner">${esc(a.summary || "Mock enforcement overlay.")}</div>
+      <div class="grid">
+        ${extra
+          ? `<div class="stat"><div class="v">${esc(a.approved_floors ?? "—")}</div><div class="k">Approved floors</div></div>
+             <div class="stat"><div class="v">+${esc(a.extra_floors ?? 4)}</div><div class="k">Illegal extra</div></div>`
+          : `<div class="stat"><div class="v">${esc(a.area_sq_m ?? "—")} m²</div><div class="k">Overlap</div></div>
+             <div class="stat"><div class="v">${esc(a.setback_m ?? "—")} m</div><div class="k">Setback short</div></div>`}
+      </div>
+      <h3>Classification</h3>
+      <div class="row"><span>Type</span><br/><b>${esc(extra ? "Unsanctioned extra storeys" : "Building constructed in neighbour plot")}</b></div>
+      <div class="row"><span>Status</span><br/><span class="badge warn">${esc(a.status || "open")}</span> · ${esc(a.severity || "")}</div>
+      <div class="row"><span>${esc(extra ? "Building" : "Built by")}</span><br/><b>${esc(a.building_name || "")}</b></div>
+      ${extra ? `<div class="row"><span>As-built</span><br/>${esc(a.built_floors)} floors · ${esc(a.built_height_m)} m vs OC ${esc(a.approved_floors)} / ${esc(a.approved_height_m)} m</div>`
+        : `<div class="row"><span>Into plot of</span><br/><b>${esc(a.victim_name || "")}</b><br/><code>${esc(a.victim_ulpin || "")}</code></div>`}
+      <div class="row"><span>Parent ULPIN</span><br/><code>${esc(a.ulpin || "")}</code></div>
+      <div class="row"><span>Next action</span><br/>${esc(a.action || "—")}</div>
+    `;
+    wirePanel(data);
+    return;
+  }
   if (data.kind === "stadium") {
     const b = data.building;
     panelEl.innerHTML = `
@@ -2210,6 +2483,18 @@ function showPanel(data) {
     .join("");
   const banner = b.kind === "construction"
     ? `<div class="banner">WIP structure — vertical parcel <b>pre-assigned</b> for cadastral continuity.</div>`
+    : "";
+  const dzBits = [];
+  if (!citizenMode && b.id) {
+    for (const c of disputeReg.encroachments || []) {
+      if (c.encroacher_id === b.id || c.victim_id === b.id) dzBits.push(`Plot overlap · ${c.id}`);
+    }
+    for (const c of disputeReg.excess_floors || []) {
+      if (c.building_id === b.id) dzBits.push(`+${c.extra_floors || 4} floors vs OC · ${c.id}`);
+    }
+  }
+  const dzBanner = dzBits.length
+    ? `<div class="banner" style="background:#fff1f0;border-color:#e8b4b0;color:#7a2222">Enforcement · ${esc(dzBits.join(" · "))} — press <b>D</b> or Dispute zones to show volumes.</div>`
     : "";
   const canInterior = b.kind === "lowrise" || b.kind === "midrise" || b.kind === "skyscraper";
   const rooms = roomsForBuilding(b.id);
@@ -2272,6 +2557,7 @@ function showPanel(data) {
       </button>
     </div>
     ${banner}
+    ${dzBanner}
     ${housesHtml}
     <div class="grid">
       <div class="stat"><div class="v">${esc(rec.carpet ?? "—")}<small>m²</small></div><div class="k">Carpet</div></div>
@@ -2352,6 +2638,8 @@ function wirePanel(data) {
         ? (data.asset?.ulpin || data.asset?.id || data.ulpin)
         : data.kind === "air_rights"
           ? (data.asset?.ulpin || data.ulpin)
+          : data.kind === "dispute"
+            ? (data.asset?.notice || data.asset?.ulpin || data.ulpin)
           : data.unit?.ulpin || data.floor?.ulpin || data.ulpin;
     try {
       await navigator.clipboard.writeText(text);
@@ -2447,6 +2735,8 @@ async function loadCity() {
   const { buildings: n, tagged } = applyBuildingRegistry(cityRoot);
   console.info("[intel_city] registry", registry.meta, "tagged meshes", tagged);
   buildAirRightsLayer();
+  await loadDisputeDocket();
+  buildDisputeLayer();
 
   setProgress(95, "Loading underground…");
   let ugCounts = { utilities: 0, structures: 0, meshes: 0 };
@@ -2479,6 +2769,8 @@ async function loadCity() {
   else setUgVisible(false);
   if (params.get("air") === "1" && !wantCitizen) setAirVisible(true);
   else setAirVisible(false);
+  if (params.get("dispute") === "1" && !wantCitizen) setDisputeVisible(true);
+  else setDisputeVisible(false);
 
   document.getElementById("loading").style.display = "none";
   document.getElementById("badge").innerHTML =
@@ -2486,7 +2778,7 @@ async function loadCity() {
   const sub = document.querySelector("#hud .sub");
   if (sub) {
     sub.innerHTML =
-      `Left = camera tools · <b>Right panel</b> = ownership + Exterior/Cutaway.<br/>Keys: <kbd>1</kbd>/<kbd>2</kbd> views · <kbd>U</kbd> underground · <kbd>A</kbd> air rights · <kbd>+</kbd>/<kbd>−</kbd> zoom · <kbd>Esc</kbd> clear`;
+      `Left = camera tools · <b>Right panel</b> = ownership + Exterior/Cutaway.<br/>Keys: <kbd>1</kbd>/<kbd>2</kbd> views · <kbd>U</kbd> underground · <kbd>A</kbd> air rights · <kbd>D</kbd> dispute zones · <kbd>+</kbd>/<kbd>−</kbd> zoom · <kbd>Esc</kbd> clear`;
   }
   setHint("Click a building floor — inspect in the <b>right panel</b>");
 
@@ -2502,6 +2794,8 @@ async function loadCity() {
       setHint("Citizen twin requires your property ULPIN — open from the portal <b>My Property</b> page.");
       document.getElementById("badge").innerHTML = `<b>Citizen twin</b> · ULPIN required`;
     }
+  } else if (params.get("focus")) {
+    selectDisputeById(params.get("focus"));
   }
   if (params.get("interior") === "1" && !wantCitizen) {
     setTimeout(() => {

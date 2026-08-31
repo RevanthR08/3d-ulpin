@@ -22,8 +22,10 @@ export function TwinViewerPage() {
 
   const qAir = params.get('air') === '1'
   const qUg = params.get('ug') === '1'
+  const qDispute = params.get('dispute') === '1'
+  const qFocus = params.get('focus')
   const twinHref = isAdmin
-    ? adminTwinHref({ air: qAir, ug: qUg })
+    ? adminTwinHref({ air: qAir, ug: qUg, dispute: qDispute, focus: qFocus, ulpin: qUlpin })
     : viewUlpin
       ? citizenTwinHref(viewUlpin)
       : null
@@ -38,7 +40,7 @@ export function TwinViewerPage() {
             </h1>
             <p className="mt-0.5 text-[12px] text-mute">
               {isAdmin
-                ? 'Intel City twin — floors, interiors, underground, air rights'
+                ? 'Intel City twin — floors, interiors, underground, air rights, dispute zones'
                 : holdings.length > 0
                   ? 'Camera on your floor — the rest of the city sits in fog'
                   : 'Set your ULPIN on My Property first'}
@@ -55,6 +57,18 @@ export function TwinViewerPage() {
                 }`}
               >
                 Air rights
+              </Link>
+            )}
+            {isAdmin && (
+              <Link
+                to={qDispute ? '/app/twin' : '/app/twin?dispute=1'}
+                className={`rounded-lg px-3.5 py-2 text-[12px] font-semibold ${
+                  qDispute
+                    ? 'border border-danger bg-danger/10 text-danger'
+                    : 'border border-line bg-white text-ink hover:border-danger'
+                }`}
+              >
+                Dispute zones
               </Link>
             )}
             {isAdmin && twinHref && (
