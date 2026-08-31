@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom'
-import { useMemo, useRef, useState, type ChangeEvent, type DragEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 import cityCore from '../../assets/input_city_core.png'
 import cityWide from '../../assets/input_city_wide.png'
+import blueprintLiving from '../../assets/blueprint_living.png'
+import blueprintElevation from '../../assets/blueprint_elevation.jpg'
+import blueprintRooms from '../../assets/blueprint_rooms.jpg'
+import blueprintFirstFloor from '../../assets/blueprint_first_floor.png'
 
 type SourceId = 'drone' | 'lidar' | 'gis' | 'floorplans' | 'gnss' | 'elevation' | 'archive' | 'other'
 
@@ -36,7 +40,11 @@ const DEMO_FILES: Array<readonly [string, number, string]> = [
   ['input_data_sample/gis/parcel_boundaries.geojson', 28_000_000, 'application/geo+json'],
   ['input_data_sample/gis/building_footprints.geojson', 24_000_000, 'application/geo+json'],
   ['input_data_sample/gis/road_network.gpkg', 46_000_000, 'application/geopackage+sqlite3'],
-  ...Array.from({ length: 100 }, (_, i) => [
+  ['input_data_sample/floorplans/typical_residential_floor.png', 106_030, 'image/png'],
+  ['input_data_sample/floorplans/facade_and_elevation.jpg', 168_759, 'image/jpeg'],
+  ['input_data_sample/floorplans/numbered_room_plan.jpg', 231_038, 'image/jpeg'],
+  ['input_data_sample/floorplans/first_floor_room_plan.png', 193_949, 'image/png'],
+  ...Array.from({ length: 96 }, (_, i) => [
     `input_data_sample/floorplans/tower_${String.fromCharCode(65 + (i % 4))}_floor_${String(i + 1).padStart(3, '0')}.pdf`,
     14_000_000 + (i % 8) * 650_000,
     'application/pdf',
@@ -142,10 +150,10 @@ const DRONE_PREVIEWS = [
 ]
 
 const BLUEPRINT_PREVIEWS = [
-  'Tower A · typical floor',
-  'Tower B · residential floor',
-  'Basement parking level',
-  'Community block plan',
+  { label: 'Typical residential floor', src: blueprintLiving },
+  { label: 'Facade and elevation set', src: blueprintElevation },
+  { label: 'Numbered room plan', src: blueprintRooms },
+  { label: 'First floor room plan', src: blueprintFirstFloor },
 ]
 
 function shortFileName(file: File) {
@@ -192,17 +200,19 @@ function SourcePreview({
             Remaining {Math.max(0, files.length - 4)} plans are indexed but not opened here.
           </div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            {BLUEPRINT_PREVIEWS.map((label, i) => (
-              <div key={label} className="rounded-xl border border-line bg-white p-4">
-                <div className="relative h-32 overflow-hidden rounded-lg bg-[#eef3f7]">
-                  <div className="absolute inset-4 border-2 border-[#4c7ea8]" />
-                  <div className="absolute left-8 top-8 h-10 w-16 border border-[#4c7ea8]" />
-                  <div className="absolute bottom-8 right-8 h-12 w-20 border border-[#4c7ea8]" />
-                  <div className="absolute left-1/2 top-4 h-24 border-l border-dashed border-[#4c7ea8]" />
-                  <div className="absolute bottom-4 left-4 right-4 border-t border-dashed border-[#4c7ea8]" />
+            {BLUEPRINT_PREVIEWS.map((item, i) => (
+              <div key={item.label} className="overflow-hidden rounded-xl border border-line bg-white">
+                <img
+                  src={item.src}
+                  alt={item.label}
+                  className="h-44 w-full bg-[#0b3a6e] object-contain"
+                />
+                <div className="px-3 py-2">
+                  <div className="text-[12px] font-semibold text-ink">{item.label}</div>
+                  <div className="font-mono mt-0.5 text-[10px] text-mute">
+                    {shortFileName(files[i] || files[0])}
+                  </div>
                 </div>
-                <div className="mt-3 text-[12px] font-semibold text-ink">{label}</div>
-                <div className="font-mono mt-1 text-[10px] text-mute">{shortFileName(files[i] || files[0])}</div>
               </div>
             ))}
           </div>
@@ -235,6 +245,11 @@ export function IngestPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const folderInputRef = useRef<HTMLInputElement | null>(null)
   const zipInputRef = useRef<HTMLInputElement | null>(null)
+
+  useEffect(() => {
+    loadSamplePackage()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const grouped = useMemo(() => {
     const seed = Object.fromEntries(SOURCE_GROUPS.map((g) => [g.id, [] as File[]])) as Record<SourceId, File[]>
