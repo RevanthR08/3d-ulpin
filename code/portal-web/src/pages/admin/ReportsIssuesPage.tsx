@@ -9,6 +9,7 @@ import {
   type DisputeMessage,
   type IssueStatus,
 } from '../../lib/storage'
+import { BackendDisputes } from './BackendDisputes'
 
 const STATUS_LABEL: Record<IssueStatus, string> = {
   new: 'New',
@@ -106,6 +107,15 @@ export function ReportsIssuesPage() {
             {note}
           </div>
         )}
+      </div>
+
+      <BackendDisputes />
+
+      <div className="border-t border-line pt-6">
+        <h2 className="font-display text-[20px] font-semibold text-ink">Citizen record issues</h2>
+        <p className="mt-1 text-[13px] text-mute">
+          Legacy citizen-submitted issues with dossier, mail thread, and operator actions.
+        </p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">

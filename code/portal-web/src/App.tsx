@@ -3,6 +3,7 @@ import { RequireAuth } from './components/RequireAuth'
 import { Shell } from './components/Shell'
 import { AuthProvider, useAuth } from './lib/auth'
 import { CitizenTicketsProvider } from './lib/tickets'
+import { ArView } from './pages/admin/ArView'
 import { DataPipelinePage } from './pages/admin/DataPipelinePage'
 import { ReportsIssuesPage } from './pages/admin/ReportsIssuesPage'
 import { UndergroundPropertiesPage } from './pages/admin/UndergroundPropertiesPage'
@@ -45,6 +46,7 @@ export default function App() {
               <Route path="/app/ulpin-generation" element={<Navigate to="/app/registry" replace />} />
               <Route path="/app/reports" element={<ReportsIssuesPage />} />
               <Route path="/app/registry" element={<RegistryPage />} />
+              <Route path="/app/ar" element={<ArView />} />
             </Route>
             <Route path="/app/atlas" element={<AtlasPage />} />
             <Route path="/app/polygons" element={<Navigate to="/app/atlas" replace />} />

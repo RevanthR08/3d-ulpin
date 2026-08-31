@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { HiOutlineArrowRight, HiOutlineFlag } from 'react-icons/hi2'
+import { HiOutlineArrowRight, HiOutlineFlag, HiOutlineMapPin } from 'react-icons/hi2'
 import { useAuth } from '../../lib/auth'
 import { lookupCitizenAccount, ownedProperties } from '../../lib/demoAccounts'
 import { addIssueReport } from '../../lib/storage'
@@ -24,8 +24,18 @@ export function ReportIssuePage() {
   const [category, setCategory] = useState(CATEGORIES[0])
   const [description, setDescription] = useState('')
   const [contact, setContact] = useState('')
+  const [location, setLocation] = useState('')
+  const [locating, setLocating] = useState(false)
 
   const chosen = holdings.find((h) => h.ulpin === ulpin) || holdings[0]
+
+  function findCurrentLocation() {
+    setLocating(true)
+    window.setTimeout(() => {
+      setLocation('Chennai Institute of Technology')
+      setLocating(false)
+    }, 1000)
+  }
 
   function submit(e: FormEvent) {
     e.preventDefault()
@@ -63,6 +73,28 @@ export function ReportIssuePage() {
       </div>
 
       <form onSubmit={submit} className="space-y-6 rounded-2xl border border-line bg-white p-6">
+        <div>
+          <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-mute">Location</div>
+          <div className="relative mt-2">
+            <HiOutlineMapPin className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-mute" />
+            <input
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="Enter location or find current location"
+              className="w-full rounded-xl border border-line bg-paper py-3 pl-10 pr-[7.5rem] text-[13.5px] outline-none focus:border-signal focus:bg-white"
+            />
+            <button
+              type="button"
+              onClick={findCurrentLocation}
+              disabled={locating}
+              className="absolute right-1.5 top-1/2 inline-flex -translate-y-1/2 items-center gap-1.5 rounded-lg bg-signal-soft px-2.5 py-1.5 text-[11px] font-semibold text-signal-deep transition hover:bg-signal-soft/70 disabled:opacity-60"
+            >
+              <HiOutlineMapPin className="h-3.5 w-3.5" />
+              {locating ? 'Locating…' : 'Current'}
+            </button>
+          </div>
+        </div>
+
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-mute">Related property</div>
           {chosen ? (

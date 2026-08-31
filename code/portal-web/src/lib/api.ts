@@ -227,6 +227,83 @@ export function findIntelCityHouse(reg: IntelCityRegistry, ulpin: string): Intel
   return null
 }
 
+/* --- Novelty modules (see app/novelty.py) --- */
+
+export type RegistryFlag = {
+  building_id: string
+  building_ulpin: string
+  building_name: string
+  violation_type: 'horizontal_land_grab' | 'cantilever_overhang' | 'unauthorized_extra_floor'
+  violation_label: string
+  severity: 'high' | 'medium' | 'low'
+  description: string
+}
+
+export type RegistryFlags = {
+  generated_at: string
+  seed: number
+  flagged_count: number
+  by_severity: Record<'high' | 'medium' | 'low', number>
+  buildings: RegistryFlag[]
+}
+
+export type ArScan = {
+  scan_id: string
+  scanned_at: string
+  match_confidence: number
+  ulpin: string
+  level: string
+  building: { id: string; ulpin: string; name: string; type?: string; floor_count?: number }
+  floor_label: string
+  unit?: string | number | null
+  owner: string
+  legal_status?: string
+  property_type?: string
+  area_sq_m?: number | null
+  gps: { latitude?: number; longitude?: number; elevation_amsl_m?: number; source?: string }
+  overlay: {
+    label: string
+    sub_label: string
+    corners_m: Array<[number, number, number]>
+    height_m?: number
+  }
+}
+
+export type DisputeStatus = 'pending_review' | 'approved' | 'rejected'
+
+export type Dispute = {
+  dispute_id: string
+  ulpin: string
+  level: string
+  issue_type: string
+  note: string
+  status: DisputeStatus
+  filed_at: string
+  filed_by: string
+  reviewed_at: string | null
+  reviewer_note: string | null
+  auto_attached: {
+    building_id?: string | null
+    building_ulpin?: string | null
+    building_name?: string | null
+    floor_label?: string | null
+    unit?: string | number | null
+    owner?: string | null
+    property_type?: string | null
+    area_sq_m?: number | null
+    unit_center_m?: number[] | null
+    unit_polygon_m?: Array<[number, number]> | null
+    vertical_extent_m?: { base?: number | null; top?: number | null }
+    gps?: { latitude?: number; longitude?: number; elevation_amsl_m?: number; source?: string }
+  }
+}
+
+export type DisputeList = {
+  count: number
+  by_status: Record<DisputeStatus, number>
+  disputes: Dispute[]
+}
+
 export const api = {
   society: () => getJson<SocietySummary>('/society'),
   geoSitePlan: () => getJson<GeoSitePlan>('/geo-site-plan'),
@@ -235,4 +312,18 @@ export const api = {
   underground: () => getJson<UndergroundResponse>('/underground'),
   units: () => getJson<{ units?: UnitDetail[] }>('/units').catch(() => ({ units: [] as UnitDetail[] })),
   intelCity: () => getJson<IntelCityRegistry>(INTEL_CITY_JSON),
+
+  registryFlags: () => getJson<RegistryFlags>('/registry/flags'),
+  arScan: () => getJson<ArScan>('/ar/scan'),
+  disputes: () => getJson<DisputeList>('/disputes'),
+  dispute: (id: string) => getJson<Dispute>(`/dispute/${encodeURIComponent(id)}`),
+  reviewDispute: (id: string, action: 'approve' | 'reject', reviewer_note?: string) =>
+    fetch(`/dispute/${encodeURIComponent(id)}/review`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ action, reviewer_note: reviewer_note ?? '' }),
+    }).then((r) => {
+      if (!r.ok) throw new Error(`/dispute/${id}/review → ${r.status}`)
+      return r.json() as Promise<Dispute>
+    }),
 }

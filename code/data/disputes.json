@@ -1,0 +1,112 @@
+[
+  {
+    "dispute_id": "DSP-2026-0001",
+    "ulpin": "3D-IND-560012-A3-L3-303",
+    "level": "unit",
+    "issue_type": "encroachment_report",
+    "note": "The flat next to mine has extended into the corridor and is blocking the fire exit.",
+    "status": "pending_review",
+    "filed_at": "2026-08-27T18:22:10Z",
+    "filed_by": "citizen",
+    "reviewed_at": null,
+    "reviewer_note": null,
+    "auto_attached": {
+      "building_id": "BLDG-003",
+      "building_ulpin": "3D-IND-560012-A3",
+      "building_name": "Tower Gamma",
+      "floor_label": "3",
+      "unit": "303",
+      "owner": "Kabir Patel",
+      "property_type": "1BHK",
+      "area_sq_m": 133.6,
+      "unit_center_m": [
+        133.5,
+        77.5,
+        7.5
+      ],
+      "unit_polygon_m": [
+        [
+          127.2,
+          71.8
+        ],
+        [
+          139.8,
+          71.8
+        ],
+        [
+          139.8,
+          82.8
+        ],
+        [
+          127.2,
+          82.8
+        ]
+      ],
+      "vertical_extent_m": {
+        "base": 6.0,
+        "top": 9.0
+      },
+      "gps": {
+        "latitude": 12.972246784045995,
+        "longitude": 77.59597146744274,
+        "elevation_amsl_m": 920,
+        "source": "building_gnss_reference"
+      }
+    }
+  },
+  {
+    "dispute_id": "DSP-2026-0002",
+    "ulpin": "3D-IND-560012-B9-L2-202",
+    "level": "unit",
+    "issue_type": "ownership_error",
+    "note": "The registry still shows the previous owner — this flat was sold to me last year.",
+    "status": "approved",
+    "filed_at": "2026-08-28T09:05:44Z",
+    "filed_by": "citizen",
+    "reviewed_at": "2026-08-29T11:40:00Z",
+    "reviewer_note": "Verified against sale deed; correction queued.",
+    "auto_attached": {
+      "building_id": "BLDG-009",
+      "building_ulpin": "3D-IND-560012-B9",
+      "building_name": "Midrise Iris",
+      "floor_label": "2",
+      "unit": "202",
+      "owner": "Vihaan Gupta",
+      "property_type": "2BHK",
+      "area_sq_m": 80.6,
+      "unit_center_m": [
+        75.5,
+        126.0,
+        4.5
+      ],
+      "unit_polygon_m": [
+        [
+          70.2,
+          122.2
+        ],
+        [
+          80.8,
+          122.2
+        ],
+        [
+          80.8,
+          130.2
+        ],
+        [
+          70.2,
+          130.2
+        ]
+      ],
+      "vertical_extent_m": {
+        "base": 3.0,
+        "top": 6.0
+      },
+      "gps": {
+        "latitude": 12.97276780452749,
+        "longitude": 77.59528573372137,
+        "elevation_amsl_m": 920,
+        "source": "building_gnss_reference"
+      }
+    }
+  }
+]

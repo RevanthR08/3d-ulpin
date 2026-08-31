@@ -12,6 +12,7 @@ from . import geo
 from . import site_plan as site_plan_mod
 from . import footprint_extraction
 from . import georeference as georeference_mod
+from . import novelty
 from .validation import validate_society
 
 
@@ -25,6 +26,17 @@ class RefPoint(BaseModel):
 class GeoreferenceRequest(BaseModel):
     polygon: list[list[float]]
     ref_points: list[RefPoint]
+
+
+class DisputeCreate(BaseModel):
+    ulpin: str
+    issue_type: str
+    note: str | None = None
+
+
+class DisputeReview(BaseModel):
+    action: str
+    reviewer_note: str | None = None
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 DATA_PATH = os.path.join(DATA_DIR, "greenfield_heights.yaml")
@@ -89,6 +101,7 @@ def startup():
     origin = society["meta"]["origin"]
     _state["society"] = society
     _state["ulpin_index"] = loader.build_ulpin_index(society)
+    _state["disputes"] = novelty.load_or_seed_disputes(society, _state["ulpin_index"])
     if os.path.isfile(UNIT_INDEX_JSON):
         with open(UNIT_INDEX_JSON, encoding="utf-8") as f:
             _state["unit_index"] = json.load(f)
@@ -151,6 +164,7 @@ def root():
         "endpoints": [
             "/society",
             "/building/{building_id}",
+            "/registry/flags",
             "/ulpin/{ulpin}",
             "/unit/{ulpin}",
             "/units",
@@ -160,6 +174,11 @@ def root():
             "/geo-site-plan",
             "/blender-export",
             "/processing-status",
+            "/disputes",
+            "/dispute/{dispute_id}",
+            "/ar/scan",
+            "POST /dispute",
+            "POST /dispute/{dispute_id}/review",
             "POST /extract-footprint",
             "POST /extract-footprint-assisted",
             "POST /georeference",
@@ -221,6 +240,15 @@ def get_building(building_id: str):
         if b["id"] == building_id or b["ulpin"] == building_id:
             return b
     raise HTTPException(status_code=404, detail=f"Building '{building_id}' not found")
+
+
+@app.get("/registry/flags")
+def registry_flags(seed: int | None = Query(None)):
+    """NOVELTY MODULE 1 — random 'encroachment' flags over the Registry tab's
+    own dataset (static3d/intel_city_buildings.json), for the severity badge +
+    detail panel next to flagged buildings. Fixed default seed for demo
+    stability; pass ?seed=<int> to re-roll. Pure mock — no comparison logic."""
+    return novelty.registry_flags(seed)
 
 
 @app.get("/ulpin/{ulpin}")
@@ -509,3 +537,64 @@ def get_processing_status():
         "stages": ai.get("processing_stages", []),
         "results": ai.get("results", {}),
     }
+
+
+# ------------------------------------------------------------------------- #
+# NOVELTY MODULE 2 — one-tap disputes
+#   Citizen "Report an Issue" tab  -> POST /dispute (auto-fills geometry/GPS)
+#   Admin "Reports / Issues" tab   -> GET /disputes + POST /dispute/{id}/review
+# ------------------------------------------------------------------------- #
+
+@app.post("/dispute", status_code=201)
+def create_dispute(req: DisputeCreate):
+    try:
+        dispute = novelty.build_dispute(
+            _state["society"], _state["ulpin_index"], _state["disputes"],
+            req.ulpin, req.issue_type, req.note or "",
+        )
+    except novelty.UlpinNotFound:
+        raise HTTPException(status_code=404, detail=f"ULPIN '{req.ulpin}' not found")
+    except novelty.BadIssueType as e:
+        raise HTTPException(status_code=422, detail=str(e))
+    _state["disputes"].append(dispute)
+    novelty.save_disputes(_state["disputes"])
+    return dispute
+
+
+@app.get("/disputes")
+def list_disputes():
+    return novelty.list_disputes(_state["disputes"])
+
+
+@app.get("/dispute/{dispute_id}")
+def get_dispute(dispute_id: str):
+    d = novelty.find_dispute(_state["disputes"], dispute_id)
+    if d is None:
+        raise HTTPException(status_code=404, detail=f"Dispute '{dispute_id}' not found")
+    return d
+
+
+@app.post("/dispute/{dispute_id}/review")
+def review_dispute(dispute_id: str, req: DisputeReview):
+    try:
+        d = novelty.review_dispute(
+            _state["disputes"], dispute_id, req.action, req.reviewer_note or ""
+        )
+    except novelty.DisputeNotFound:
+        raise HTTPException(status_code=404, detail=f"Dispute '{dispute_id}' not found")
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+    novelty.save_disputes(_state["disputes"])
+    return d
+
+
+# ------------------------------------------------------------------------- #
+# NOVELTY MODULE 3 — AR scan (admin "Atlas" tab -> AR View mode only)
+# ------------------------------------------------------------------------- #
+
+@app.get("/ar/scan")
+def ar_scan(seed: int | None = Query(None)):
+    """Returns one random building + unit from the dataset, formatted for an
+    on-screen AR overlay box. Pass ?seed=<int> for a repeatable demo; omit for
+    a fresh random pick and fresh match_confidence (0.82-0.94) each call."""
+    return novelty.ar_scan(_state["society"], seed)

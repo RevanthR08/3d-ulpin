@@ -1,7 +1,91 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { api, type IntelCityBuilding, type IntelCityFloor, type IntelCityUnit } from '../lib/api'
+import {
+  api,
+  type IntelCityBuilding,
+  type IntelCityFloor,
+  type IntelCityUnit,
+  type RegistryFlag,
+} from '../lib/api'
 import { useAuth } from '../lib/auth'
+
+const SEVERITY_STYLE: Record<RegistryFlag['severity'], string> = {
+  high: 'border-danger/30 bg-danger/10 text-danger',
+  medium: 'border-amber/30 bg-amber/15 text-amber',
+  low: 'border-mute/30 bg-mute/15 text-mute',
+}
+
+function FlagBadge({ flag, onOpen }: { flag: RegistryFlag; onOpen: () => void }) {
+  return (
+    <button
+      type="button"
+      title={`${flag.violation_label} · ${flag.severity}`}
+      onClick={(e) => {
+        e.stopPropagation()
+        onOpen()
+      }}
+      className={`inline-flex flex-none items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${SEVERITY_STYLE[flag.severity]}`}
+    >
+      <span aria-hidden="true">⚠</span>
+      {flag.severity}
+    </button>
+  )
+}
+
+function FlagDetailModal({ flag, onClose }: { flag: RegistryFlag; onClose: () => void }) {
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  return (
+    <div
+      className="absolute inset-0 z-40 flex items-center justify-center bg-ink/45 p-4 backdrop-blur-[2px]"
+      onClick={onClose}
+      role="presentation"
+    >
+      <div
+        className="panel-slide w-full max-w-md rounded-2xl border border-line bg-white p-6 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="flag-detail-title"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <div className="text-[11px] uppercase tracking-[0.14em] text-mute">Encroachment flag</div>
+            <h2 id="flag-detail-title" className="font-display mt-1 text-[20px] font-semibold text-ink">
+              {flag.building_name}
+            </h2>
+            <div className="font-mono mt-1 text-[11px] text-signal">{flag.building_ulpin}</div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg px-2 py-1 text-[12px] font-semibold text-mute hover:bg-paper hover:text-ink"
+          >
+            Close
+          </button>
+        </div>
+
+        <div className="mt-5 flex flex-wrap items-center gap-2">
+          <span className="text-[15px] font-semibold text-ink">{flag.violation_label}</span>
+          <span
+            className={`rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase ${SEVERITY_STYLE[flag.severity]}`}
+          >
+            {flag.severity}
+          </span>
+        </div>
+        <p className="mt-3 rounded-xl border border-line bg-paper px-4 py-3 text-[13px] leading-relaxed text-ink">
+          {flag.description}
+        </p>
+      </div>
+    </div>
+  )
+}
 
 type Tab = 'buildings' | 'floors'
 
@@ -239,6 +323,8 @@ export function RegistryPage() {
   const [q, setQ] = useState(() => params.get('q') || '')
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [housePick, setHousePick] = useState<HousePick | null>(null)
+  const [flags, setFlags] = useState<Record<string, RegistryFlag>>({})
+  const [flagDetail, setFlagDetail] = useState<RegistryFlag | null>(null)
 
   useEffect(() => {
     api
@@ -249,6 +335,20 @@ export function RegistryPage() {
         setSelectedId(rows.find((b) => b.floors?.length)?.id || rows[0]?.id || null)
       })
       .catch(() => setBuildings([]))
+  }, [])
+
+  useEffect(() => {
+    api
+      .registryFlags()
+      .then((res) => {
+        const map: Record<string, RegistryFlag> = {}
+        for (const f of res.buildings) {
+          map[f.building_ulpin] = f
+          map[f.building_id] = f
+        }
+        setFlags(map)
+      })
+      .catch(() => setFlags({}))
   }, [])
 
   const selected = useMemo(
@@ -348,7 +448,14 @@ export function RegistryPage() {
                 <tbody className="divide-y divide-line">
                   {rows.map((b) => (
                     <tr key={b.id} className="hover:bg-paper/80">
-                      <td className="px-5 py-3.5 font-semibold text-ink">{b.name}</td>
+                      <td className="px-5 py-3.5 font-semibold text-ink">
+                        <span className="flex items-center gap-2">
+                          {b.name}
+                          {flags[b.ulpin] && (
+                            <FlagBadge flag={flags[b.ulpin]} onOpen={() => setFlagDetail(flags[b.ulpin])} />
+                          )}
+                        </span>
+                      </td>
                       <td className="px-5 py-3.5 text-mute">{b.kind}</td>
                       <td className="px-5 py-3.5 text-mute">{b.floors?.length ?? 0}</td>
                       <td className="font-mono px-5 py-3.5 text-[11px] text-signal">{b.ulpin}</td>
@@ -413,7 +520,12 @@ export function RegistryPage() {
                       selected?.id === b.id ? 'bg-signal-soft' : 'hover:bg-paper'
                     }`}
                   >
-                    <div className="text-[14px] font-semibold text-ink">{b.name}</div>
+                    <div className="flex items-center gap-2 text-[14px] font-semibold text-ink">
+                      {b.name}
+                      {flags[b.ulpin] && (
+                        <FlagBadge flag={flags[b.ulpin]} onOpen={() => setFlagDetail(flags[b.ulpin])} />
+                      )}
+                    </div>
                     <div className="mt-0.5 text-[12px] text-mute">
                       {b.kind} · {b.floors?.length || 0} floors
                     </div>
@@ -503,6 +615,7 @@ export function RegistryPage() {
       </div>
 
       {housePick && <HouseDetailModal pick={housePick} onClose={() => setHousePick(null)} />}
+      {flagDetail && <FlagDetailModal flag={flagDetail} onClose={() => setFlagDetail(null)} />}
     </div>
   )
 }

@@ -97,11 +97,22 @@ const SignOutIcon = (p: IconProps) => (
   </Glyph>
 )
 
+const ScanIcon = (p: IconProps) => (
+  <Glyph {...p}>
+    <path d="M4 9V6a2 2 0 0 1 2-2h3" />
+    <path d="M15 4h3a2 2 0 0 1 2 2v3" />
+    <path d="M20 15v3a2 2 0 0 1-2 2h-3" />
+    <path d="M9 20H6a2 2 0 0 1-2-2v-3" />
+    <path d="M4 12h16" />
+  </Glyph>
+)
+
 const ADMIN_NAV: NavItem[] = [
   { to: '/app/pipeline', label: 'Data & AI Pipeline', Icon: PipelineIcon },
   { to: '/app/underground-properties', label: 'Underground Properties', Icon: LayersIcon },
   { to: '/app/registry', label: 'Registry', Icon: RegistryIcon },
   { to: '/app/atlas', label: 'Atlas', Icon: GlobeIcon },
+  { to: '/app/ar', label: 'AR Scanner', Icon: ScanIcon },
   { to: '/app/reports', label: 'Reports / Issues', Icon: FlagIcon },
 ]
 
@@ -129,14 +140,14 @@ export function Shell() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-paper">
-      <aside className="flex h-full w-24 flex-none flex-col border-r border-line bg-paper">
+      <aside className="flex h-full w-24 flex-none flex-col border-r border-white/10 bg-signal-deep">
         <div className="flex flex-none items-center justify-center py-4">
           <div
             title="VERTICA"
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink text-white shadow-sm"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-white shadow-sm ring-1 ring-white/15"
           >
             <svg viewBox="0 0 24 24" fill="none" className="h-[22px] w-[22px]" role="img" aria-label="VERTICA">
-              <path d="M12 2.75 21 7.25 12 11.75 3 7.25Z" fill="#0c8f7c" />
+              <path d="M12 2.75 21 7.25 12 11.75 3 7.25Z" fill="#d8f3ee" />
               <path d="M3 12 12 16.5 21 12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
               <path d="M3 16.5 12 21 21 16.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.6" />
             </svg>
@@ -149,22 +160,36 @@ export function Shell() {
               to={item.to}
               end={item.end}
               className={({ isActive }) =>
-                `flex min-h-[62px] flex-col items-center justify-center gap-1.5 rounded-xl px-1 py-2 text-center transition ${
-                  isActive
-                    ? 'bg-signal-soft text-signal-deep'
-                    : 'text-mute hover:bg-paper-dim hover:text-ink'
+                `relative flex min-h-[62px] flex-col items-center justify-center gap-1.5 rounded-xl px-1 py-2 text-center transition ${
+                  isActive ? 'text-[#99f6e4]' : 'text-white/80 hover:bg-white/10 hover:text-white'
                 }`
               }
             >
-              <item.Icon className="h-[22px] w-[22px]" />
-              <span className="text-[10px] font-medium leading-tight">{item.label}</span>
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-0 top-1/2 h-8 w-[3px] -translate-y-1/2 rounded-r-full bg-[#99f6e4]"
+                    />
+                  )}
+                  <item.Icon className="h-[22px] w-[22px]" strokeWidth={isActive ? 2.2 : 1.6} />
+                  <span
+                    className={`text-[10px] leading-tight ${
+                      isActive ? 'font-semibold' : 'font-medium'
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
-        <div className="flex flex-none flex-col items-center gap-2 border-t border-line py-3">
+        <div className="flex flex-none flex-col items-center gap-2 border-t border-white/10 py-3">
           <div
             title={`${auth.username} · ${roleLabel}`}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-paper-dim text-[12px] font-semibold uppercase text-ink"
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white text-[12px] font-semibold uppercase text-signal-deep"
           >
             {auth.username.slice(0, 1)}
           </div>
@@ -175,7 +200,7 @@ export function Shell() {
               navigate('/login')
             }}
             title="Sign out"
-            className="flex flex-col items-center gap-1 text-mute transition hover:text-danger"
+            className="flex flex-col items-center gap-1 text-white/80 transition hover:text-white"
           >
             <SignOutIcon className="h-[18px] w-[18px]" />
             <span className="text-[10px] font-medium leading-tight">Sign out</span>
@@ -183,11 +208,13 @@ export function Shell() {
         </div>
       </aside>
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <header className="flex h-14 flex-none items-center justify-between border-b border-line bg-paper/90 px-7 backdrop-blur">
-          <div className="text-[12px] text-mute">Ministry of Rural Development · DoLR</div>
+        <header className="flex h-14 flex-none items-center justify-between border-b border-white/10 bg-signal-deep px-7">
+          <div className="text-[11px] uppercase tracking-[0.14em] text-white/90">
+            Ministry of Rural Development · DoLR
+          </div>
           <div className="flex items-center gap-2">
             {auth.role === 'citizen' && <CitizenTicketButton />}
-            <div className="rounded-full border border-line bg-white px-3 py-1 text-[11px] font-medium tracking-wide text-ink">
+            <div className="rounded-full border border-white/20 bg-white/12 px-3 py-1 text-[11px] font-medium tracking-wide text-white">
               {contextLabel}
             </div>
           </div>
@@ -208,11 +235,11 @@ function CitizenTicketButton() {
     <button
       type="button"
       onClick={() => openPanel()}
-      className="rounded-full border border-line bg-white px-3 py-1 text-[11px] font-medium tracking-wide text-ink hover:border-signal"
+      className="rounded-full border border-white/20 bg-white/12 px-3 py-1 text-[11px] font-medium tracking-wide text-white hover:border-white/45"
     >
       Tickets
       {openCount > 0 ? (
-        <span className="ml-1.5 rounded-full bg-amber/20 px-1.5 py-0.5 text-[10px] font-semibold text-amber">
+        <span className="ml-1.5 rounded-full bg-white px-1.5 py-0.5 text-[10px] font-semibold text-signal-deep">
           {openCount}
         </span>
       ) : null}
