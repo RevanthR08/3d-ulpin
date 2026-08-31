@@ -17,6 +17,7 @@ import {
   type Role,
 } from './storage'
 import { resolveCitizenUlpin } from './demoAccounts'
+import { digitsOnly, isAadhaar } from './ulpin'
 
 type Ctx = {
   auth: AuthState | null
@@ -42,15 +43,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   })
 
   const login = useCallback((username: string, role: Role) => {
-    const next = { username, role }
+    const storedName = role === 'citizen' && isAadhaar(username) ? digitsOnly(username) : username.trim()
+    const next = { username: storedName || username, role }
     setAuth(next)
     setAuthState(next)
     if (role === 'citizen') {
-      const ulpin = resolveCitizenUlpin(username)
+      const ulpin = resolveCitizenUlpin(storedName)
       setSelectedUlpin(ulpin)
       setUlpinState(ulpin)
     } else {
-      // Operator: never preload a house focus — full city Atlas
       clearSelectedUlpin()
       setUlpinState(null)
     }

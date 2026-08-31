@@ -10,11 +10,12 @@ import {
 import loginHero from '../assets/login-hero.png'
 import { useAuth } from '../lib/auth'
 import {
-  DEFAULT_CITIZEN_ULPIN,
-  DEMO_CITIZEN_ACCOUNTS,
+  DEFAULT_CITIZEN_AADHAAR,
+  DEMO_AADHAAR_CHIPS,
   ownedProperties,
   resolveCitizenUlpin,
 } from '../lib/demoAccounts'
+import { formatAadhaar, isAadhaar, toPublicUlpin } from '../lib/ulpin'
 import type { Role } from '../lib/storage'
 
 const ADMIN_HOME = '/app/pipeline'
@@ -48,15 +49,17 @@ export function LoginPage() {
 
   function onSubmit(e: FormEvent) {
     e.preventDefault()
-    const name = username.trim() || (role === 'admin' ? 'operator' : DEFAULT_CITIZEN_ULPIN)
+    const name = username.trim() || (role === 'admin' ? 'operator' : DEFAULT_CITIZEN_AADHAAR)
     login(name, role)
     navigate(role === 'admin' ? ADMIN_HOME : '/citizen')
   }
 
   const previewUlpin = isCitizen
-    ? resolveCitizenUlpin(username || DEFAULT_CITIZEN_ULPIN)
+    ? resolveCitizenUlpin(username || DEFAULT_CITIZEN_AADHAAR)
     : null
-  const previewHoldings = previewUlpin ? ownedProperties(previewUlpin) : []
+  const previewHoldings = isCitizen
+    ? ownedProperties(username.trim() || DEFAULT_CITIZEN_AADHAAR)
+    : []
 
   return (
     <div className="grain relative min-h-screen bg-paper lg:h-screen lg:overflow-hidden">
@@ -90,8 +93,8 @@ export function LoginPage() {
                 />
               </div>
               <div className="absolute -bottom-5 -right-3 rounded-2xl border border-line bg-paper/95 px-4 py-3 shadow-lg backdrop-blur">
-                <div className="font-mono text-[11px] text-signal-deep">3D-IND-560012-A1-L7-704</div>
-                <div className="mt-0.5 text-[10px] text-mute">One ULPIN per volume</div>
+                <div className="font-mono text-[11px] text-signal-deep">TN330400031801</div>
+                <div className="mt-0.5 text-[10px] text-mute">14-digit 3D ULPIN · one ID per volume</div>
               </div>
             </div>
 
@@ -163,20 +166,24 @@ export function LoginPage() {
               </div>
               <div className="mt-0.5 text-[12px] text-mute">
                 {isCitizen
-                  ? 'Sign in with your floor / unit ULPIN.'
+                  ? 'Sign in with your 12-digit Aadhaar. Your properties and ULPIN load after login.'
                   : 'Access the restricted operator workspace.'}
               </div>
 
               <label className="mt-4 block">
                 <span className="mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-mute">
-                  {isCitizen ? 'Floor / unit ULPIN' : 'Operator username'}
+                  {isCitizen ? 'Aadhaar number' : 'Operator username'}
                 </span>
                 <span className="relative block">
                   <HiOutlineIdentification className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-mute" />
                   <input
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder={isCitizen ? DEFAULT_CITIZEN_ULPIN : 'operator'}
+                    value={isCitizen ? formatAadhaar(username) : username}
+                    onChange={(e) =>
+                      setUsername(isCitizen ? e.target.value.replace(/\D/g, '').slice(0, 12) : e.target.value)
+                    }
+                    placeholder={isCitizen ? formatAadhaar(DEFAULT_CITIZEN_AADHAAR) : 'operator'}
+                    inputMode={isCitizen ? 'numeric' : undefined}
+                    maxLength={isCitizen ? 14 : undefined}
                     className="font-mono w-full rounded-xl border border-line bg-paper py-3 pl-10 pr-3.5 text-[13px] text-ink outline-none placeholder:text-mute/50 focus:border-signal focus:bg-white"
                   />
                 </span>
@@ -185,14 +192,14 @@ export function LoginPage() {
               {isCitizen && (
                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
                   <span className="text-[10px] uppercase tracking-[0.14em] text-mute">Demo</span>
-                  {DEMO_CITIZEN_ACCOUNTS.map((a) => (
+                  {DEMO_AADHAAR_CHIPS.map((a) => (
                     <button
-                      key={a.ulpin}
+                      key={a.aadhaar}
                       type="button"
-                      onClick={() => setUsername(a.ulpin)}
+                      onClick={() => setUsername(a.aadhaar)}
                       className="rounded-lg border border-line bg-paper px-2 py-1 text-[10px] font-semibold text-mute transition hover:border-signal hover:text-signal-deep"
                     >
-                      {a.building} F{a.floor}
+                      {a.label}
                     </button>
                   ))}
                 </div>
@@ -222,14 +229,16 @@ export function LoginPage() {
                   <ul className="mt-2 space-y-1">
                     {previewHoldings.map((h) => (
                       <li key={h.ulpin} className="font-mono text-[11px] text-signal-deep">
-                        {h.building} · floor {h.floor} · {h.ulpin}
+                        {h.building} · floor {h.floor} · {toPublicUlpin(h.ulpin)}
                       </li>
                     ))}
                   </ul>
                   {username.trim() &&
-                  resolveCitizenUlpin(username) === DEFAULT_CITIZEN_ULPIN &&
-                  username.trim() !== DEFAULT_CITIZEN_ULPIN ? (
-                    <span className="text-mute"> · unknown → default Meridian Peak</span>
+                  !isAadhaar(username) &&
+                  resolveCitizenUlpin(username) === previewUlpin &&
+                  username.replace(/\D/g, '').length > 0 &&
+                  username.replace(/\D/g, '').length !== 12 ? (
+                    <span className="text-mute"> · enter 12-digit Aadhaar</span>
                   ) : null}
                 </div>
               )}
@@ -244,7 +253,7 @@ export function LoginPage() {
 
               <p className="mt-4 text-center text-[11px] leading-relaxed text-mute">
                 {isCitizen
-                  ? 'Citizen · Horizon Tower, Meridian Peak, or Cedar Walk ULPIN only'
+                  ? 'Citizen · Aadhaar 2345 6789 0123, 3456 7890 1234, or 4567 8901 2345'
                   : 'Operator · full City Atlas · no ULPIN focus on login'}
               </p>
             </form>

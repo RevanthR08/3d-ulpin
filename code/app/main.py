@@ -13,6 +13,7 @@ from . import site_plan as site_plan_mod
 from . import footprint_extraction
 from . import georeference as georeference_mod
 from . import novelty
+from . import ulpin as ulpin_mod
 from .validation import validate_society
 
 
@@ -139,10 +140,16 @@ if os.path.isfile(_PORTAL_INDEX):
             name="portal_assets",
         )
 
+    def _portal_index():
+        return FileResponse(
+            _PORTAL_INDEX,
+            headers={"Cache-Control": "no-store, max-age=0"},
+        )
+
     @app.get("/portal")
     @app.get("/portal/")
     def portal_root():
-        return FileResponse(_PORTAL_INDEX)
+        return _portal_index()
 
     @app.get("/portal/{full_path:path}")
     def portal_spa(full_path: str):
@@ -152,7 +159,7 @@ if os.path.isfile(_PORTAL_INDEX):
             raise HTTPException(status_code=400, detail="invalid path")
         if full_path and os.path.isfile(candidate):
             return FileResponse(candidate)
-        return FileResponse(_PORTAL_INDEX)
+        return _portal_index()
 else:
     app.mount("/portal", StaticFiles(directory=STATICSITE_DIR, html=True), name="portal")
 
@@ -243,16 +250,28 @@ def get_building(building_id: str):
 
 @app.get("/ulpin/{ulpin}")
 def get_ulpin(ulpin: str):
-    entry = _state["ulpin_index"].get(ulpin)
+    entry = None
+    for key in ulpin_mod.lookup_keys(ulpin):
+        entry = _state["ulpin_index"].get(key)
+        if entry:
+            break
     if not entry:
         raise HTTPException(status_code=404, detail=f"ULPIN '{ulpin}' not found")
+    if entry.get("data") and entry["data"].get("ulpin"):
+        entry = {**entry, "public_ulpin": ulpin_mod.to_public_ulpin(entry["data"].get("ulpin"))}
+    else:
+        entry = {**entry, "public_ulpin": ulpin_mod.to_public_ulpin(ulpin)}
     return entry
 
 
 @app.get("/unit/{ulpin}")
 def get_unit(ulpin: str):
     """Unit detail for click-to-zoom: owner, size, layout, elevations."""
-    entry = _state["ulpin_index"].get(ulpin)
+    entry = None
+    for key in ulpin_mod.lookup_keys(ulpin):
+        entry = _state["ulpin_index"].get(key)
+        if entry:
+            break
     if not entry or entry.get("level") != "unit":
         raise HTTPException(status_code=404, detail=f"Unit ULPIN '{ulpin}' not found")
     data = entry.get("data") or {}

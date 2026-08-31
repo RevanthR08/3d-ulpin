@@ -1,3 +1,5 @@
+import { toLegacyUlpin, ulpinEquals } from './ulpin'
+
 export type SocietySummary = {
   meta?: { display_name?: string; name?: string; data_type?: string }
   computed_totals?: {
@@ -177,13 +179,14 @@ function parcelFrom(b: IntelCityBuilding, f?: IntelCityFloor, u?: IntelCityUnit,
 export function resolveIntelCityUnit(reg: IntelCityRegistry, ulpin: string): UnitDetail | null {
   const needle = ulpin.trim()
   if (!needle) return null
+  const legacy = toLegacyUlpin(needle)
   for (const b of reg.buildings || []) {
-    if (b.ulpin === needle) return parcelFrom(b, b.floors?.[0], b.floors?.[0]?.units?.[0], b.ulpin)
+    if (ulpinEquals(b.ulpin, needle) || b.ulpin === legacy) return parcelFrom(b, b.floors?.[0], b.floors?.[0]?.units?.[0], b.ulpin)
     for (const f of b.floors || []) {
       for (const u of f.units || []) {
-        if (u.ulpin === needle) return parcelFrom(b, f, u, u.ulpin)
+        if (ulpinEquals(u.ulpin, needle) || u.ulpin === legacy) return parcelFrom(b, f, u, u.ulpin)
       }
-      if (f.ulpin === needle) return parcelFrom(b, f, f.units?.[0], f.ulpin)
+      if (ulpinEquals(f.ulpin, needle) || f.ulpin === legacy) return parcelFrom(b, f, f.units?.[0], f.ulpin)
     }
   }
   return null
@@ -198,12 +201,13 @@ export type IntelCityHouse = {
 export function findIntelCityHouse(reg: IntelCityRegistry, ulpin: string): IntelCityHouse | null {
   const needle = ulpin.trim()
   if (!needle) return null
+  const legacy = toLegacyUlpin(needle)
   for (const building of reg.buildings || []) {
     for (const floor of building.floors || []) {
       for (const unit of floor.units || []) {
-        if (unit.ulpin === needle) return { building, floor, unit }
+        if (ulpinEquals(unit.ulpin, needle) || unit.ulpin === legacy) return { building, floor, unit }
       }
-      if (floor.ulpin === needle) {
+      if (ulpinEquals(floor.ulpin, needle) || floor.ulpin === legacy) {
         const unit = floor.units?.[0] || {
           ulpin: floor.ulpin,
           owner: floor.owner,
@@ -218,7 +222,7 @@ export function findIntelCityHouse(reg: IntelCityRegistry, ulpin: string): Intel
         return { building, floor, unit }
       }
     }
-    if (building.ulpin === needle && building.floors?.[0]) {
+    if ((ulpinEquals(building.ulpin, needle) || building.ulpin === legacy) && building.floors?.[0]) {
       const floor = building.floors[0]
       const unit = floor.units?.[0]
       if (unit) return { building, floor, unit }
