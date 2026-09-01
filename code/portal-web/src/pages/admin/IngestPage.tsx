@@ -71,6 +71,7 @@ function classifyFile(file: File): SourceId {
   const path = cleanPath(file).toLowerCase()
   const ext = extensionOf(file)
 
+  if (path.includes('/floorplans/') || path.includes('\\floorplans\\')) return 'floorplans'
   if (ext === 'zip') return 'archive'
   if (/(lidar|point[\s_-]?cloud|las|laz)/.test(path) || ['las', 'laz', 'ply', 'e57', 'xyz'].includes(ext)) {
     return 'lidar'
@@ -241,14 +242,17 @@ function SourcePreview({
 export function IngestPage() {
   const [files, setFiles] = useState<File[]>([])
   const [dragging, setDragging] = useState(false)
+  const [staging, setStaging] = useState(false)
   const [selectedSource, setSelectedSource] = useState<SourceId | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const folderInputRef = useRef<HTMLInputElement | null>(null)
   const zipInputRef = useRef<HTMLInputElement | null>(null)
+  const loadTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    loadSamplePackage()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      if (loadTimer.current) clearTimeout(loadTimer.current)
+    }
   }, [])
 
   const grouped = useMemo(() => {
@@ -266,11 +270,19 @@ export function IngestPage() {
   function loadSamplePackage() {
     setFiles(DEMO_FILES.map(([path, size, type]) => makeDemoFile(path, size, type)))
     setSelectedSource('floorplans')
+    setStaging(false)
   }
 
   function addFiles(incoming: FileList | File[]) {
     if (!Array.from(incoming).length) return
-    loadSamplePackage()
+    if (loadTimer.current) clearTimeout(loadTimer.current)
+    setFiles([])
+    setSelectedSource(null)
+    setStaging(true)
+    loadTimer.current = setTimeout(() => {
+      loadSamplePackage()
+      loadTimer.current = null
+    }, 3000)
   }
 
   function onInput(e: ChangeEvent<HTMLInputElement>) {
@@ -285,12 +297,13 @@ export function IngestPage() {
   }
 
   function clearPackage() {
+    if (loadTimer.current) {
+      clearTimeout(loadTimer.current)
+      loadTimer.current = null
+    }
+    setStaging(false)
     setFiles([])
     setSelectedSource(null)
-  }
-
-  function loadDemoPackage() {
-    loadSamplePackage()
   }
 
   return (
@@ -298,7 +311,7 @@ export function IngestPage() {
       <div>
         <h1 className="font-display text-[32px] font-semibold text-ink">Data Ingestion</h1>
         <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-mute">
-          Drop any file — the demo loads the sample survey (100 floor plans plus drone, LiDAR, GIS, GNSS, DEM).
+          Upload a file, folder, or ZIP. The demo then stages the sample survey (100 floor plans plus drone, LiDAR, GIS, GNSS, DEM).
         </p>
       </div>
 
@@ -318,10 +331,16 @@ export function IngestPage() {
       <div
         onDragOver={(e) => {
           e.preventDefault()
-          setDragging(true)
+          if (!staging) setDragging(true)
         }}
         onDragLeave={() => setDragging(false)}
-        onDrop={onDrop}
+        onDrop={(e) => {
+          if (staging) {
+            e.preventDefault()
+            return
+          }
+          onDrop(e)
+        }}
         className={`rounded-[28px] border-2 border-dashed p-8 text-center transition ${
           dragging ? 'border-signal bg-signal-soft/70' : 'border-line bg-white'
         }`}
@@ -331,42 +350,50 @@ export function IngestPage() {
         </div>
         <h2 className="font-display mt-5 text-[26px] font-semibold text-ink">Upload Survey / Property Data</h2>
         <p className="mx-auto mt-2 max-w-md text-[14px] leading-relaxed text-mute">
-          Drag and drop any file or folder. The demo loads the sample survey package (100 floor plans).
+          Drag and drop any file or folder. After a short index, the sample survey package appears (100 floor plans).
         </p>
 
         <div className="mt-7 flex flex-wrap justify-center gap-3">
           <button
             type="button"
+            disabled={staging}
             onClick={() => fileInputRef.current?.click()}
-            className="rounded-xl bg-ink px-5 py-3 text-[13px] font-semibold text-white"
+            className="rounded-xl bg-ink px-5 py-3 text-[13px] font-semibold text-white disabled:opacity-50"
           >
             Browse Files
           </button>
           <button
             type="button"
+            disabled={staging}
             onClick={() => folderInputRef.current?.click()}
-            className="rounded-xl border border-line bg-paper px-5 py-3 text-[13px] font-semibold text-ink"
+            className="rounded-xl border border-line bg-paper px-5 py-3 text-[13px] font-semibold text-ink disabled:opacity-50"
           >
             Browse Folder
           </button>
           <button
             type="button"
+            disabled={staging}
             onClick={() => zipInputRef.current?.click()}
-            className="rounded-xl border border-line bg-paper px-5 py-3 text-[13px] font-semibold text-ink"
+            className="rounded-xl border border-line bg-paper px-5 py-3 text-[13px] font-semibold text-ink disabled:opacity-50"
           >
             Upload ZIP Package
           </button>
-          <button
-            type="button"
-            onClick={loadDemoPackage}
-            className="rounded-xl border border-signal/30 bg-signal-soft px-5 py-3 text-[13px] font-semibold text-signal-deep"
-          >
-            Load Demo Survey Package
-          </button>
         </div>
 
-        <div className="mt-5 text-[12px] text-mute">Supports multiple files and mixed data sources.</div>
+        <div className="mt-5 text-[12px] text-mute">
+          {staging ? 'Indexing uploaded files… staging the sample survey.' : 'Supports multiple files and mixed data sources.'}
+        </div>
       </div>
+
+      {staging && (
+        <div className="rounded-2xl border border-line bg-white px-6 py-8 text-center">
+          <div className="text-[11px] uppercase tracking-[0.14em] text-mute">Indexing</div>
+          <div className="font-display mt-2 text-[22px] font-semibold text-ink">Reading survey package</div>
+          <div className="mt-2 text-[13px] text-mute">
+            Detecting drone, LiDAR, GIS, floor plans, GNSS, and elevation sources.
+          </div>
+        </div>
+      )}
 
       {files.length > 0 && (
         <div className="rounded-2xl border border-line bg-white">
