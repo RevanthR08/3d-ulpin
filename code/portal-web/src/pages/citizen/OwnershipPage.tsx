@@ -73,7 +73,7 @@ function TitlePopup({
           </div>
 
           <div>
-            <div className="text-[20px] font-semibold text-ink">{unit.owner || holding.owner}</div>
+            <div className="text-[20px] font-semibold text-ink">{holding.owner}</div>
             <div className="font-mono mt-0.5 text-[11px] text-mute">
               {unit.owner_id || floor.owner_id || 'Aadhaar on file'}
             </div>
@@ -265,7 +265,7 @@ export function OwnershipPage() {
             <div className="space-y-4 px-8 py-6">
               <div>
                 <div className="text-[11px] text-mute">Registered owner</div>
-                <div className="mt-1 text-[18px] font-semibold">{unit?.owner || p.owner}</div>
+                <div className="mt-1 text-[18px] font-semibold">{p.owner}</div>
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <span
