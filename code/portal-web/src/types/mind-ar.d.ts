@@ -44,6 +44,8 @@ declare module 'mind-ar/dist/mindar-image-three.prod.js' {
     /** Only exists once `start()` has reached its `_startAR` phase. */
     controller?: { stopProcessVideo?: () => void }
     anchors: MindARAnchor[]
+    /** When true, MindAR asks for the user-facing webcam (laptops / Chrome). */
+    shouldFaceUser: boolean
     addAnchor(targetIndex: number): MindARAnchor
     start(): Promise<void>
     /** Assumes `video.srcObject` is set — throws if called mid-startup. */

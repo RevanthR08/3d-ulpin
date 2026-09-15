@@ -3,7 +3,6 @@ import { HiOutlineArrowPath, HiOutlineViewfinderCircle, HiOutlineXMark } from 'r
 import { MindARThree, type MindARAnchor } from 'mind-ar/dist/mindar-image-three.prod.js'
 import { Vector3 } from 'three'
 import mindTargetUrl from '../../assets/ar-target-building.mind?url'
-import targetPreview from '../../assets/ar-target-building.jpg'
 import {
   AR_FLOORS,
   TARGET_ASPECT,
@@ -15,16 +14,6 @@ import {
 } from '../../lib/arBuilding'
 
 type CamState = 'starting' | 'searching' | 'tracking' | 'denied' | 'insecure' | 'unsupported'
-
-/**
- * Ceiling on how long we sit in "Recognizing building…". If MindAR hasn't
- * acquired the target by then we show the outlines anyway, anchored to a fixed
- * rect over the live feed. Real tracking still wins whenever it is available.
- */
-const LOCK_FALLBACK_MS = 5000
-
-/** Fraction of the panel the untracked fallback outline spans. */
-const FALLBACK_FILL = 0.82
 
 /** Precomputed target-space geometry — constant, so build it once. */
 const FLOOR_GEOMETRY = AR_FLOORS.map((floor) => ({
@@ -50,8 +39,6 @@ export function ArView() {
   const polyRefs = useRef<Array<SVGPolygonElement | null>>([])
   const foldRefs = useRef<Array<SVGLineElement | null>>([])
   const chipRefs = useRef<Array<HTMLButtonElement | null>>([])
-  /** Ref, not state, so the render loop reads it without being torn down. */
-  const forcedLockRef = useRef(false)
 
   const selected = useMemo(
     () => AR_FLOORS.find((f) => f.id === selectedId) ?? null,
@@ -68,8 +55,6 @@ export function ArView() {
 
     let disposed = false
     let instance: MindARThree | null = null
-    let fallbackTimer: ReturnType<typeof setTimeout> | undefined
-    forcedLockRef.current = false
 
     /**
      * Fully release the camera + renderer. Safe to call more than once and at
@@ -210,13 +195,15 @@ export function ArView() {
         missTolerance: 8,
       })
       instance = mindar
+      mindar.shouldFaceUser = true
 
       const anchor: MindARAnchor = mindar.addAnchor(0)
       anchor.onTargetFound = () => !disposed && setCamState('tracking')
-      // once the fallback has fired we stay "locked" — losing the real target
-      // must not drop the UI back to recognising
       anchor.onTargetLost = () => {
-        if (!disposed && !forcedLockRef.current) setCamState('searching')
+        if (disposed) return
+        setSelectedId(null)
+        setHoveredId(null)
+        setCamState('searching')
       }
 
       await mindar.start()
@@ -235,14 +222,6 @@ export function ArView() {
 
       setCamState('searching')
 
-      // ceiling on the recognising state — a natural lock before this just
-      // wins, since the render loop always prefers the real pose
-      fallbackTimer = setTimeout(() => {
-        if (disposed) return
-        forcedLockRef.current = true
-        setCamState('tracking')
-      }, LOCK_FALLBACK_MS)
-
       const { renderer, scene, camera } = mindar
       const point = new Vector3()
 
@@ -254,32 +233,19 @@ export function ArView() {
         if (!overlay || !frame) return
 
         const tracked = anchor.group.visible
-        const show = tracked || forcedLockRef.current
-        overlay.style.opacity = show ? '1' : '0'
-        overlay.style.pointerEvents = show ? 'auto' : 'none'
-        if (!show) return
+        overlay.style.opacity = tracked ? '1' : '0'
+        overlay.style.pointerEvents = tracked ? 'auto' : 'none'
+        if (!tracked) return
 
         const w = frame.clientWidth
         const h = frame.clientHeight
 
-        // Tracked: target space -> world -> clip -> css pixels, so the outline
-        // follows the building. Untracked (fallback): a fixed rect centred in
-        // the panel, keeping the outline over the live feed rather than hiding it.
-        let project: (u: number, v: number) => [number, number]
-        if (tracked) {
-          project = (u, v) => {
-            point
-              .set(u - 0.5, (0.5 - v) * TARGET_ASPECT, 0)
-              .applyMatrix4(anchor.group.matrixWorld)
-              .project(camera)
-            return [(point.x * 0.5 + 0.5) * w, (-point.y * 0.5 + 0.5) * h]
-          }
-        } else {
-          const unit = Math.min(w, h / TARGET_ASPECT) * FALLBACK_FILL
-          project = (u, v) => [
-            w / 2 + (u - 0.5) * unit,
-            h / 2 + (v - 0.5) * unit * TARGET_ASPECT,
-          ]
+        const project = (u: number, v: number): [number, number] => {
+          point
+            .set(u - 0.5, (0.5 - v) * TARGET_ASPECT, 0)
+            .applyMatrix4(anchor.group.matrixWorld)
+            .project(camera)
+          return [(point.x * 0.5 + 0.5) * w, (-point.y * 0.5 + 0.5) * h]
         }
 
         FLOOR_GEOMETRY.forEach((geo, i) => {
@@ -318,7 +284,6 @@ export function ArView() {
 
     return () => {
       disposed = true
-      clearTimeout(fallbackTimer)
       teardown()
     }
   }, [])
@@ -431,23 +396,6 @@ export function ArView() {
             )}
           </div>
 
-          {/* searching — show the operator what to point at */}
-          {camState === 'searching' && (
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-col items-center gap-3 p-5">
-              <div className="w-[min(320px,90%)] rounded-2xl border border-line bg-white/92 p-4 text-center shadow-xl backdrop-blur">
-                <div className="text-[13px] font-semibold text-ink">Recognizing building…</div>
-                <p className="mt-1 text-[12px] leading-relaxed text-mute">
-                  Hold steady — the overlay locks on automatically.
-                </p>
-                <img
-                  src={targetPreview}
-                  alt="The building elevation the scanner is looking for"
-                  className="mx-auto mt-3 h-24 w-auto rounded-lg border border-line object-contain"
-                />
-              </div>
-            </div>
-          )}
-
           {blocked && (
             <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-3 bg-paper-dim px-6 text-center">
               <HiOutlineViewfinderCircle className="h-8 w-8 text-mute" aria-hidden="true" />
@@ -467,56 +415,62 @@ export function ArView() {
           )}
         </div>
 
-        {/* RIGHT — verdict + property record for the selected storey */}
+        {/* RIGHT — empty until the building is identified; then verdict + record */}
         <div className="flex min-h-0 flex-1 flex-col gap-3 lg:h-full lg:overflow-y-auto">
-          {selected ? (
+          {!tracking ? (
+            <div className="rounded-2xl border border-line bg-white px-5 py-6 text-[13px] leading-relaxed text-mute">
+              {blocked
+                ? 'Camera is required before the scanner can identify a building.'
+                : 'No building identified yet. Point the camera at the elevation print — floor outlines and ownership appear only after a lock.'}
+            </div>
+          ) : selected ? (
             <FloorRecord floor={selected} onClear={() => setSelectedId(null)} />
           ) : (
             <div className="rounded-2xl border border-line bg-white px-5 py-6 text-[13px] leading-relaxed text-mute">
-              {tracking
-                ? 'Locked on. Tap any highlighted floor on the building to pull its ULPIN and ownership record.'
-                : 'Point the camera at the building elevation. Once it locks on, each floor is outlined and tappable.'}
+              Locked on. Tap any highlighted floor on the building to pull its ULPIN and ownership record.
             </div>
           )}
 
-          <div className="rounded-2xl border border-line bg-white p-4">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-mute">
-              Storeys · ground + 5
-            </div>
-            <div className="mt-2 flex flex-col gap-1">
-              {AR_FLOORS.map((floor) => {
-                const active = floor.id === selectedId
-                return (
-                  <button
-                    key={floor.id}
-                    type="button"
-                    onClick={() => setSelectedId(active ? null : floor.id)}
-                    onPointerEnter={() => setHoveredId(floor.id)}
-                    onPointerLeave={() => setHoveredId((h) => (h === floor.id ? null : h))}
-                    className={`flex items-center gap-3 rounded-lg border px-3 py-2 text-left transition ${
-                      active
-                        ? 'border-signal bg-signal-soft'
-                        : 'border-line bg-white hover:border-signal'
-                    }`}
-                  >
-                    <span
-                      className={`flex h-6 w-6 flex-none items-center justify-center rounded-md text-[10px] font-bold ${
-                        active ? 'bg-signal text-white' : 'bg-paper-dim text-mute'
+          {tracking && (
+            <div className="rounded-2xl border border-line bg-white p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-mute">
+                Storeys · ground + 5
+              </div>
+              <div className="mt-2 flex flex-col gap-1">
+                {AR_FLOORS.map((floor) => {
+                  const active = floor.id === selectedId
+                  return (
+                    <button
+                      key={floor.id}
+                      type="button"
+                      onClick={() => setSelectedId(active ? null : floor.id)}
+                      onPointerEnter={() => setHoveredId(floor.id)}
+                      onPointerLeave={() => setHoveredId((h) => (h === floor.id ? null : h))}
+                      className={`flex items-center gap-3 rounded-lg border px-3 py-2 text-left transition ${
+                        active
+                          ? 'border-signal bg-signal-soft'
+                          : 'border-line bg-white hover:border-signal'
                       }`}
                     >
-                      {floor.short}
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[12px] font-semibold text-ink">
-                        {floor.label}
+                      <span
+                        className={`flex h-6 w-6 flex-none items-center justify-center rounded-md text-[10px] font-bold ${
+                          active ? 'bg-signal text-white' : 'bg-paper-dim text-mute'
+                        }`}
+                      >
+                        {floor.short}
                       </span>
-                      <span className="block truncate text-[11px] text-mute">{floor.owner}</span>
-                    </span>
-                  </button>
-                )
-              })}
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-[12px] font-semibold text-ink">
+                          {floor.label}
+                        </span>
+                        <span className="block truncate text-[11px] text-mute">{floor.owner}</span>
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

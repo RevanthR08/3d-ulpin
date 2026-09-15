@@ -143,7 +143,10 @@ if os.path.isfile(_PORTAL_INDEX):
     def _portal_index():
         return FileResponse(
             _PORTAL_INDEX,
-            headers={"Cache-Control": "no-store, max-age=0"},
+            headers={
+                "Cache-Control": "no-store, max-age=0",
+                "Permissions-Policy": "camera=(self)",
+            },
         )
 
     @app.get("/portal")
