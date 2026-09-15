@@ -1,0 +1,96 @@
+{
+  "meta": {
+    "city": "Intel City",
+    "pincode": "600001",
+    "agency": "Chennai Metro Rail Limited",
+    "corridor": "East–west rail · Blender Y ≈ −2024",
+    "note": "One underground station (Station-5) plus the longest single tunnel tube (tunnel2). Extra tunnel copies from the pack were not used.",
+    "glb": "intel_city_metro.glb"
+  },
+  "assets": [
+    {
+      "id": "METRO-VIADUCT-01",
+      "type": "metro_viaduct",
+      "label": "CMRL elevated viaduct",
+      "ulpin": "3D-IND-600001-METRO-VIADUCT-01",
+      "status": "operational",
+      "from": "West yard approach",
+      "to": "Central road crossing",
+      "length_m": 1100,
+      "deck_height_m": 18,
+      "summary": "Sci-fi metro set on the Lillabo viaduct (west–central) and at the existing Tunnel_Entrance portal (east).",
+      "blender_aabb": {
+        "min": [-688, -2038, 2],
+        "max": [420, -2010, 15]
+      }
+    },
+    {
+      "id": "METRO-STATION-01",
+      "type": "metro_station",
+      "label": "CMRL underground station",
+      "ulpin": "3D-IND-600001-METRO-STATION-01",
+      "status": "operational",
+      "from": "Viaduct east approach",
+      "to": "Running tunnel",
+      "length_m": 180,
+      "depth_m": 22,
+      "summary": "Single underground station from the 5-station pack (Station-5), placed east of the elevated viaduct.",
+      "mesh_match": "Station-5",
+      "blender_aabb": {
+        "min": [413.26, -2053.35, -25.87],
+        "max": [593.08, -1994.65, -18.13]
+      }
+    },
+    {
+      "id": "METRO-TUNNEL-01",
+      "type": "metro_tunnel",
+      "label": "CMRL underground running tunnel",
+      "ulpin": "3D-IND-600001-METRO-TUNNEL-01",
+      "status": "operational",
+      "from": "Underground station",
+      "to": "East portal approach",
+      "length_m": 180,
+      "depth_m": 22,
+      "summary": "One tunnel tube (tunnel2) attached to the station — not the extra tunnelEnd / tunnelRial copies.",
+      "mesh_match": "tunnel2",
+      "blender_aabb": {
+        "min": [593.08, -2030.98, -25.87],
+        "max": [773.08, -2017.02, -19.94]
+      }
+    },
+    {
+      "id": "METRO-TRAIN-EL-01",
+      "type": "metro_train",
+      "label": "CMRL elevated train",
+      "ulpin": "3D-IND-600001-METRO-TRAIN-EL-01",
+      "status": "operational",
+      "summary": "Sci-fi metro train on the Lillabo viaduct and at the east portal.",
+      "mesh_match": "Train_0"
+    },
+    {
+      "id": "METRO-TRAIN-UG-01",
+      "type": "metro_train",
+      "label": "CMRL underground train",
+      "ulpin": "3D-IND-600001-METRO-TRAIN-UG-01",
+      "status": "operational",
+      "summary": "Train cab parked in the underground station.",
+      "mesh_match": "cab1",
+      "blender_aabb": {
+        "min": [489.17, -2027.71, -24.67],
+        "max": [517.17, -2020.29, -19.17]
+      }
+    },
+    {
+      "id": "METRO-ALIGN-01",
+      "type": "metro_track",
+      "label": "CMRL surface alignment",
+      "ulpin": "3D-IND-600001-METRO-ALIGN-01",
+      "status": "operational",
+      "from": "West yard",
+      "to": "East portal",
+      "length_m": 3960,
+      "summary": "At-grade metro / rail alignment already in the twin (Train_tracks).",
+      "mesh_match": "Train_tracks"
+    }
+  ]
+}
