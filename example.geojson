@@ -1,0 +1,121 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "kind": "site_boundary",
+          "name": "DemoSite"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [80.2700, 13.0820],
+              [80.2725, 13.0820],
+              [80.2725, 13.0840],
+              [80.2700, 13.0840],
+              [80.2700, 13.0820]
+            ]
+          ]
+        }
+      },
+  
+      {
+        "type": "Feature",
+        "properties": {
+          "kind": "building",
+          "building_id": "BLD-001",
+          "name": "Tower Alpha",
+          "floors": 14,
+          "height_m": 42.0,
+          "landuse": "Residential"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [80.27020, 13.08220],
+              [80.27045, 13.08220],
+              [80.27045, 13.08245],
+              [80.27020, 13.08245],
+              [80.27020, 13.08220]
+            ]
+          ]
+        }
+      },
+  
+      {
+        "type": "Feature",
+        "properties": {
+          "kind": "building",
+          "building_id": "BLD-002",
+          "name": "Tower Beta",
+          "floors": 10,
+          "height_m": 30.0,
+          "landuse": "Residential"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [80.27100, 13.08225],
+              [80.27130, 13.08225],
+              [80.27130, 13.08250],
+              [80.27100, 13.08250],
+              [80.27100, 13.08225]
+            ]
+          ]
+        }
+      },
+  
+      {
+        "type": "Feature",
+        "properties": {
+          "kind": "building",
+          "building_id": "BLD-003",
+          "name": "Commercial Block",
+          "floors": 4,
+          "height_m": 15.0,
+          "landuse": "Commercial"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [80.27030, 13.08310],
+              [80.27080, 13.08310],
+              [80.27080, 13.08335],
+              [80.27055, 13.08355],
+              [80.27030, 13.08335],
+              [80.27030, 13.08310]
+            ]
+          ]
+        }
+      },
+  
+      {
+        "type": "Feature",
+        "properties": {
+          "kind": "building",
+          "building_id": "BLD-004",
+          "name": "Club House",
+          "floors": 2,
+          "height_m": 7.0,
+          "landuse": "Community"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [80.27170, 13.08330],
+              [80.27205, 13.08330],
+              [80.27205, 13.08355],
+              [80.27170, 13.08355],
+              [80.27170, 13.08330]
+            ]
+          ]
+        }
+      }
+    ]
+  }
